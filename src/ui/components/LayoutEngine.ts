@@ -97,15 +97,33 @@ ${varDecls}
     }
   `;
   if (applet.kind === "react") {
-    // Host page with React 18 from esm.sh. Agent writes a default export
-    // component body or a self-contained render call.
+    // Wrap agent code so it always renders. Three patterns are supported:
+    //   1. Self-contained: code already calls createRoot(...).render(...) — injected as-is.
+    //   2. Component expression: code is a function/arrow (possibly starting with
+    //      "() =>" or "function") — assigned to App and rendered automatically.
+    //   3. Everything else: wrapped in a fragment and rendered as-is.
+    const code = applet.html.trim();
+    let scriptBody: string;
+    if (/createRoot\s*\(/.test(code)) {
+      // Agent already calls createRoot — inject as-is.
+      scriptBody = code;
+    } else if (/(?:^|\n)\s*(?:const|let|var)\s+App\s*=/.test(code) || /(?:^|\n)\s*function\s+App\s*\(/.test(code)) {
+      // Agent already defined App — just mount it.
+      scriptBody = `${code}\ncreateRoot(document.getElementById('root')).render(React.createElement(App));`;
+    } else if (/^(?:\(|async\s*\()[^)]*\)\s*=>|^function\s*\w*\s*\(/.test(code)) {
+      // Bare arrow/function expression — assign to App then mount.
+      scriptBody = `const App = ${code};\ncreateRoot(document.getElementById('root')).render(React.createElement(App));`;
+    } else {
+      // Statement block — run it, then mount App if defined.
+      scriptBody = `${code}\nif (typeof App !== 'undefined') createRoot(document.getElementById('root')).render(React.createElement(App));`;
+    }
     return `<!doctype html><html><head><meta charset="utf-8">
 <style>${baseStyles}</style>
 </head><body><div id="root"></div>
 <script type="module">
 import React from "https://esm.sh/react@18";
 import { createRoot } from "https://esm.sh/react-dom@18/client";
-${applet.html}
+${scriptBody}
 </script></body></html>`;
   }
   return `<!doctype html><html><head><meta charset="utf-8">

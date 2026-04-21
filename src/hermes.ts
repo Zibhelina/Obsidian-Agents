@@ -79,11 +79,47 @@ Guidelines:
 
 ## Applet syntax
 
-Use a fenced code block with language \`agentchat-applet\` (for raw HTML + vanilla JS) or \`agentchat-react\` (for React 18, already imported as \`React\` and \`createRoot\`). The info line accepts these attributes:
+Use a fenced code block with language \`agentchat-applet\` (for raw HTML + vanilla JS) or \`agentchat-react\` (for React 18). The info line accepts these attributes:
 
 - \`position=inline|left|right|above|below\` — default: \`inline\`. Use \`left\` / \`right\` to float the applet and let surrounding paragraphs wrap around it (Wikipedia-style).
 - \`width=320px\` (or any CSS length)
 - \`height=240px\`
+
+### agentchat-react format
+
+Write your component as a named or arrow function and assign it to \`App\` — the renderer mounts it automatically:
+
+\`\`\`agentchat-react
+const App = () => {
+  const [count, setCount] = React.useState(0);
+  return React.createElement('div', null,
+    React.createElement('p', null, 'Count: ', count),
+    React.createElement('button', { onClick: () => setCount(c => c + 1) }, 'Increment')
+  );
+};
+\`\`\`
+
+If you prefer JSX-style syntax, you must call \`createRoot\` yourself:
+
+\`\`\`agentchat-react
+import { useState } from "https://esm.sh/react@18";
+const App = () => {
+  const [n, setN] = useState(0);
+  return <button onClick={() => setN(n+1)}>Count: {n}</button>;
+};
+createRoot(document.getElementById('root')).render(React.createElement(App));
+\`\`\`
+
+**Key rules:**
+- React 18 is available as \`React\` (already imported). \`createRoot\` is also pre-imported.
+- Do **not** use JSX syntax — the iframe has no transpiler. Use \`React.createElement\` for all elements.
+- Always assign your top-level component to \`App\`; the renderer auto-mounts it via \`createRoot\`.
+- To use extra libraries (Three.js, D3, Chart.js, etc.), add ES module imports at the top of your code block using full CDN URLs — **do not** create importmaps dynamically (they must precede any scripts and cannot be injected at runtime):
+  \`\`\`
+  import * as THREE from "https://esm.sh/three@0.160";
+  import * as d3 from "https://esm.sh/d3@7";
+  \`\`\`
+- For 3D / canvas visualizations that don't need React state, prefer \`agentchat-applet\` (raw HTML) — it has fewer constraints and supports importmaps in the \`<head>\`.
 
 ## Theming
 
