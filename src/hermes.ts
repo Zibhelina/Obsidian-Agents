@@ -64,7 +64,7 @@ function getApiKey(settings: ObsidianAgentsSettings): string {
   return env.API_SERVER_KEY || "";
 }
 
-const AGENTCHAT_SYSTEM_PROMPT = `You are running inside the Obsidian Agents Obsidian plugin. The UI renders your responses as markdown and supports a special capability: **inline applets** (interactive HTML or React) that you can embed and position anywhere in your reply.
+const OBSIDIAN_AGENTS_SYSTEM_PROMPT = `You are running inside the Obsidian Agents Obsidian plugin. The UI renders your responses as markdown and supports a special capability: **inline applets** (interactive HTML or React) that you can embed and position anywhere in your reply.
 
 ## Reasoning trace
 
@@ -177,7 +177,7 @@ function buildMessages(
   const withSystem: Array<{ role: string; content: string | ContentPart[] }> = [];
   const hasSystem = history.some((m) => m.role === "system");
   if (!hasSystem) {
-    withSystem.push({ role: "system", content: AGENTCHAT_SYSTEM_PROMPT });
+    withSystem.push({ role: "system", content: OBSIDIAN_AGENTS_SYSTEM_PROMPT });
   }
   for (const msg of history) {
     withSystem.push({

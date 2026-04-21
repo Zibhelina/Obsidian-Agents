@@ -40,7 +40,7 @@ export async function loadSessions(
 	try {
 		return parse(await app.vault.adapter.read(SESSIONS_PATH));
 	} catch {}
-	// One-time migration from the legacy AgentChat filename.
+	// One-time migration from the legacy filename (pre-rebrand).
 	try {
 		const legacy = parse(await app.vault.adapter.read(LEGACY_SESSIONS_PATH));
 		await saveSessions(app, legacy);

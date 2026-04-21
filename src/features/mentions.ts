@@ -2,7 +2,7 @@ import { App, TFile } from "obsidian";
 import type { ChatMessage } from "../types";
 
 const MENTION_REGEX = /(?:^|\s)@\[([^\]]+)\]\(([^)]+)\)|(?:^|\s)@"([^"]+)"|(?:^|\s)@([^\s@]+)/g;
-const MARKER_PREFIX = "__AGENTCHAT_MENTION__";
+const MARKER_PREFIX = "__OBSIDIAN_AGENTS_MENTION__";
 
 // Extensions we refuse to read as text — vault.read() on these produces binary
 // garbage that bloats the request and corrupts the payload.
