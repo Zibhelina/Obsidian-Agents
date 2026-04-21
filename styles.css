@@ -1070,8 +1070,8 @@ button.obsidian-agents-message-action-btn:hover {
 .obsidian-agents-composer-expand-btn,
 button.obsidian-agents-composer-expand-btn {
   position: absolute;
-  top: -12px;
-  right: 8px;
+  top: -11px;
+  right: -11px;
   z-index: 5;
   display: inline-flex;
   align-items: center;

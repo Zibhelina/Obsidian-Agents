@@ -89,6 +89,19 @@ export default class ObsidianAgentsPlugin extends Plugin {
       this.sessions.push(session);
       this.activeSessionId = session.id;
       await this.saveSessionsData();
+    } else {
+      // Always land on a fresh greeting screen after Obsidian reloads.
+      // Reuse an existing empty session if there is one; otherwise start
+      // a new one. The previously-active session is still in the sidebar
+      // and one click away.
+      const emptySession =
+        this.sessions.find((s) => s.folderId === null && s.messages.length === 0) ??
+        (() => {
+          const s = createSession(null);
+          this.sessions.push(s);
+          return s;
+        })();
+      this.activeSessionId = emptySession.id;
     }
   }
 
