@@ -82,6 +82,21 @@ export class ChatView extends ItemView {
     // Strip Obsidian's default view-content padding so we fill edge-to-edge
     container.style.padding = "0";
 
+    // Swallow horizontal trackpad pans anywhere inside the chat view.
+    // Without this, a right-to-left two-finger swipe produces a horizontal
+    // scroll delta that the browser applies to the nearest scrollable
+    // ancestor (or a history gesture), which was translating the chat
+    // column. We never want horizontal scrolling in this view.
+    container.addEventListener(
+      "wheel",
+      (e: WheelEvent) => {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+          e.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+
     // Sidebar
     this.sidebar = new Sidebar(
       container,
@@ -184,6 +199,7 @@ export class ChatView extends ItemView {
 
   loadSession(session: ChatSession): void {
     this.currentSessionId = session.id;
+    this.termPanel?.close();
     this.messageList?.clear();
     for (const msg of session.messages) {
       this.messageList?.addMessage(msg, this.plugin);

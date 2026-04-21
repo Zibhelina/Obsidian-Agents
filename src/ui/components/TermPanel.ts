@@ -85,8 +85,15 @@ export class TermPanel extends Component {
   close(): void {
     this.host.removeClass("is-open");
     this.isOpen = false;
-    // Leave content in place until next open to avoid a flash-empty
-    // during the slide-out transition.
+    // Clear after the slide-out transition so nothing stale survives
+    // into the next session — matches the expectation that the panel
+    // is purely a response to a click on a term pill.
+    window.setTimeout(() => {
+      if (!this.isOpen) {
+        this.content.empty();
+        this.titleEl.setText("");
+      }
+    }, 260);
   }
 
   private renderNotFound(termId: string): void {

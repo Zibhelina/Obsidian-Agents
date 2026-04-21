@@ -8,12 +8,23 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: contain;
   background: var(--background-primary);
   color: var(--text-normal);
   font-family: var(--font-interface);
   position: relative;
   container-type: inline-size;
   container-name: obsidian-agents;
+}
+
+/* Block trackpad horizontal-pan from nudging the chat column. The chat
+   content is never meant to scroll horizontally, so pan-y + pinch-zoom
+   is all we ever want here. */
+.obsidian-agents-chat-panel,
+.obsidian-agents-message-list {
+  touch-action: pan-y pinch-zoom;
+  overscroll-behavior-x: none;
 }
 
 /* Obsidian's default .view-content has padding; our view fills edge-to-edge */
@@ -3026,14 +3037,19 @@ button.obsidian-agents-composer-send-btn:disabled {
   border-left: 1px solid var(--background-modifier-border);
   box-shadow: -8px 0 24px rgba(0, 0, 0, 0.25);
   transform: translateX(100%);
-  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              visibility 0s linear 220ms;
   display: flex;
   flex-direction: column;
-  pointer-events: auto;
+  pointer-events: none;
+  visibility: hidden;
   overflow: hidden;
 }
 .obsidian-agents-term-panel-host.is-open .obsidian-agents-term-panel {
   transform: translateX(0);
+  pointer-events: auto;
+  visibility: visible;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .obsidian-agents-term-panel-host.is-open .obsidian-agents-term-panel-backdrop {
   background: rgba(0, 0, 0, 0.35);
@@ -3213,3 +3229,146 @@ button.obsidian-agents-composer-send-btn:disabled {
 .obsidian-agents-term-panel-sources {
   margin-top: 20px;
 }
+
+/* ---------- Unified minimal icon-button style ----------
+   One consistent look across mention pills, attachments, sidebars,
+   expanded composer, lightboxes, thinking drawer, applet fullscreen,
+   and sidebar actions (new folder, new chat, collapse/expand, per-item
+   menu): bare icon, no shape, muted by default, brightens on hover. */
+.obsidian-agents-mention-chip-remove,
+.obsidian-agents-attachment-remove,
+.obsidian-agents-attachment-chip-image .obsidian-agents-attachment-remove,
+.obsidian-agents-reply-quote-remove,
+.obsidian-agents-term-panel-close,
+.obsidian-agents-lightbox-close,
+.obsidian-agents-thinking-drawer-close,
+.obsidian-agents-applet-fullscreen-close,
+.obsidian-agents-composer.obsidian-agents-composer-expanded .obsidian-agents-composer-expand-btn,
+.obsidian-agents-composer.obsidian-agents-composer-expanded button.obsidian-agents-composer-expand-btn,
+.obsidian-agents-icon-btn,
+button.obsidian-agents-icon-btn,
+.obsidian-agents-sidebar-expand-btn,
+.obsidian-agents-tree-item-menu,
+button.obsidian-agents-tree-item-menu {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  color: var(--text-faint) !important;
+  opacity: 0.7;
+  transition: color 120ms ease, opacity 120ms ease !important;
+}
+
+.obsidian-agents-mention-chip-remove:hover,
+.obsidian-agents-attachment-remove:hover,
+.obsidian-agents-attachment-chip-image:hover .obsidian-agents-attachment-remove,
+.obsidian-agents-attachment-chip-image .obsidian-agents-attachment-remove:hover,
+.obsidian-agents-reply-quote-remove:hover,
+.obsidian-agents-term-panel-close:hover,
+.obsidian-agents-term-panel-close:focus-visible,
+.obsidian-agents-lightbox-close:hover,
+.obsidian-agents-thinking-drawer-close:hover,
+.obsidian-agents-applet-fullscreen-close:hover,
+.obsidian-agents-composer.obsidian-agents-composer-expanded .obsidian-agents-composer-expand-btn:hover,
+.obsidian-agents-composer.obsidian-agents-composer-expanded button.obsidian-agents-composer-expand-btn:hover,
+.obsidian-agents-icon-btn:hover,
+button.obsidian-agents-icon-btn:hover,
+.obsidian-agents-sidebar-expand-btn:hover,
+.obsidian-agents-tree-item-menu:hover,
+button.obsidian-agents-tree-item-menu:hover {
+  background: transparent !important;
+  color: var(--text-normal) !important;
+  opacity: 1;
+  outline: none;
+}
+
+/* Sidebar per-item menu (...) still only appears on row hover, but
+   uses the same minimal style once visible. */
+.obsidian-agents-tree-item-menu,
+button.obsidian-agents-tree-item-menu {
+  opacity: 0;
+}
+.obsidian-agents-tree-item:hover .obsidian-agents-tree-item-menu {
+  opacity: 0.7;
+}
+.obsidian-agents-tree-item:hover .obsidian-agents-tree-item-menu:hover {
+  opacity: 1;
+}
+
+/* Keep contrast on dark overlays (lightbox + applet fullscreen) where
+   the faint-text variable would disappear against a black backdrop. */
+.obsidian-agents-lightbox-close,
+.obsidian-agents-applet-fullscreen-close {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+.obsidian-agents-lightbox-close:hover,
+.obsidian-agents-applet-fullscreen-close:hover {
+  color: #fff !important;
+}
+
+/* Hover-reveal chips keep their appear-on-hover behavior, but the
+   underlying X itself uses the shared minimal style above. */
+.obsidian-agents-mention-chip-remove,
+.obsidian-agents-attachment-chip .obsidian-agents-attachment-remove,
+.obsidian-agents-attachment-chip-image .obsidian-agents-attachment-remove {
+  opacity: 0;
+}
+.obsidian-agents-mention-chip:hover .obsidian-agents-mention-chip-remove,
+.obsidian-agents-attachment-chip:hover .obsidian-agents-attachment-remove,
+.obsidian-agents-attachment-chip-image:hover .obsidian-agents-attachment-remove {
+  opacity: 0.7;
+}
+.obsidian-agents-mention-chip:hover .obsidian-agents-mention-chip-remove:hover,
+.obsidian-agents-attachment-chip:hover .obsidian-agents-attachment-remove:hover,
+.obsidian-agents-attachment-chip-image:hover .obsidian-agents-attachment-remove:hover {
+  opacity: 1;
+}
+
+/* Normalize icon size across all X buttons — uniform, discreet 14px. */
+.obsidian-agents-mention-chip-remove .svg-icon,
+.obsidian-agents-mention-chip-remove svg,
+.obsidian-agents-attachment-remove .svg-icon,
+.obsidian-agents-attachment-remove svg,
+.obsidian-agents-attachment-chip-image .obsidian-agents-attachment-remove .svg-icon,
+.obsidian-agents-attachment-chip-image .obsidian-agents-attachment-remove svg,
+.obsidian-agents-reply-quote-remove .svg-icon,
+.obsidian-agents-reply-quote-remove svg,
+.obsidian-agents-term-panel-close svg,
+.obsidian-agents-lightbox-close .svg-icon,
+.obsidian-agents-lightbox-close svg,
+.obsidian-agents-thinking-drawer-close .svg-icon,
+.obsidian-agents-thinking-drawer-close svg,
+.obsidian-agents-applet-fullscreen-close svg {
+  width: 14px !important;
+  height: 14px !important;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+.obsidian-agents-term-panel-close svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+.obsidian-agents-composer.obsidian-agents-composer-expanded .obsidian-agents-composer-expand-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+.obsidian-agents-icon-btn .svg-icon,
+.obsidian-agents-icon-btn svg,
+.obsidian-agents-sidebar-expand-btn .svg-icon,
+.obsidian-agents-sidebar-expand-btn svg,
+.obsidian-agents-tree-item-menu .svg-icon,
+.obsidian-agents-tree-item-menu svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+
