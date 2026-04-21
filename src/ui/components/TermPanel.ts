@@ -38,26 +38,26 @@ export class TermPanel extends Component {
     this.app = app;
     this.sourcePath = sourcePath;
 
-    this.host = container.createDiv({ cls: "agentchat-term-panel-host" });
+    this.host = container.createDiv({ cls: "obsidian-agents-term-panel-host" });
 
-    this.backdrop = this.host.createDiv({ cls: "agentchat-term-panel-backdrop" });
+    this.backdrop = this.host.createDiv({ cls: "obsidian-agents-term-panel-backdrop" });
     this.backdrop.addEventListener("click", () => this.close());
 
-    this.panel = this.host.createDiv({ cls: "agentchat-term-panel" });
+    this.panel = this.host.createDiv({ cls: "obsidian-agents-term-panel" });
     this.panel.setAttribute("role", "dialog");
     this.panel.setAttribute("aria-label", "Term detail");
 
-    const header = this.panel.createDiv({ cls: "agentchat-term-panel-header" });
-    this.titleEl = header.createEl("h3", { cls: "agentchat-term-panel-title" });
+    const header = this.panel.createDiv({ cls: "obsidian-agents-term-panel-header" });
+    this.titleEl = header.createEl("h3", { cls: "obsidian-agents-term-panel-title" });
     this.closeBtn = header.createEl("button", {
-      cls: "agentchat-term-panel-close",
+      cls: "obsidian-agents-term-panel-close",
       attr: { "aria-label": "Close term panel" },
     });
     this.closeBtn.innerHTML =
       '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
     this.closeBtn.addEventListener("click", () => this.close());
 
-    this.content = this.panel.createDiv({ cls: "agentchat-term-panel-content" });
+    this.content = this.panel.createDiv({ cls: "obsidian-agents-term-panel-content" });
 
     this.innerComponent = new Component();
     this.addChild(this.innerComponent);
@@ -92,7 +92,7 @@ export class TermPanel extends Component {
   private renderNotFound(termId: string): void {
     this.titleEl.setText("Unknown term");
     this.content.empty();
-    const msg = this.content.createDiv({ cls: "agentchat-term-panel-missing" });
+    const msg = this.content.createDiv({ cls: "obsidian-agents-term-panel-missing" });
     msg.setText(`No definition registered for "${termId}".`);
   }
 
@@ -108,8 +108,8 @@ export class TermPanel extends Component {
 
     // Optional canonical link just under the title, as a muted chip.
     if (def.href) {
-      const linkRow = this.content.createDiv({ cls: "agentchat-term-panel-linkrow" });
-      const a = linkRow.createEl("a", { cls: "agentchat-term-panel-canonical" });
+      const linkRow = this.content.createDiv({ cls: "obsidian-agents-term-panel-linkrow" });
+      const a = linkRow.createEl("a", { cls: "obsidian-agents-term-panel-canonical" });
       a.href = def.href;
       a.target = "_blank";
       a.rel = "noopener noreferrer";
@@ -118,18 +118,18 @@ export class TermPanel extends Component {
 
     // Summary paragraph.
     if (def.summary) {
-      const summary = this.content.createDiv({ cls: "agentchat-term-panel-summary" });
+      const summary = this.content.createDiv({ cls: "obsidian-agents-term-panel-summary" });
       summary.setText(def.summary);
     }
 
     // Key facts list.
     if (Array.isArray(def.keyFacts) && def.keyFacts.length > 0) {
-      const block = this.content.createDiv({ cls: "agentchat-term-panel-keyfacts" });
+      const block = this.content.createDiv({ cls: "obsidian-agents-term-panel-keyfacts" });
       block.createEl("h4", {
-        cls: "agentchat-term-panel-section-heading",
+        cls: "obsidian-agents-term-panel-section-heading",
         text: "Key facts",
       });
-      const ul = block.createEl("ul", { cls: "agentchat-term-panel-keyfacts-list" });
+      const ul = block.createEl("ul", { cls: "obsidian-agents-term-panel-keyfacts-list" });
       for (const f of def.keyFacts) {
         if (!f || !f.label) continue;
         const li = ul.createEl("li");
@@ -142,14 +142,14 @@ export class TermPanel extends Component {
     if (Array.isArray(def.sections)) {
       for (const sec of def.sections) {
         if (!sec || !sec.body) continue;
-        const wrap = this.content.createDiv({ cls: "agentchat-term-panel-section" });
+        const wrap = this.content.createDiv({ cls: "obsidian-agents-term-panel-section" });
         if (sec.heading) {
           wrap.createEl("h4", {
-            cls: "agentchat-term-panel-section-heading",
+            cls: "obsidian-agents-term-panel-section-heading",
             text: sec.heading,
           });
         }
-        const body = wrap.createDiv({ cls: "agentchat-term-panel-section-body markdown-rendered" });
+        const body = wrap.createDiv({ cls: "obsidian-agents-term-panel-section-body markdown-rendered" });
         if (this.app) {
           MarkdownRenderer.render(
             this.app,
@@ -168,44 +168,44 @@ export class TermPanel extends Component {
 
     // Sources footer (reuses the same visual language as layout sources).
     if (Array.isArray(def.sources) && def.sources.length > 0) {
-      const footer = this.content.createDiv({ cls: "agentchat-rich-sources agentchat-term-panel-sources" });
-      footer.createSpan({ cls: "agentchat-rich-sources-label", text: "Sources" });
+      const footer = this.content.createDiv({ cls: "obsidian-agents-rich-sources obsidian-agents-term-panel-sources" });
+      footer.createSpan({ cls: "obsidian-agents-rich-sources-label", text: "Sources" });
       def.sources.forEach((s, i) => {
         if (!s || typeof s.href !== "string") return;
         const href = s.href.trim();
         if (!/^https?:\/\/|^mailto:/i.test(href)) return;
-        const link = footer.createEl("a", { cls: "agentchat-rich-source" });
+        const link = footer.createEl("a", { cls: "obsidian-agents-rich-source" });
         link.href = href;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
-        link.createSpan({ cls: "agentchat-rich-source-num", text: `${i + 1}` });
-        link.createSpan({ cls: "agentchat-rich-source-label", text: s.label || href });
+        link.createSpan({ cls: "obsidian-agents-rich-source-num", text: `${i + 1}` });
+        link.createSpan({ cls: "obsidian-agents-rich-source-label", text: s.label || href });
         const site = s.site || this.hostnameOf(href);
         if (site) {
-          link.createSpan({ cls: "agentchat-rich-source-site", text: site });
+          link.createSpan({ cls: "obsidian-agents-rich-source-site", text: site });
         }
       });
     }
   }
 
   private renderImageCarousel(images: NonNullable<TermDefinition["images"]>): void {
-    const wrap = this.content.createDiv({ cls: "agentchat-term-panel-carousel" });
-    const track = wrap.createDiv({ cls: "agentchat-term-panel-carousel-track" });
+    const wrap = this.content.createDiv({ cls: "obsidian-agents-term-panel-carousel" });
+    const track = wrap.createDiv({ cls: "obsidian-agents-term-panel-carousel-track" });
     images.forEach((img) => {
-      const slide = track.createDiv({ cls: "agentchat-term-panel-carousel-slide" });
+      const slide = track.createDiv({ cls: "obsidian-agents-term-panel-carousel-slide" });
       const el = slide.createEl("img");
       el.src = img.src;
       el.alt = img.alt || "";
       el.loading = "lazy";
       if (img.caption) {
-        slide.createDiv({ cls: "agentchat-term-panel-carousel-caption", text: img.caption });
+        slide.createDiv({ cls: "obsidian-agents-term-panel-carousel-caption", text: img.caption });
       }
     });
 
     if (images.length > 1) {
-      const dots = wrap.createDiv({ cls: "agentchat-term-panel-carousel-dots" });
+      const dots = wrap.createDiv({ cls: "obsidian-agents-term-panel-carousel-dots" });
       images.forEach((_, i) => {
-        const d = dots.createDiv({ cls: "agentchat-term-panel-carousel-dot" });
+        const d = dots.createDiv({ cls: "obsidian-agents-term-panel-carousel-dot" });
         if (i === 0) d.addClass("is-active");
       });
       // Update active dot on scroll.
@@ -214,7 +214,7 @@ export class TermPanel extends Component {
         () => {
           const slideW = track.clientWidth;
           const idx = slideW > 0 ? Math.round(track.scrollLeft / slideW) : 0;
-          const children = dots.querySelectorAll(".agentchat-term-panel-carousel-dot");
+          const children = dots.querySelectorAll(".obsidian-agents-term-panel-carousel-dot");
           children.forEach((el, i) => {
             el.classList.toggle("is-active", i === idx);
           });

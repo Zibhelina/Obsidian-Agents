@@ -391,7 +391,7 @@ function safeBuild(view: EditorView): DecorationSet {
   try {
     return buildDecorations(view);
   } catch (err) {
-    console.warn("[agentchat] live-preview decoration build failed", err);
+    console.warn("[obsidian-agents] live-preview decoration build failed", err);
     return Decoration.none;
   }
 }
@@ -426,7 +426,7 @@ export class LivePreviewEditor {
   private onChange?: (value: string) => void;
 
   constructor(parent: HTMLElement, opts: LivePreviewEditorOptions = {}) {
-    this.dom = parent.createDiv({ cls: "agentchat-composer-cm" });
+    this.dom = parent.createDiv({ cls: "obsidian-agents-composer-cm" });
     this.onChange = opts.onChange;
 
     const updateListener = EditorView.updateListener.of((u) => {

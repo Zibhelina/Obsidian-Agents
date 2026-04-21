@@ -5,7 +5,7 @@ export class StatusBar {
   private timeEl: HTMLElement;
 
   constructor(container: HTMLElement) {
-    this.el = container.createDiv({ cls: "agentchat-status-bar" });
+    this.el = container.createDiv({ cls: "obsidian-agents-status-bar" });
     this.modelEl = this.el.createSpan();
     this.tokensEl = this.el.createSpan();
     this.timeEl = this.el.createSpan();

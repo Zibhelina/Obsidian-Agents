@@ -13,9 +13,9 @@ export class ReplyHandle {
     this.onReply = onReply;
 
     this.btn = document.createElement("div");
-    this.btn.className = "agentchat-reply-handle";
+    this.btn.className = "obsidian-agents-reply-handle";
     this.btn.style.display = "none";
-    const icon = this.btn.createSpan({ cls: "agentchat-reply-handle-icon" });
+    const icon = this.btn.createSpan({ cls: "obsidian-agents-reply-handle-icon" });
     setIcon(icon, "reply");
     this.btn.createSpan({ text: "Reply" });
     document.body.appendChild(this.btn);
@@ -49,8 +49,8 @@ export class ReplyHandle {
     }
     // Accept selections anywhere inside any message wrapper — user or agent.
     const bubble =
-      el.closest(".agentchat-message-wrapper") ||
-      el.closest(".agentchat-message-bubble");
+      el.closest(".obsidian-agents-message-wrapper") ||
+      el.closest(".obsidian-agents-message-bubble");
     if (!bubble) {
       this.hide();
       return;

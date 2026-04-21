@@ -1,8 +1,8 @@
 /* ============================================================
-   AgentChat — ChatGPT-inspired modern chat UI
+   Obsidian Agents — ChatGPT-inspired modern chat UI
    ============================================================ */
 
-.agentchat-view {
+.obsidian-agents-view {
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -13,22 +13,22 @@
   font-family: var(--font-interface);
   position: relative;
   container-type: inline-size;
-  container-name: agentchat;
+  container-name: obsidian-agents;
 }
 
 /* Obsidian's default .view-content has padding; our view fills edge-to-edge */
-.workspace-leaf-content[data-type="agentchat"] .view-content,
-.view-content:has(> .agentchat-view) {
+.workspace-leaf-content[data-type="obsidian-agents"] .view-content,
+.view-content:has(> .obsidian-agents-view) {
   padding: 0 !important;
 }
 
-.agentchat-view,
-.agentchat-view * {
+.obsidian-agents-view,
+.obsidian-agents-view * {
   box-sizing: border-box;
 }
 
 /* --- Sidebar panel --- */
-.agentchat-sidebar-panel {
+.obsidian-agents-sidebar-panel {
   position: relative;
   width: 260px;
   min-width: 220px;
@@ -42,14 +42,14 @@
   transition: width 0.18s ease, min-width 0.18s ease;
 }
 
-.agentchat-sidebar {
+.obsidian-agents-sidebar {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.agentchat-sidebar-header {
+.obsidian-agents-sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -57,7 +57,7 @@
   gap: 4px;
 }
 
-.agentchat-sidebar-title {
+.obsidian-agents-sidebar-title {
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -65,13 +65,13 @@
   flex: 1;
 }
 
-.agentchat-sidebar-actions {
+.obsidian-agents-sidebar-actions {
   display: flex;
   gap: 2px;
 }
 
-.agentchat-icon-btn,
-button.agentchat-icon-btn {
+.obsidian-agents-icon-btn,
+button.obsidian-agents-icon-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -87,38 +87,38 @@ button.agentchat-icon-btn {
   transition: background 0.12s, color 0.12s;
 }
 
-.agentchat-icon-btn:hover,
-button.agentchat-icon-btn:hover {
+.obsidian-agents-icon-btn:hover,
+button.obsidian-agents-icon-btn:hover {
   background: var(--background-modifier-hover) !important;
   color: var(--text-normal);
 }
 
-.agentchat-icon-btn .svg-icon {
+.obsidian-agents-icon-btn .svg-icon {
   width: 16px;
   height: 16px;
 }
 
-.agentchat-sidebar-tree {
+.obsidian-agents-sidebar-tree {
   flex: 1;
   overflow-y: auto;
   padding: 4px 8px 16px;
 }
 
 /* --- Section body (Projects) --- */
-.agentchat-section-body {
+.obsidian-agents-section-body {
   margin-bottom: 4px;
 }
 
-.agentchat-projects-body {
+.obsidian-agents-projects-body {
   margin-bottom: 8px;
 }
 
 /* --- Date group labels (static, non-interactive, like ChatGPT) --- */
-.agentchat-date-group {
+.obsidian-agents-date-group {
   margin-top: 4px;
 }
 
-.agentchat-date-group-label {
+.obsidian-agents-date-group-label {
   padding: 10px 8px 4px 8px;
   font-size: 11px;
   font-weight: 600;
@@ -127,15 +127,15 @@ button.agentchat-icon-btn:hover {
   user-select: none;
 }
 
-.agentchat-date-group-body {
+.obsidian-agents-date-group-body {
   /* sessions sit directly under their date label */
 }
 
-.agentchat-tree-folder {
+.obsidian-agents-tree-folder {
   margin: 1px 0;
 }
 
-.agentchat-tree-folder-header {
+.obsidian-agents-tree-folder-header {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -149,11 +149,11 @@ button.agentchat-icon-btn:hover {
   transition: background 0.1s;
 }
 
-.agentchat-tree-folder-header:hover {
+.obsidian-agents-tree-folder-header:hover {
   background: var(--background-modifier-hover);
 }
 
-.agentchat-tree-caret {
+.obsidian-agents-tree-caret {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -163,19 +163,19 @@ button.agentchat-icon-btn:hover {
   flex-shrink: 0;
 }
 
-.agentchat-tree-caret .svg-icon {
+.obsidian-agents-tree-caret .svg-icon {
   width: 12px;
   height: 12px;
 }
 
-.agentchat-tree-folder-children {
+.obsidian-agents-tree-folder-children {
   position: relative;
   padding-left: 14px;
   margin-left: 10px;
 }
 
 /* Subtle vertical guide rail for nested folders */
-.agentchat-tree-folder-children::before {
+.obsidian-agents-tree-folder-children::before {
   content: "";
   position: absolute;
   left: 0;
@@ -186,7 +186,7 @@ button.agentchat-icon-btn:hover {
   opacity: 0.6;
 }
 
-.agentchat-tree-item {
+.obsidian-agents-tree-item {
   position: relative;
   display: flex;
   align-items: center;
@@ -201,33 +201,33 @@ button.agentchat-icon-btn:hover {
   min-width: 0;
 }
 
-.agentchat-tree-item:hover {
+.obsidian-agents-tree-item:hover {
   background: var(--background-modifier-hover);
 }
 
-.agentchat-tree-item.agentchat-active {
+.obsidian-agents-tree-item.obsidian-agents-active {
   background: var(--background-modifier-active-hover, color-mix(in srgb, var(--text-normal) 10%, transparent));
   color: var(--text-normal);
 }
 
-.agentchat-tree-item.agentchat-dragging {
+.obsidian-agents-tree-item.obsidian-agents-dragging {
   opacity: 0.5;
 }
 
-.agentchat-tree-folder-header.agentchat-drop-target {
+.obsidian-agents-tree-folder-header.obsidian-agents-drop-target {
   background: color-mix(in srgb, var(--interactive-accent) 20%, transparent);
   outline: 2px dashed var(--interactive-accent);
   outline-offset: -2px;
 }
 
-.agentchat-sidebar-tree.agentchat-drop-root {
+.obsidian-agents-sidebar-tree.obsidian-agents-drop-root {
   background: color-mix(in srgb, var(--interactive-accent) 6%, transparent);
   outline: 2px dashed var(--interactive-accent);
   outline-offset: -4px;
   border-radius: 8px;
 }
 
-.agentchat-tree-label {
+.obsidian-agents-tree-label {
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -235,8 +235,8 @@ button.agentchat-icon-btn:hover {
   white-space: nowrap;
 }
 
-.agentchat-tree-item-menu,
-button.agentchat-tree-item-menu {
+.obsidian-agents-tree-item-menu,
+button.obsidian-agents-tree-item-menu {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -253,24 +253,24 @@ button.agentchat-tree-item-menu {
   transition: opacity 0.12s, background 0.12s;
 }
 
-.agentchat-tree-item-menu .svg-icon {
+.obsidian-agents-tree-item-menu .svg-icon {
   width: 14px;
   height: 14px;
 }
 
 /* Conceal shape entirely until hover — matches the sidebar icon buttons */
-.agentchat-tree-item:hover .agentchat-tree-item-menu {
+.obsidian-agents-tree-item:hover .obsidian-agents-tree-item-menu {
   opacity: 1;
 }
 
-.agentchat-tree-item-menu:hover,
-button.agentchat-tree-item-menu:hover {
+.obsidian-agents-tree-item-menu:hover,
+button.obsidian-agents-tree-item-menu:hover {
   background: var(--background-modifier-hover) !important;
   color: var(--text-normal);
 }
 
 /* --- Sidebar expand button (visible when collapsed) --- */
-.agentchat-sidebar-expand-btn {
+.obsidian-agents-sidebar-expand-btn {
   display: none;
   position: absolute;
   top: 8px;
@@ -288,18 +288,18 @@ button.agentchat-tree-item-menu:hover {
   transition: color 0.12s;
 }
 
-.agentchat-sidebar-expand-btn:hover {
+.obsidian-agents-sidebar-expand-btn:hover {
   background: transparent;
   color: var(--text-normal);
 }
 
-.agentchat-sidebar-expand-btn .svg-icon {
+.obsidian-agents-sidebar-expand-btn .svg-icon {
   width: 16px;
   height: 16px;
 }
 
 /* --- Collapsed sidebar --- */
-.agentchat-sidebar-panel.agentchat-sidebar-collapsed {
+.obsidian-agents-sidebar-panel.obsidian-agents-sidebar-collapsed {
   width: 44px;
   min-width: 44px;
   max-width: 44px;
@@ -307,16 +307,16 @@ button.agentchat-tree-item-menu:hover {
   border-right: none;
 }
 
-.agentchat-sidebar-panel.agentchat-sidebar-collapsed .agentchat-sidebar {
+.obsidian-agents-sidebar-panel.obsidian-agents-sidebar-collapsed .obsidian-agents-sidebar {
   display: none;
 }
 
-.agentchat-sidebar-panel.agentchat-sidebar-collapsed .agentchat-sidebar-expand-btn {
+.obsidian-agents-sidebar-panel.obsidian-agents-sidebar-collapsed .obsidian-agents-sidebar-expand-btn {
   display: inline-flex;
 }
 
 /* --- Chat panel --- */
-.agentchat-chat-panel {
+.obsidian-agents-chat-panel {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -327,7 +327,7 @@ button.agentchat-tree-item-menu:hover {
 }
 
 /* --- Message list --- */
-.agentchat-message-list {
+.obsidian-agents-message-list {
   flex: 1;
   overflow-y: auto;
   padding: 28px 0 32px;
@@ -337,25 +337,25 @@ button.agentchat-tree-item-menu:hover {
 }
 
 /* Tighten the spacing between a user reply and the following agent reply */
-.agentchat-message-wrapper-user + .agentchat-message-wrapper-agent {
+.obsidian-agents-message-wrapper-user + .obsidian-agents-message-wrapper-agent {
   margin-top: -16px;
 }
 
 /* Empty-state (desktop): greeting + composer centered as a single block.
    align-items stays stretch so composer fills full width — pill centering
-   is handled inside .agentchat-composer via its own align-items: center. */
-.agentchat-chat-panel.agentchat-empty {
+   is handled inside .obsidian-agents-composer via its own align-items: center. */
+.obsidian-agents-chat-panel.obsidian-agents-empty {
   justify-content: center;
   align-items: stretch;
 }
 
-.agentchat-chat-panel.agentchat-empty .agentchat-message-list {
+.obsidian-agents-chat-panel.obsidian-agents-empty .obsidian-agents-message-list {
   flex: 0 0 auto;
   padding: 0;
   min-height: 0;
 }
 
-.agentchat-greeting {
+.obsidian-agents-greeting {
   text-align: center;
   font-size: 28px;
   font-weight: 500;
@@ -364,49 +364,49 @@ button.agentchat-tree-item-menu:hover {
   letter-spacing: -0.01em;
 }
 
-.agentchat-chat-panel.agentchat-empty .agentchat-composer {
+.obsidian-agents-chat-panel.obsidian-agents-empty .obsidian-agents-composer {
   padding-top: 0;
   padding-bottom: 0;
   margin-bottom: 18vh;
 }
 
-.agentchat-chat-panel.agentchat-empty .agentchat-composer > * {
+.obsidian-agents-chat-panel.obsidian-agents-empty .obsidian-agents-composer > * {
   max-width: 760px;
   width: 100%;
 }
 
 /* --- Message wrappers --- */
-.agentchat-message-wrapper {
+.obsidian-agents-message-wrapper {
   width: 100%;
   max-width: 760px;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
   flex-direction: column;
-  animation: agentchat-fade-in 0.18s ease;
+  animation: obsidian-agents-fade-in 0.18s ease;
 }
 
-@keyframes agentchat-fade-in {
+@keyframes obsidian-agents-fade-in {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.agentchat-message-wrapper-user {
+.obsidian-agents-message-wrapper-user {
   align-items: flex-end;
 }
 
-.agentchat-message-wrapper-agent {
+.obsidian-agents-message-wrapper-agent {
   align-items: stretch;
 }
 
-.agentchat-message-sender {
+.obsidian-agents-message-sender {
   display: none; /* ChatGPT hides sender labels; role is visually clear */
 }
 
 /* Text selection must work everywhere in chat content */
-.agentchat-message-wrapper,
-.agentchat-message-bubble,
-.agentchat-message-bubble * {
+.obsidian-agents-message-wrapper,
+.obsidian-agents-message-bubble,
+.obsidian-agents-message-bubble * {
   user-select: text !important;
   -webkit-user-select: text !important;
   cursor: text;
@@ -414,11 +414,11 @@ button.agentchat-tree-item-menu:hover {
 
 /* Iframes and applets host their own documents — don't force the text
    cursor or text-selection styling onto them. */
-.agentchat-message-bubble iframe,
-.agentchat-message-bubble iframe *,
-.agentchat-applet-host,
-.agentchat-applet-host *,
-.agentchat-layout-applet {
+.obsidian-agents-message-bubble iframe,
+.obsidian-agents-message-bubble iframe *,
+.obsidian-agents-applet-host,
+.obsidian-agents-applet-host *,
+.obsidian-agents-layout-applet {
   cursor: default !important;
   user-select: auto !important;
   -webkit-user-select: auto !important;
@@ -427,21 +427,21 @@ button.agentchat-tree-item-menu:hover {
 /* The iframe itself should always show the default arrow, never a text
    caret — even when the parent bubble applies a text cursor for message
    selection. */
-iframe.agentchat-layout-applet {
+iframe.obsidian-agents-layout-applet {
   cursor: default !important;
   pointer-events: auto;
 }
 
 /* Restore pointer cursor on interactive children */
-.agentchat-message-bubble a,
-.agentchat-message-bubble button,
-.agentchat-message-copy-btn,
-.agentchat-message-copy-btn * {
+.obsidian-agents-message-bubble a,
+.obsidian-agents-message-bubble button,
+.obsidian-agents-message-copy-btn,
+.obsidian-agents-message-copy-btn * {
   cursor: pointer;
 }
 
 /* --- User bubble (ChatGPT style) --- */
-.agentchat-message-bubble-user {
+.obsidian-agents-message-bubble-user {
   max-width: 85%;
   padding: 10px 16px;
   border-radius: 18px;
@@ -453,7 +453,7 @@ iframe.agentchat-layout-applet {
 }
 
 /* --- Agent message (no bubble, plain text) --- */
-.agentchat-message-bubble-agent {
+.obsidian-agents-message-bubble-agent {
   width: 100%;
   padding: 0;
   background: transparent;
@@ -465,7 +465,7 @@ iframe.agentchat-layout-applet {
 }
 
 /* --- Message action row (copy, reply) under each message --- */
-.agentchat-message-actions {
+.obsidian-agents-message-actions {
   display: flex;
   gap: 4px;
   margin-top: 6px;
@@ -473,16 +473,16 @@ iframe.agentchat-layout-applet {
   transition: opacity 0.12s;
 }
 
-.agentchat-message-wrapper:hover .agentchat-message-actions {
+.obsidian-agents-message-wrapper:hover .obsidian-agents-message-actions {
   opacity: 1;
 }
 
-.agentchat-message-wrapper-user .agentchat-message-actions {
+.obsidian-agents-message-wrapper-user .obsidian-agents-message-actions {
   justify-content: flex-end;
 }
 
-.agentchat-message-action-btn,
-button.agentchat-message-action-btn {
+.obsidian-agents-message-action-btn,
+button.obsidian-agents-message-action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -498,26 +498,26 @@ button.agentchat-message-action-btn {
   transition: background 0.12s, color 0.12s;
 }
 
-.agentchat-message-action-btn:hover,
-button.agentchat-message-action-btn:hover {
+.obsidian-agents-message-action-btn:hover,
+button.obsidian-agents-message-action-btn:hover {
   background: var(--background-modifier-hover) !important;
   color: var(--text-normal);
 }
 
-.agentchat-message-action-btn .svg-icon {
+.obsidian-agents-message-action-btn .svg-icon {
   width: 14px;
   height: 14px;
 }
 
-.agentchat-message-bubble p {
+.obsidian-agents-message-bubble p {
   margin: 0 0 12px;
 }
 
-.agentchat-message-bubble p:last-child {
+.obsidian-agents-message-bubble p:last-child {
   margin-bottom: 0;
 }
 
-.agentchat-message-bubble pre {
+.obsidian-agents-message-bubble pre {
   background: var(--background-secondary);
   padding: 12px 16px;
   border-radius: 10px;
@@ -527,26 +527,26 @@ button.agentchat-message-action-btn:hover {
   font-size: 13px;
 }
 
-.agentchat-message-bubble code {
+.obsidian-agents-message-bubble code {
   font-family: var(--font-monospace);
   font-size: 0.9em;
 }
 
-.agentchat-message-bubble-user code,
-.agentchat-message-bubble-agent :not(pre) > code {
+.obsidian-agents-message-bubble-user code,
+.obsidian-agents-message-bubble-agent :not(pre) > code {
   padding: 1px 6px;
   border-radius: 4px;
   background: var(--background-secondary);
 }
 
-.agentchat-message-bubble-user :not(pre) > code {
+.obsidian-agents-message-bubble-user :not(pre) > code {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.agentchat-message-bubble strong { font-weight: 600; }
-.agentchat-message-bubble em { font-style: italic; }
+.obsidian-agents-message-bubble strong { font-weight: 600; }
+.obsidian-agents-message-bubble em { font-style: italic; }
 
-.agentchat-message-bubble a {
+.obsidian-agents-message-bubble a {
   color: var(--interactive-accent);
   text-decoration: underline;
 }
@@ -554,35 +554,35 @@ button.agentchat-message-action-btn:hover {
 /* Accent is driven by Obsidian's --interactive-accent, which the user chooses
    via Settings → Appearance → Accent color. Everything in the plugin derives
    from that variable. */
-.agentchat-view {
-  --agentchat-accent: var(--interactive-accent);
-  --agentchat-accent-hover: var(--interactive-accent-hover, var(--interactive-accent));
+.obsidian-agents-view {
+  --obsidian-agents-accent: var(--interactive-accent);
+  --obsidian-agents-accent-hover: var(--interactive-accent-hover, var(--interactive-accent));
 }
 
-.agentchat-message-bubble h1,
-.agentchat-message-bubble h2,
-.agentchat-message-bubble h3,
-.agentchat-message-bubble h4 {
+.obsidian-agents-message-bubble h1,
+.obsidian-agents-message-bubble h2,
+.obsidian-agents-message-bubble h3,
+.obsidian-agents-message-bubble h4 {
   margin: 16px 0 8px;
   font-weight: 600;
   line-height: 1.3;
 }
 
-.agentchat-message-bubble h1 { font-size: 1.5em; }
-.agentchat-message-bubble h2 { font-size: 1.3em; }
-.agentchat-message-bubble h3 { font-size: 1.15em; }
+.obsidian-agents-message-bubble h1 { font-size: 1.5em; }
+.obsidian-agents-message-bubble h2 { font-size: 1.3em; }
+.obsidian-agents-message-bubble h3 { font-size: 1.15em; }
 
-.agentchat-message-bubble ul,
-.agentchat-message-bubble ol {
+.obsidian-agents-message-bubble ul,
+.obsidian-agents-message-bubble ol {
   margin: 8px 0 12px;
   padding-left: 24px;
 }
 
-.agentchat-message-bubble li {
+.obsidian-agents-message-bubble li {
   margin: 4px 0;
 }
 
-.agentchat-message-bubble blockquote {
+.obsidian-agents-message-bubble blockquote {
   margin: 10px 0;
   padding: 2px 0 2px 14px;
   border-left: 3px solid var(--background-modifier-border);
@@ -590,7 +590,7 @@ button.agentchat-message-action-btn:hover {
 }
 
 /* --- User attachments --- */
-.agentchat-user-attachments {
+.obsidian-agents-user-attachments {
   margin-top: 6px;
   display: flex;
   flex-wrap: wrap;
@@ -599,12 +599,12 @@ button.agentchat-message-action-btn:hover {
 }
 
 /* Images sit ABOVE the bubble, outside of it, right-aligned */
-.agentchat-user-attachments-images {
+.obsidian-agents-user-attachments-images {
   margin-top: 0;
   margin-bottom: 6px;
 }
 
-.agentchat-user-attachment-img {
+.obsidian-agents-user-attachment-img {
   max-width: 220px;
   max-height: 220px;
   border-radius: 12px;
@@ -614,12 +614,12 @@ button.agentchat-message-action-btn:hover {
   transition: opacity 0.12s, transform 0.12s;
 }
 
-.agentchat-user-attachment-img:hover {
+.obsidian-agents-user-attachment-img:hover {
   opacity: 0.9;
   transform: translateY(-1px);
 }
 
-.agentchat-user-attachment-file {
+.obsidian-agents-user-attachment-file {
   font-size: 12px;
   opacity: 0.85;
   display: flex;
@@ -631,31 +631,31 @@ button.agentchat-message-action-btn:hover {
 }
 
 /* --- Streaming indicator --- */
-.agentchat-streaming-indicator {
+.obsidian-agents-streaming-indicator {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   padding: 6px 2px;
 }
 
-.agentchat-streaming-dot {
+.obsidian-agents-streaming-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
   background: var(--text-muted);
-  animation: agentchat-bounce 1.4s infinite ease-in-out both;
+  animation: obsidian-agents-bounce 1.4s infinite ease-in-out both;
 }
 
-.agentchat-streaming-dot:nth-child(1) { animation-delay: -0.32s; }
-.agentchat-streaming-dot:nth-child(2) { animation-delay: -0.16s; }
+.obsidian-agents-streaming-dot:nth-child(1) { animation-delay: -0.32s; }
+.obsidian-agents-streaming-dot:nth-child(2) { animation-delay: -0.16s; }
 
-@keyframes agentchat-bounce {
+@keyframes obsidian-agents-bounce {
   0%, 80%, 100% { transform: scale(0.5); opacity: 0.4; }
   40% { transform: scale(1); opacity: 1; }
 }
 
 /* --- Tool activity rows (server-side tool calls streamed from Hermes) --- */
-.agentchat-tool-activity {
+.obsidian-agents-tool-activity {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -667,7 +667,7 @@ button.agentchat-message-action-btn:hover {
   font-size: 12.5px;
 }
 
-.agentchat-tool-row {
+.obsidian-agents-tool-row {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -676,19 +676,19 @@ button.agentchat-message-action-btn:hover {
   line-height: 1.4;
 }
 
-.agentchat-tool-icon {
+.obsidian-agents-tool-icon {
   flex: 0 0 auto;
   font-size: 13px;
   line-height: 1;
 }
 
-.agentchat-tool-label {
+.obsidian-agents-tool-label {
   flex: 1 1 auto;
   word-break: break-word;
   color: var(--text-normal);
 }
 
-.agentchat-tool-running .agentchat-tool-label::after {
+.obsidian-agents-tool-running .obsidian-agents-tool-label::after {
   content: "";
   display: inline-block;
   width: 6px;
@@ -696,22 +696,22 @@ button.agentchat-message-action-btn:hover {
   margin-left: 6px;
   border-radius: 50%;
   background: var(--interactive-accent);
-  animation: agentchat-tool-pulse 1.2s ease-in-out infinite;
+  animation: obsidian-agents-tool-pulse 1.2s ease-in-out infinite;
 }
 
-@keyframes agentchat-tool-pulse {
+@keyframes obsidian-agents-tool-pulse {
   0%, 100% { opacity: 0.35; }
   50%      { opacity: 1; }
 }
 
 /* --- Thinking trace: subtle inline pill, full trace lives in a drawer --- */
-.agentchat-thinking-trace {
+.obsidian-agents-thinking-trace {
   margin: 0 0 8px;
   background: transparent;
   border: none;
 }
 
-.agentchat-thinking-pill {
+.obsidian-agents-thinking-pill {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -726,17 +726,17 @@ button.agentchat-message-action-btn:hover {
   transition: color 0.12s;
 }
 
-.agentchat-thinking-pill:hover,
-.agentchat-thinking-pill:focus-visible {
+.obsidian-agents-thinking-pill:hover,
+.obsidian-agents-thinking-pill:focus-visible {
   color: var(--text-muted);
   outline: none;
 }
 
-.agentchat-thinking-pill-streaming {
+.obsidian-agents-thinking-pill-streaming {
   color: var(--text-muted);
 }
 
-.agentchat-thinking-pill-streaming .agentchat-thinking-label::after {
+.obsidian-agents-thinking-pill-streaming .obsidian-agents-thinking-label::after {
   content: "";
   display: inline-block;
   width: 6px;
@@ -744,30 +744,30 @@ button.agentchat-message-action-btn:hover {
   margin-left: 6px;
   border-radius: 50%;
   background: var(--interactive-accent);
-  animation: agentchat-pulse 1.2s ease-in-out infinite;
+  animation: obsidian-agents-pulse 1.2s ease-in-out infinite;
   vertical-align: middle;
 }
 
-@keyframes agentchat-pulse {
+@keyframes obsidian-agents-pulse {
   0%, 100% { opacity: 0.3; }
   50% { opacity: 1; }
 }
 
-.agentchat-thinking-caret {
+.obsidian-agents-thinking-caret {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: currentColor;
 }
 
-.agentchat-thinking-caret .svg-icon {
+.obsidian-agents-thinking-caret .svg-icon {
   width: 13px;
   height: 13px;
   stroke-width: 2;
 }
 
 /* Right-side drawer that shows the full trace */
-.agentchat-thinking-drawer {
+.obsidian-agents-thinking-drawer {
   position: fixed;
   top: 0;
   right: 0;
@@ -779,15 +779,15 @@ button.agentchat-message-action-btn:hover {
   z-index: 9500;
   display: flex;
   flex-direction: column;
-  animation: agentchat-slide-in 0.18s ease-out;
+  animation: obsidian-agents-slide-in 0.18s ease-out;
 }
 
-@keyframes agentchat-slide-in {
+@keyframes obsidian-agents-slide-in {
   from { transform: translateX(100%); }
   to   { transform: translateX(0); }
 }
 
-.agentchat-thinking-drawer-header {
+.obsidian-agents-thinking-drawer-header {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -795,20 +795,20 @@ button.agentchat-message-action-btn:hover {
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
-.agentchat-thinking-drawer-title {
+.obsidian-agents-thinking-drawer-title {
   font-size: 15px;
   font-weight: 600;
   color: var(--text-normal);
 }
 
-.agentchat-thinking-drawer-meta {
+.obsidian-agents-thinking-drawer-meta {
   color: var(--text-muted);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
   margin-right: auto;
 }
 
-.agentchat-thinking-drawer-close {
+.obsidian-agents-thinking-drawer-close {
   width: 22px;
   height: 22px;
   border: none !important;
@@ -823,13 +823,13 @@ button.agentchat-message-action-btn:hover {
   transition: color 0.12s;
 }
 
-.agentchat-thinking-drawer-close:hover {
+.obsidian-agents-thinking-drawer-close:hover {
   background: transparent !important;
   color: var(--text-normal);
 }
 
-.agentchat-thinking-drawer-close .svg-icon,
-.agentchat-thinking-drawer-close svg {
+.obsidian-agents-thinking-drawer-close .svg-icon,
+.obsidian-agents-thinking-drawer-close svg {
   width: 18px;
   height: 18px;
   stroke: currentColor;
@@ -837,7 +837,7 @@ button.agentchat-message-action-btn:hover {
   stroke-width: 2.2;
 }
 
-.agentchat-thinking-drawer-body {
+.obsidian-agents-thinking-drawer-body {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
@@ -845,28 +845,28 @@ button.agentchat-message-action-btn:hover {
 
 /* Activity-panel timeline (ChatGPT-style): left rail, interleaves reasoning
    dots with globe/icon bullets for tool calls. */
-.agentchat-thinking-drawer-time {
+.obsidian-agents-thinking-drawer-time {
   color: var(--text-muted);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
   margin-right: auto;
 }
-.agentchat-thinking-drawer-sep {
+.obsidian-agents-thinking-drawer-sep {
   color: var(--text-faint);
   margin: 0 2px;
 }
-.agentchat-thinking-drawer-section-heading {
+.obsidian-agents-thinking-drawer-section-heading {
   font-size: 17px;
   font-weight: 600;
   color: var(--text-normal);
   margin: 4px 0 12px;
 }
 
-.agentchat-thinking-timeline {
+.obsidian-agents-thinking-timeline {
   position: relative;
   padding-left: 26px;
 }
-.agentchat-thinking-timeline::before {
+.obsidian-agents-thinking-timeline::before {
   content: "";
   position: absolute;
   left: 11px;
@@ -876,13 +876,13 @@ button.agentchat-message-action-btn:hover {
   background: var(--background-modifier-border);
 }
 
-.agentchat-thinking-tl-row {
+.obsidian-agents-thinking-tl-row {
   position: relative;
   display: flex;
   gap: 10px;
   padding: 10px 0;
 }
-.agentchat-thinking-tl-bullet {
+.obsidian-agents-thinking-tl-bullet {
   position: absolute;
   left: -26px;
   top: 12px;
@@ -897,42 +897,42 @@ button.agentchat-message-action-btn:hover {
   font-size: 12px;
   z-index: 1;
 }
-.agentchat-thinking-tl-bullet-dot {
+.obsidian-agents-thinking-tl-bullet-dot {
   width: 8px;
   height: 8px;
   left: -19px;
   top: 18px;
   background: var(--text-faint);
 }
-.agentchat-thinking-tl-bullet-icon {
+.obsidian-agents-thinking-tl-bullet-icon {
   border: 1px solid var(--background-modifier-border);
   font-size: 13px;
 }
 
-.agentchat-thinking-tl-body {
+.obsidian-agents-thinking-tl-body {
   flex: 1;
   min-width: 0;
 }
-.agentchat-thinking-tl-title {
+.obsidian-agents-thinking-tl-title {
   font-size: 14px;
   font-weight: 500;
   color: var(--text-normal);
   line-height: 1.4;
 }
-.agentchat-thinking-tl-text {
+.obsidian-agents-thinking-tl-text {
   margin: 0;
   color: var(--text-muted);
   font-size: 13.5px;
   line-height: 1.55;
   white-space: pre-wrap;
 }
-.agentchat-thinking-tl-chips {
+.obsidian-agents-thinking-tl-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 8px;
 }
-.agentchat-thinking-tl-chip {
+.obsidian-agents-thinking-tl-chip {
   display: inline-flex;
   align-items: center;
   padding: 3px 10px;
@@ -944,24 +944,24 @@ button.agentchat-message-action-btn:hover {
   border: 1px solid var(--background-modifier-border);
   transition: background 120ms ease, color 120ms ease;
 }
-.agentchat-thinking-tl-chip:hover {
+.obsidian-agents-thinking-tl-chip:hover {
   background: var(--background-modifier-hover);
   color: var(--text-normal) !important;
 }
 
-.agentchat-thinking-tl-tool-running .agentchat-thinking-tl-bullet-icon {
+.obsidian-agents-thinking-tl-tool-running .obsidian-agents-thinking-tl-bullet-icon {
   border-color: var(--interactive-accent);
 }
-.agentchat-thinking-tl-tool-failed .agentchat-thinking-tl-bullet-icon {
+.obsidian-agents-thinking-tl-tool-failed .obsidian-agents-thinking-tl-bullet-icon {
   border-color: #e06c75;
 }
 
-.agentchat-thinking-label {
+.obsidian-agents-thinking-label {
   font-weight: 400;
   color: currentColor;
 }
 
-.agentchat-thinking-pre {
+.obsidian-agents-thinking-pre {
   margin: 0;
   padding: 0;
   background: transparent;
@@ -974,15 +974,15 @@ button.agentchat-message-action-btn:hover {
   color: var(--text-muted);
 }
 
-.agentchat-thinking-empty {
+.obsidian-agents-thinking-empty {
   font-style: italic;
   color: var(--text-faint);
   font-size: 12px;
 }
 
 /* --- Markdown tables (rendered by Obsidian's MarkdownRenderer) --- */
-.agentchat-message-bubble table,
-.agentchat-layout-text table {
+.obsidian-agents-message-bubble table,
+.obsidian-agents-layout-text table {
   border-collapse: collapse;
   margin: 10px 0;
   font-size: 14px;
@@ -992,29 +992,29 @@ button.agentchat-message-action-btn:hover {
   overflow-x: auto;
 }
 
-.agentchat-message-bubble th,
-.agentchat-message-bubble td,
-.agentchat-layout-text th,
-.agentchat-layout-text td {
+.obsidian-agents-message-bubble th,
+.obsidian-agents-message-bubble td,
+.obsidian-agents-layout-text th,
+.obsidian-agents-layout-text td {
   border: 1px solid var(--background-modifier-border);
   padding: 6px 10px;
   text-align: left;
   vertical-align: top;
 }
 
-.agentchat-message-bubble thead th,
-.agentchat-layout-text thead th {
+.obsidian-agents-message-bubble thead th,
+.obsidian-agents-layout-text thead th {
   background: var(--background-secondary);
   font-weight: 600;
 }
 
-.agentchat-message-bubble tbody tr:nth-child(even),
-.agentchat-layout-text tbody tr:nth-child(even) {
+.obsidian-agents-message-bubble tbody tr:nth-child(even),
+.obsidian-agents-layout-text tbody tr:nth-child(even) {
   background: var(--background-secondary-alt, var(--background-secondary));
 }
 
 /* --- Composer --- */
-.agentchat-composer {
+.obsidian-agents-composer {
   padding: 8px 16px 16px;
   background: var(--background-primary);
   display: flex;
@@ -1023,13 +1023,13 @@ button.agentchat-message-action-btn:hover {
   align-items: center;
 }
 
-.agentchat-composer > * {
+.obsidian-agents-composer > * {
   width: 100%;
   max-width: 760px;
   box-sizing: border-box;
 }
 
-.agentchat-composer-input-wrap {
+.obsidian-agents-composer-input-wrap {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1042,12 +1042,12 @@ button.agentchat-message-action-btn:hover {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
-.agentchat-composer-input-wrap:focus-within {
+.obsidian-agents-composer-input-wrap:focus-within {
   border-color: var(--background-modifier-border-hover, var(--background-modifier-border));
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.agentchat-composer-input-row {
+.obsidian-agents-composer-input-row {
   display: flex;
   align-items: flex-end;
   gap: 6px;
@@ -1057,8 +1057,8 @@ button.agentchat-message-action-btn:hover {
 
 /* Keep the attach/send buttons hugging the bottom of the rounded container
    so they don't drift to the center as the textarea grows with shift+enter. */
-.agentchat-composer-input-row > .agentchat-composer-attach-btn,
-.agentchat-composer-input-row > .agentchat-composer-send-btn {
+.obsidian-agents-composer-input-row > .obsidian-agents-composer-attach-btn,
+.obsidian-agents-composer-input-row > .obsidian-agents-composer-send-btn {
   flex-shrink: 0;
   align-self: flex-end;
   margin-bottom: 4px;
@@ -1067,8 +1067,8 @@ button.agentchat-message-action-btn:hover {
 /* Expand / collapse toggle pinned to the composer's top-right corner.
    Rendered as a bare icon (no button chrome) — only the icon color
    changes on hover. */
-.agentchat-composer-expand-btn,
-button.agentchat-composer-expand-btn {
+.obsidian-agents-composer-expand-btn,
+button.obsidian-agents-composer-expand-btn {
   position: absolute;
   top: 6px;
   right: 10px;
@@ -1087,15 +1087,15 @@ button.agentchat-composer-expand-btn {
   transition: color 0.12s;
 }
 
-.agentchat-composer-expand-btn:hover,
-button.agentchat-composer-expand-btn:hover {
+.obsidian-agents-composer-expand-btn:hover,
+button.obsidian-agents-composer-expand-btn:hover {
   background: transparent !important;
   color: var(--text-normal);
   transform: none;
 }
 
-.agentchat-composer-expand-btn .svg-icon,
-.agentchat-composer-expand-btn svg {
+.obsidian-agents-composer-expand-btn .svg-icon,
+.obsidian-agents-composer-expand-btn svg {
   width: 15px;
   height: 15px;
   stroke: currentColor;
@@ -1104,32 +1104,32 @@ button.agentchat-composer-expand-btn:hover {
 }
 
 /* --- CM6 live-preview composer editor --- */
-.agentchat-composer-editor-host {
+.obsidian-agents-composer-editor-host {
   flex: 1;
   min-width: 0;
   padding-right: 34px;
 }
 
-.agentchat-composer-cm {
+.obsidian-agents-composer-cm {
   width: 100%;
 }
 
-.agentchat-composer-cm .cm-editor {
+.obsidian-agents-composer-cm .cm-editor {
   background: transparent;
   max-height: 220px;
   overflow-y: auto;
 }
 
-.agentchat-composer-expanded .agentchat-composer-cm .cm-editor {
+.obsidian-agents-composer-expanded .obsidian-agents-composer-cm .cm-editor {
   max-height: none;
 }
 
-.agentchat-composer-cm .cm-content {
+.obsidian-agents-composer-cm .cm-content {
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-.agentchat-composer-cm .cm-placeholder {
+.obsidian-agents-composer-cm .cm-placeholder {
   color: var(--text-faint);
   font-style: normal;
 }
@@ -1233,16 +1233,16 @@ button.agentchat-composer-expand-btn:hover {
 }
 
 /* Expanded mode: composer becomes a right-side document panel. */
-.agentchat-view.agentchat-composer-docked {
+.obsidian-agents-view.obsidian-agents-composer-docked {
   position: relative;
 }
 
-.agentchat-view.agentchat-composer-docked .agentchat-chat-panel {
+.obsidian-agents-view.obsidian-agents-composer-docked .obsidian-agents-chat-panel {
   padding-right: 0;
   margin-right: min(560px, 48vw);
 }
 
-.agentchat-composer-expanded {
+.obsidian-agents-composer-expanded {
   position: absolute !important;
   top: 0 !important;
   right: 0 !important;
@@ -1261,13 +1261,13 @@ button.agentchat-composer-expand-btn:hover {
   margin: 0 !important;
 }
 
-.agentchat-composer-expanded > * {
+.obsidian-agents-composer-expanded > * {
   max-width: none !important;
   padding-left: 16px !important;
   padding-right: 16px !important;
 }
 
-.agentchat-composer-expanded .agentchat-composer-input-wrap {
+.obsidian-agents-composer-expanded .obsidian-agents-composer-input-wrap {
   flex: 1;
   border-radius: 0;
   border: none !important;
@@ -1279,7 +1279,7 @@ button.agentchat-composer-expand-btn:hover {
   flex-direction: column;
 }
 
-.agentchat-composer-expanded .agentchat-composer-input-row {
+.obsidian-agents-composer-expanded .obsidian-agents-composer-input-row {
   flex: 1;
   min-height: 0;
   align-items: stretch;
@@ -1288,15 +1288,15 @@ button.agentchat-composer-expand-btn:hover {
 /* Expanded view: focused writing surface with no toolbar chrome. The +
    button, send button, attachments, mention chips, and reply quote all
    disappear. User submits with Cmd+Enter. */
-.agentchat-composer-expanded .agentchat-composer-attach-btn,
-.agentchat-composer-expanded .agentchat-composer-send-btn,
-.agentchat-composer-expanded .agentchat-attachment-list,
-.agentchat-composer-expanded .agentchat-mention-chips,
-.agentchat-composer-expanded .agentchat-reply-quote {
+.obsidian-agents-composer-expanded .obsidian-agents-composer-attach-btn,
+.obsidian-agents-composer-expanded .obsidian-agents-composer-send-btn,
+.obsidian-agents-composer-expanded .obsidian-agents-attachment-list,
+.obsidian-agents-composer-expanded .obsidian-agents-mention-chips,
+.obsidian-agents-composer-expanded .obsidian-agents-reply-quote {
   display: none !important;
 }
 
-.agentchat-composer-expanded .agentchat-composer-editor-host {
+.obsidian-agents-composer-expanded .obsidian-agents-composer-editor-host {
   flex: 1;
   min-height: 0;
   display: flex;
@@ -1304,27 +1304,27 @@ button.agentchat-composer-expand-btn:hover {
   padding: 28px 44px 24px 44px !important;
 }
 
-.agentchat-composer-expanded .agentchat-composer-cm {
+.obsidian-agents-composer-expanded .obsidian-agents-composer-cm {
   flex: 1;
   min-height: 0;
 }
 
-.agentchat-composer-expanded .agentchat-composer-cm .cm-editor {
+.obsidian-agents-composer-expanded .obsidian-agents-composer-cm .cm-editor {
   height: 100%;
 }
 
-.agentchat-composer-expanded .agentchat-composer-cm .cm-scroller {
+.obsidian-agents-composer-expanded .obsidian-agents-composer-cm .cm-scroller {
   height: 100%;
 }
 
-.agentchat-composer-expanded .agentchat-composer-cm .cm-content {
+.obsidian-agents-composer-expanded .obsidian-agents-composer-cm .cm-content {
   padding: 0 !important;
   font-size: 16px;
   line-height: 1.6;
 }
 
-.agentchat-composer-textarea,
-textarea.agentchat-composer-textarea {
+.obsidian-agents-composer-textarea,
+textarea.obsidian-agents-composer-textarea {
   flex: 1;
   resize: none;
   border: none !important;
@@ -1347,19 +1347,19 @@ textarea.agentchat-composer-textarea {
   display: block;
 }
 
-.agentchat-composer-textarea:focus,
-textarea.agentchat-composer-textarea:focus {
+.obsidian-agents-composer-textarea:focus,
+textarea.obsidian-agents-composer-textarea:focus {
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
 }
 
-.agentchat-composer-textarea::placeholder {
+.obsidian-agents-composer-textarea::placeholder {
   color: var(--text-faint);
 }
 
 /* --- Mention chips (above textarea, inside composer) --- */
-.agentchat-mention-chips {
+.obsidian-agents-mention-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -1367,7 +1367,7 @@ textarea.agentchat-composer-textarea:focus {
   margin: 0;
 }
 
-.agentchat-mention-chip {
+.obsidian-agents-mention-chip {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -1380,7 +1380,7 @@ textarea.agentchat-composer-textarea:focus {
   max-width: 240px;
 }
 
-.agentchat-mention-chip-icon {
+.obsidian-agents-mention-chip-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1388,19 +1388,19 @@ textarea.agentchat-composer-textarea:focus {
   flex-shrink: 0;
 }
 
-.agentchat-mention-chip-icon .svg-icon {
+.obsidian-agents-mention-chip-icon .svg-icon {
   width: 13px;
   height: 13px;
 }
 
-.agentchat-mention-chip-label {
+.obsidian-agents-mention-chip-label {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 500;
 }
 
-.agentchat-mention-chip-remove {
+.obsidian-agents-mention-chip-remove {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1417,22 +1417,22 @@ textarea.agentchat-composer-textarea:focus {
   transition: opacity 0.12s, background 0.12s;
 }
 
-.agentchat-mention-chip:hover .agentchat-mention-chip-remove {
+.obsidian-agents-mention-chip:hover .obsidian-agents-mention-chip-remove {
   opacity: 1;
 }
 
-.agentchat-mention-chip-remove:hover {
+.obsidian-agents-mention-chip-remove:hover {
   background: var(--background-modifier-border);
   color: var(--text-normal);
 }
 
-.agentchat-mention-chip-remove .svg-icon {
+.obsidian-agents-mention-chip-remove .svg-icon {
   width: 12px;
   height: 12px;
 }
 
-.agentchat-composer-attach-btn,
-button.agentchat-composer-attach-btn {
+.obsidian-agents-composer-attach-btn,
+button.obsidian-agents-composer-attach-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1449,20 +1449,20 @@ button.agentchat-composer-attach-btn {
   transition: background 0.15s, border-color 0.15s;
 }
 
-.agentchat-composer-attach-btn:hover,
-button.agentchat-composer-attach-btn:hover {
+.obsidian-agents-composer-attach-btn:hover,
+button.obsidian-agents-composer-attach-btn:hover {
   background: var(--background-modifier-hover) !important;
   border-color: var(--background-modifier-border) !important;
 }
 
-.agentchat-composer-attach-btn .svg-icon {
+.obsidian-agents-composer-attach-btn .svg-icon {
   width: 18px;
   height: 18px;
   stroke-width: 2;
 }
 
-.agentchat-composer-send-btn,
-button.agentchat-composer-send-btn {
+.obsidian-agents-composer-send-btn,
+button.obsidian-agents-composer-send-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1479,47 +1479,47 @@ button.agentchat-composer-send-btn {
   box-shadow: none !important;
 }
 
-.agentchat-composer-send-btn:hover:not(:disabled) {
+.obsidian-agents-composer-send-btn:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
 }
 
-.agentchat-composer-send-btn:active {
+.obsidian-agents-composer-send-btn:active {
   transform: scale(0.95);
 }
 
-.agentchat-composer-send-btn.agentchat-composer-send-btn-stop,
-button.agentchat-composer-send-btn.agentchat-composer-send-btn-stop {
+.obsidian-agents-composer-send-btn.obsidian-agents-composer-send-btn-stop,
+button.obsidian-agents-composer-send-btn.obsidian-agents-composer-send-btn-stop {
   background: var(--text-normal) !important;
   color: var(--background-primary) !important;
 }
 
-.agentchat-composer-send-btn-stop .svg-icon {
+.obsidian-agents-composer-send-btn-stop .svg-icon {
   fill: currentColor;
   width: 12px;
   height: 12px;
 }
 
-.agentchat-composer-send-btn:disabled,
-button.agentchat-composer-send-btn:disabled {
+.obsidian-agents-composer-send-btn:disabled,
+button.obsidian-agents-composer-send-btn:disabled {
   background: var(--background-modifier-border) !important;
   color: var(--text-faint) !important;
   cursor: not-allowed;
 }
 
-.agentchat-composer-send-btn .svg-icon {
+.obsidian-agents-composer-send-btn .svg-icon {
   width: 16px;
   height: 16px;
   stroke-width: 2.5;
 }
 
-.agentchat-composer-toolbar,
-.agentchat-composer-hint {
+.obsidian-agents-composer-toolbar,
+.obsidian-agents-composer-hint {
   display: none;
 }
 
 /* --- Attachments (pre-send) --- */
-.agentchat-attachment-list {
+.obsidian-agents-attachment-list {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -1527,7 +1527,7 @@ button.agentchat-composer-send-btn:disabled {
 }
 
 /* Image-only chip: larger square thumbnail with rounded corners, click to expand. */
-.agentchat-attachment-chip-image {
+.obsidian-agents-attachment-chip-image {
   position: relative;
   width: 72px;
   height: 72px;
@@ -1540,12 +1540,12 @@ button.agentchat-composer-send-btn:disabled {
   transition: transform 0.12s, box-shadow 0.12s;
 }
 
-.agentchat-attachment-chip-image:hover {
+.obsidian-agents-attachment-chip-image:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
 }
 
-.agentchat-attachment-chip-image .agentchat-attachment-thumb {
+.obsidian-agents-attachment-chip-image .obsidian-agents-attachment-thumb {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1553,7 +1553,7 @@ button.agentchat-composer-send-btn:disabled {
   display: block;
 }
 
-.agentchat-attachment-chip-image .agentchat-attachment-remove {
+.obsidian-agents-attachment-chip-image .obsidian-agents-attachment-remove {
   position: absolute;
   top: 4px;
   right: 4px;
@@ -1565,17 +1565,17 @@ button.agentchat-composer-send-btn:disabled {
   opacity: 0;
 }
 
-.agentchat-attachment-chip-image:hover .agentchat-attachment-remove {
+.obsidian-agents-attachment-chip-image:hover .obsidian-agents-attachment-remove {
   opacity: 1;
 }
 
-.agentchat-attachment-chip-image .agentchat-attachment-remove .svg-icon {
+.obsidian-agents-attachment-chip-image .obsidian-agents-attachment-remove .svg-icon {
   width: 12px;
   height: 12px;
 }
 
 /* Full-screen lightbox */
-.agentchat-lightbox {
+.obsidian-agents-lightbox {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.85);
@@ -1583,22 +1583,22 @@ button.agentchat-composer-send-btn:disabled {
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  animation: agentchat-fade-in 0.12s ease-out;
+  animation: obsidian-agents-fade-in 0.12s ease-out;
 }
 
-@keyframes agentchat-fade-in {
+@keyframes obsidian-agents-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-.agentchat-lightbox-img {
+.obsidian-agents-lightbox-img {
   max-width: 92vw;
   max-height: 92vh;
   border-radius: 10px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
 }
 
-.agentchat-lightbox-close {
+.obsidian-agents-lightbox-close {
   position: absolute;
   top: 16px;
   right: 16px;
@@ -1615,16 +1615,16 @@ button.agentchat-composer-send-btn:disabled {
   transition: background 0.12s;
 }
 
-.agentchat-lightbox-close:hover {
+.obsidian-agents-lightbox-close:hover {
   background: rgba(255, 255, 255, 0.22) !important;
 }
 
-.agentchat-lightbox-close .svg-icon {
+.obsidian-agents-lightbox-close .svg-icon {
   width: 18px;
   height: 18px;
 }
 
-.agentchat-attachment-chip {
+.obsidian-agents-attachment-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1636,14 +1636,14 @@ button.agentchat-composer-send-btn:disabled {
   color: var(--text-normal);
 }
 
-.agentchat-attachment-thumb {
+.obsidian-agents-attachment-thumb {
   width: 24px;
   height: 24px;
   object-fit: cover;
   border-radius: 4px;
 }
 
-.agentchat-attachment-remove {
+.obsidian-agents-attachment-remove {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1661,20 +1661,20 @@ button.agentchat-composer-send-btn:disabled {
   transition: opacity 0.12s, background 0.12s;
 }
 
-.agentchat-attachment-chip:hover .agentchat-attachment-remove {
+.obsidian-agents-attachment-chip:hover .obsidian-agents-attachment-remove {
   opacity: 1;
 }
 
-.agentchat-attachment-remove:hover {
+.obsidian-agents-attachment-remove:hover {
   background: var(--background-modifier-error-hover);
   color: var(--text-error);
 }
 
 /* Status bar is no longer rendered; metadata lives in the trace header */
-.agentchat-status-bar { display: none; }
+.obsidian-agents-status-bar { display: none; }
 
 /* --- Permission widget --- */
-.agentchat-permission-slot {
+.obsidian-agents-permission-slot {
   width: 100%;
   max-width: 760px;
   margin: 12px auto;
@@ -1682,16 +1682,16 @@ button.agentchat-composer-send-btn:disabled {
   box-sizing: border-box;
 }
 
-.agentchat-permission-widget {
+.obsidian-agents-permission-widget {
   border: 1px solid var(--interactive-accent);
   border-radius: 12px;
   padding: 14px 16px;
   background: var(--background-secondary);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  animation: agentchat-fade-in 0.18s ease;
+  animation: obsidian-agents-fade-in 0.18s ease;
 }
 
-.agentchat-permission-title {
+.obsidian-agents-permission-title {
   font-weight: 600;
   margin-bottom: 8px;
   font-size: 13px;
@@ -1700,7 +1700,7 @@ button.agentchat-composer-send-btn:disabled {
   gap: 6px;
 }
 
-.agentchat-permission-args {
+.obsidian-agents-permission-args {
   font-size: 12px;
   color: var(--text-muted);
   margin-bottom: 12px;
@@ -1714,12 +1714,12 @@ button.agentchat-composer-send-btn:disabled {
   overflow: auto;
 }
 
-.agentchat-permission-actions {
+.obsidian-agents-permission-actions {
   display: flex;
   gap: 8px;
 }
 
-.agentchat-permission-actions button {
+.obsidian-agents-permission-actions button {
   border: 1px solid var(--background-modifier-border);
   border-radius: 8px;
   padding: 6px 14px;
@@ -1731,27 +1731,27 @@ button.agentchat-composer-send-btn:disabled {
   transition: background 0.12s;
 }
 
-.agentchat-permission-actions button:hover {
+.obsidian-agents-permission-actions button:hover {
   background: var(--background-modifier-hover);
 }
 
-.agentchat-permission-actions button.agentchat-btn-primary {
+.obsidian-agents-permission-actions button.obsidian-agents-btn-primary {
   background: var(--interactive-accent);
   color: var(--text-on-accent);
   border-color: var(--interactive-accent);
 }
 
-.agentchat-permission-actions button.agentchat-btn-primary:hover {
+.obsidian-agents-permission-actions button.obsidian-agents-btn-primary:hover {
   filter: brightness(1.1);
 }
 
-.agentchat-permission-actions button.agentchat-btn-danger {
+.obsidian-agents-permission-actions button.obsidian-agents-btn-danger {
   background: var(--background-modifier-error);
   color: var(--text-on-accent);
   border-color: var(--background-modifier-error);
 }
 
-.agentchat-permission-explain-area {
+.obsidian-agents-permission-explain-area {
   width: 100%;
   margin-top: 10px;
   min-height: 60px;
@@ -1765,13 +1765,13 @@ button.agentchat-composer-send-btn:disabled {
   font-size: 13px;
 }
 
-.agentchat-permission-explain-area:focus {
+.obsidian-agents-permission-explain-area:focus {
   outline: none;
   border-color: var(--interactive-accent);
 }
 
 /* --- Mention popover --- */
-.agentchat-mention-popover {
+.obsidian-agents-mention-popover {
   position: absolute;
   bottom: calc(100% + 6px);
   left: 8px;
@@ -1787,7 +1787,7 @@ button.agentchat-composer-send-btn:disabled {
 }
 
 /* Fixed-position variant mounted on document body to escape overflow clipping */
-.agentchat-mention-popover-fixed {
+.obsidian-agents-mention-popover-fixed {
   position: fixed;
   left: 0;
   top: 0;
@@ -1796,7 +1796,7 @@ button.agentchat-composer-send-btn:disabled {
   z-index: 9999;
 }
 
-.agentchat-mention-item {
+.obsidian-agents-mention-item {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1808,12 +1808,12 @@ button.agentchat-composer-send-btn:disabled {
   transition: background 0.1s;
 }
 
-.agentchat-mention-item.selected,
-.agentchat-mention-item:hover {
+.obsidian-agents-mention-item.selected,
+.obsidian-agents-mention-item:hover {
   background: var(--background-modifier-hover);
 }
 
-.agentchat-mention-icon {
+.obsidian-agents-mention-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1823,25 +1823,25 @@ button.agentchat-composer-send-btn:disabled {
   height: 16px;
 }
 
-.agentchat-mention-icon .svg-icon {
+.obsidian-agents-mention-icon .svg-icon {
   width: 16px;
   height: 16px;
 }
 
-.agentchat-mention-text {
+.obsidian-agents-mention-text {
   flex: 1;
   min-width: 0;
   overflow: hidden;
 }
 
-.agentchat-mention-name {
+.obsidian-agents-mention-name {
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.agentchat-mention-path {
+.obsidian-agents-mention-path {
   font-size: 11px;
   color: var(--text-faint);
   white-space: nowrap;
@@ -1851,7 +1851,7 @@ button.agentchat-composer-send-btn:disabled {
 }
 
 /* --- Command popover --- */
-.agentchat-command-popover {
+.obsidian-agents-command-popover {
   position: absolute;
   bottom: calc(100% + 6px);
   left: 8px;
@@ -1866,7 +1866,7 @@ button.agentchat-composer-send-btn:disabled {
   padding: 4px;
 }
 
-.agentchat-command-item {
+.obsidian-agents-command-item {
   padding: 7px 12px;
   cursor: pointer;
   font-size: 13px;
@@ -1875,13 +1875,13 @@ button.agentchat-composer-send-btn:disabled {
   transition: background 0.1s;
 }
 
-.agentchat-command-item:hover,
-.agentchat-command-item.selected {
+.obsidian-agents-command-item:hover,
+.obsidian-agents-command-item.selected {
   background: var(--background-modifier-hover);
 }
 
 /* --- Applets --- */
-.agentchat-applet {
+.obsidian-agents-applet {
   border: 1px solid var(--background-modifier-border);
   border-radius: 10px;
   padding: 12px;
@@ -1890,26 +1890,26 @@ button.agentchat-composer-send-btn:disabled {
   overflow: auto;
 }
 
-.agentchat-applet-code pre {
+.obsidian-agents-applet-code pre {
   margin: 0;
   padding: 12px;
   border-radius: 8px;
   background: var(--background-primary);
 }
 
-.agentchat-applet-error {
+.obsidian-agents-applet-error {
   color: var(--text-error);
   font-size: 13px;
 }
 
 /* --- Layout engine --- */
-.agentchat-layout-engine { overflow: hidden; }
-.agentchat-layout-block { margin: 8px 0; }
-.agentchat-layout-left { float: left; margin-right: 12px; margin-bottom: 8px; max-width: 50%; }
-.agentchat-layout-right { float: right; margin-left: 12px; margin-bottom: 8px; max-width: 50%; }
-.agentchat-layout-above, .agentchat-layout-below { clear: both; margin: 8px 0; }
-.agentchat-layout-image { max-width: 100%; border-radius: 10px; display: block; }
-.agentchat-layout-applet {
+.obsidian-agents-layout-engine { overflow: hidden; }
+.obsidian-agents-layout-block { margin: 8px 0; }
+.obsidian-agents-layout-left { float: left; margin-right: 12px; margin-bottom: 8px; max-width: 50%; }
+.obsidian-agents-layout-right { float: right; margin-left: 12px; margin-bottom: 8px; max-width: 50%; }
+.obsidian-agents-layout-above, .obsidian-agents-layout-below { clear: both; margin: 8px 0; }
+.obsidian-agents-layout-image { max-width: 100%; border-radius: 10px; display: block; }
+.obsidian-agents-layout-applet {
   width: 100%;
   border: none;
   border-radius: 0;
@@ -1917,12 +1917,12 @@ button.agentchat-composer-send-btn:disabled {
 }
 
 /* Applet host: positions the hover-expand button. */
-.agentchat-applet-host {
+.obsidian-agents-applet-host {
   position: relative;
   width: 100%;
 }
 
-.agentchat-applet-expand-btn {
+.obsidian-agents-applet-expand-btn {
   position: absolute;
   top: 16px;
   right: 18px;
@@ -1943,17 +1943,17 @@ button.agentchat-composer-send-btn:disabled {
   z-index: 2;
 }
 
-.agentchat-applet-host:hover .agentchat-applet-expand-btn {
+.obsidian-agents-applet-host:hover .obsidian-agents-applet-expand-btn {
   opacity: 1;
 }
 
-.agentchat-applet-expand-btn:hover {
+.obsidian-agents-applet-expand-btn:hover {
   background: transparent !important;
   color: var(--text-normal);
 }
 
 /* Full-screen applet overlay */
-.agentchat-applet-fullscreen {
+.obsidian-agents-applet-fullscreen {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.72);
@@ -1964,7 +1964,7 @@ button.agentchat-composer-send-btn:disabled {
   padding: 32px;
 }
 
-.agentchat-applet-fullscreen-frame {
+.obsidian-agents-applet-fullscreen-frame {
   width: 100%;
   height: 100%;
   max-width: 1400px;
@@ -1974,7 +1974,7 @@ button.agentchat-composer-send-btn:disabled {
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
 }
 
-.agentchat-applet-fullscreen-close {
+.obsidian-agents-applet-fullscreen-close {
   position: absolute;
   top: 16px;
   right: 16px;
@@ -1990,31 +1990,31 @@ button.agentchat-composer-send-btn:disabled {
   justify-content: center;
 }
 
-.agentchat-applet-fullscreen-close:hover {
+.obsidian-agents-applet-fullscreen-close:hover {
   background: rgba(0, 0, 0, 0.6) !important;
 }
 
 /* --- Scrollbars --- */
-.agentchat-message-list::-webkit-scrollbar,
-.agentchat-sidebar-tree::-webkit-scrollbar,
-.agentchat-mention-popover::-webkit-scrollbar {
+.obsidian-agents-message-list::-webkit-scrollbar,
+.obsidian-agents-sidebar-tree::-webkit-scrollbar,
+.obsidian-agents-mention-popover::-webkit-scrollbar {
   width: 6px;
 }
 
-.agentchat-message-list::-webkit-scrollbar-thumb,
-.agentchat-sidebar-tree::-webkit-scrollbar-thumb,
-.agentchat-mention-popover::-webkit-scrollbar-thumb {
+.obsidian-agents-message-list::-webkit-scrollbar-thumb,
+.obsidian-agents-sidebar-tree::-webkit-scrollbar-thumb,
+.obsidian-agents-mention-popover::-webkit-scrollbar-thumb {
   background: var(--background-modifier-border);
   border-radius: 3px;
 }
 
-.agentchat-message-list::-webkit-scrollbar-thumb:hover,
-.agentchat-sidebar-tree::-webkit-scrollbar-thumb:hover {
+.obsidian-agents-message-list::-webkit-scrollbar-thumb:hover,
+.obsidian-agents-sidebar-tree::-webkit-scrollbar-thumb:hover {
   background: var(--background-modifier-border-hover);
 }
 
 /* --- Inline rename --- */
-.agentchat-inline-rename {
+.obsidian-agents-inline-rename {
   background: var(--background-primary);
   color: var(--text-normal);
   border: 1px solid var(--interactive-accent);
@@ -2027,7 +2027,7 @@ button.agentchat-composer-send-btn:disabled {
   min-width: 0;
 }
 
-.agentchat-empty-state {
+.obsidian-agents-empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2038,12 +2038,12 @@ button.agentchat-composer-send-btn:disabled {
   text-align: center;
 }
 
-.agentchat-empty-state-text {
+.obsidian-agents-empty-state-text {
   font-size: 12px;
 }
 
 /* --- Reply handle (floating button over selection) --- */
-.agentchat-reply-handle {
+.obsidian-agents-reply-handle {
   position: fixed;
   z-index: 10000;
   display: none;
@@ -2061,24 +2061,24 @@ button.agentchat-composer-send-btn:disabled {
   user-select: none;
 }
 
-.agentchat-reply-handle:hover {
+.obsidian-agents-reply-handle:hover {
   background: var(--background-modifier-hover);
 }
 
-.agentchat-reply-handle-icon {
+.obsidian-agents-reply-handle-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--text-muted);
 }
 
-.agentchat-reply-handle-icon .svg-icon {
+.obsidian-agents-reply-handle-icon .svg-icon {
   width: 13px;
   height: 13px;
 }
 
 /* --- Reply quote chip inside composer --- */
-.agentchat-reply-quote {
+.obsidian-agents-reply-quote {
   display: flex;
   align-items: stretch;
   gap: 10px;
@@ -2086,20 +2086,20 @@ button.agentchat-composer-send-btn:disabled {
   position: relative;
 }
 
-.agentchat-reply-quote-bar {
+.obsidian-agents-reply-quote-bar {
   width: 3px;
   background: var(--interactive-accent);
   border-radius: 2px;
   flex-shrink: 0;
 }
 
-.agentchat-reply-quote-body {
+.obsidian-agents-reply-quote-body {
   flex: 1;
   min-width: 0;
   overflow: hidden;
 }
 
-.agentchat-reply-quote-label {
+.obsidian-agents-reply-quote-label {
   font-size: 11px;
   font-weight: 600;
   color: var(--interactive-accent);
@@ -2108,7 +2108,7 @@ button.agentchat-composer-send-btn:disabled {
   letter-spacing: 0.04em;
 }
 
-.agentchat-reply-quote-text {
+.obsidian-agents-reply-quote-text {
   font-size: 12px;
   color: var(--text-muted);
   line-height: 1.4;
@@ -2120,7 +2120,7 @@ button.agentchat-composer-send-btn:disabled {
   white-space: pre-wrap;
 }
 
-.agentchat-reply-quote-remove {
+.obsidian-agents-reply-quote-remove {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2136,18 +2136,18 @@ button.agentchat-composer-send-btn:disabled {
   align-self: flex-start;
 }
 
-.agentchat-reply-quote-remove:hover {
+.obsidian-agents-reply-quote-remove:hover {
   background: var(--background-modifier-border);
   color: var(--text-normal);
 }
 
-.agentchat-reply-quote-remove .svg-icon {
+.obsidian-agents-reply-quote-remove .svg-icon {
   width: 13px;
   height: 13px;
 }
 
 /* Mobile sidebar backdrop — dismisses overlay sidebar on tap */
-.agentchat-sidebar-backdrop {
+.obsidian-agents-sidebar-backdrop {
   display: none;
   position: absolute;
   inset: 0;
@@ -2158,23 +2158,23 @@ button.agentchat-composer-send-btn:disabled {
 /* --- Responsive (container queries — fire on panel width, not viewport) --- */
 
 /* Tablet: sidebar shrinks slightly */
-@container agentchat (max-width: 700px) {
-  .agentchat-sidebar-panel {
+@container obsidian-agents (max-width: 700px) {
+  .obsidian-agents-sidebar-panel {
     width: 220px;
     min-width: 180px;
   }
-  .agentchat-greeting {
+  .obsidian-agents-greeting {
     font-size: 24px;
   }
 }
 
 /* Mobile: sidebar becomes an absolute overlay so chat panel fills full width */
-@container agentchat (max-width: 520px) {
-  .agentchat-sidebar-backdrop {
+@container obsidian-agents (max-width: 520px) {
+  .obsidian-agents-sidebar-backdrop {
     display: block;
   }
   /* Both open and collapsed sidebar leave the flex flow */
-  .agentchat-sidebar-panel {
+  .obsidian-agents-sidebar-panel {
     position: absolute;
     left: 0;
     top: 0;
@@ -2182,11 +2182,11 @@ button.agentchat-composer-send-btn:disabled {
     min-width: 0;
     z-index: 40;
   }
-  .agentchat-sidebar-panel:not(.agentchat-sidebar-collapsed) {
+  .obsidian-agents-sidebar-panel:not(.obsidian-agents-sidebar-collapsed) {
     box-shadow: 0 0 32px rgba(0, 0, 0, 0.18);
   }
   /* Collapsed toggle: transparent sliver, no layout space taken */
-  .agentchat-sidebar-panel.agentchat-sidebar-collapsed {
+  .obsidian-agents-sidebar-panel.obsidian-agents-sidebar-collapsed {
     width: 44px;
     min-width: 44px;
     max-width: 44px;
@@ -2194,10 +2194,10 @@ button.agentchat-composer-send-btn:disabled {
     background: transparent;
     border-right: none;
   }
-  .agentchat-greeting {
+  .obsidian-agents-greeting {
     font-size: 22px;
   }
-  .agentchat-message-bubble {
+  .obsidian-agents-message-bubble {
     max-width: 100% !important;
   }
 
@@ -2205,22 +2205,22 @@ button.agentchat-composer-send-btn:disabled {
      the first user bubble doesn't slide underneath it. The button sits in
      the sidebar panel (z-index: 41); pushing it up and giving the message
      list a matching top offset keeps them on separate "levels". */
-  .agentchat-sidebar-panel.agentchat-sidebar-collapsed .agentchat-sidebar-expand-btn {
+  .obsidian-agents-sidebar-panel.obsidian-agents-sidebar-collapsed .obsidian-agents-sidebar-expand-btn {
     top: 4px;
     left: 4px;
   }
-  .agentchat-view:has(.agentchat-sidebar-panel.agentchat-sidebar-collapsed) .agentchat-message-list {
+  .obsidian-agents-view:has(.obsidian-agents-sidebar-panel.obsidian-agents-sidebar-collapsed) .obsidian-agents-message-list {
     padding-top: 44px;
   }
 
   /* Switch empty-state to bottom-pinned layout on mobile:
      Greeting is taken out of flex flow and absolutely centered in the panel.
      message-list (flex:1) fills the space, composer pins to the bottom. */
-  .agentchat-chat-panel.agentchat-empty {
+  .obsidian-agents-chat-panel.obsidian-agents-empty {
     justify-content: flex-start;
     align-items: stretch;
   }
-  .agentchat-chat-panel.agentchat-empty .agentchat-greeting {
+  .obsidian-agents-chat-panel.obsidian-agents-empty .obsidian-agents-greeting {
     position: absolute;
     top: 50%;
     left: 0;
@@ -2229,22 +2229,22 @@ button.agentchat-composer-send-btn:disabled {
     padding: 0 24px;
     pointer-events: none;
   }
-  .agentchat-chat-panel.agentchat-empty .agentchat-message-list {
+  .obsidian-agents-chat-panel.obsidian-agents-empty .obsidian-agents-message-list {
     flex: 1;
     overflow: hidden;
   }
-  .agentchat-chat-panel.agentchat-empty .agentchat-composer {
+  .obsidian-agents-chat-panel.obsidian-agents-empty .obsidian-agents-composer {
     margin-bottom: 0;
     padding-bottom: 16px;
   }
 }
 
 /* Very narrow: expanded composer goes full-screen */
-@container agentchat (max-width: 400px) {
-  .agentchat-composer-expanded {
+@container obsidian-agents (max-width: 400px) {
+  .obsidian-agents-composer-expanded {
     width: 100% !important;
   }
-  .agentchat-view.agentchat-composer-docked .agentchat-chat-panel {
+  .obsidian-agents-view.obsidian-agents-composer-docked .obsidian-agents-chat-panel {
     display: none !important;
   }
 }
@@ -2253,11 +2253,11 @@ button.agentchat-composer-send-btn:disabled {
    Rich layouts: gallery, carousel, hero, map, card-list.
    ========================================================================= */
 
-.agentchat-rich-layout {
+.obsidian-agents-rich-layout {
   margin: 12px 0;
 }
 
-.agentchat-rich-error {
+.obsidian-agents-rich-error {
   background: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);
   border-left: 3px solid #e06c75;
@@ -2266,7 +2266,7 @@ button.agentchat-composer-send-btn:disabled {
   padding: 8px 12px;
   font-size: 12px;
 }
-.agentchat-rich-error pre {
+.obsidian-agents-rich-error pre {
   margin: 8px 0 0 0;
   font-size: 11px;
   white-space: pre-wrap;
@@ -2276,15 +2276,15 @@ button.agentchat-composer-send-btn:disabled {
 
 /* --- Gallery (grid of images) ------------------------------------------- */
 
-.agentchat-rich-gallery {
-  --agentchat-gallery-columns: 3;
+.obsidian-agents-rich-gallery {
+  --obsidian-agents-gallery-columns: 3;
   display: grid;
-  grid-template-columns: repeat(var(--agentchat-gallery-columns), 1fr);
+  grid-template-columns: repeat(var(--obsidian-agents-gallery-columns), 1fr);
   gap: 8px;
   width: 100%;
 }
 
-.agentchat-rich-gallery-cell {
+.obsidian-agents-rich-gallery-cell {
   position: relative;
   aspect-ratio: 1 / 1;
   border-radius: 10px;
@@ -2293,7 +2293,7 @@ button.agentchat-composer-send-btn:disabled {
   cursor: zoom-in;
 }
 
-.agentchat-rich-gallery-img {
+.obsidian-agents-rich-gallery-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -2301,11 +2301,11 @@ button.agentchat-composer-send-btn:disabled {
   transition: transform 0.2s ease;
 }
 
-.agentchat-rich-gallery-cell:hover .agentchat-rich-gallery-img {
+.obsidian-agents-rich-gallery-cell:hover .obsidian-agents-rich-gallery-img {
   transform: scale(1.03);
 }
 
-.agentchat-rich-gallery-caption {
+.obsidian-agents-rich-gallery-caption {
   position: absolute;
   left: 0;
   right: 0;
@@ -2317,7 +2317,7 @@ button.agentchat-composer-send-btn:disabled {
   pointer-events: none;
 }
 
-.agentchat-rich-gallery-badge {
+.obsidian-agents-rich-gallery-badge {
   position: absolute;
   right: 8px;
   bottom: 8px;
@@ -2332,13 +2332,13 @@ button.agentchat-composer-send-btn:disabled {
 
 /* --- Carousel (horizontal scroller) ------------------------------------- */
 
-.agentchat-rich-carousel {
-  --agentchat-carousel-height: 280px;
+.obsidian-agents-rich-carousel {
+  --obsidian-agents-carousel-height: 280px;
   position: relative;
   width: 100%;
 }
 
-.agentchat-rich-carousel-track {
+.obsidian-agents-rich-carousel-track {
   display: flex;
   gap: 10px;
   overflow-x: auto;
@@ -2347,10 +2347,10 @@ button.agentchat-composer-send-btn:disabled {
   padding-bottom: 6px;
 }
 
-.agentchat-rich-carousel-slide {
+.obsidian-agents-rich-carousel-slide {
   flex: 0 0 auto;
-  width: calc(var(--agentchat-carousel-height) * 1.4);
-  height: var(--agentchat-carousel-height);
+  width: calc(var(--obsidian-agents-carousel-height) * 1.4);
+  height: var(--obsidian-agents-carousel-height);
   border-radius: 12px;
   overflow: hidden;
   background: var(--background-secondary);
@@ -2359,14 +2359,14 @@ button.agentchat-composer-send-btn:disabled {
   cursor: zoom-in;
 }
 
-.agentchat-rich-carousel-img {
+.obsidian-agents-rich-carousel-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.agentchat-rich-carousel-caption {
+.obsidian-agents-rich-carousel-caption {
   position: absolute;
   left: 0;
   right: 0;
@@ -2378,7 +2378,7 @@ button.agentchat-composer-send-btn:disabled {
   pointer-events: none;
 }
 
-.agentchat-rich-carousel-arrow {
+.obsidian-agents-rich-carousel-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -2398,14 +2398,14 @@ button.agentchat-composer-send-btn:disabled {
   opacity: 0.9;
 }
 
-.agentchat-rich-carousel-arrow:hover {
+.obsidian-agents-rich-carousel-arrow:hover {
   background: rgba(0, 0, 0, 0.75) !important;
 }
 
-.agentchat-rich-carousel-prev { left: 8px; }
-.agentchat-rich-carousel-next { right: 8px; }
+.obsidian-agents-rich-carousel-prev { left: 8px; }
+.obsidian-agents-rich-carousel-next { right: 8px; }
 
-.agentchat-rich-carousel-counter {
+.obsidian-agents-rich-carousel-counter {
   position: absolute;
   bottom: 14px;
   right: 14px;
@@ -2420,7 +2420,7 @@ button.agentchat-composer-send-btn:disabled {
 
 /* --- Hero (featured + stacked) ------------------------------------------ */
 
-.agentchat-rich-hero {
+.obsidian-agents-rich-hero {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 8px;
@@ -2428,7 +2428,7 @@ button.agentchat-composer-send-btn:disabled {
   min-height: 320px;
 }
 
-.agentchat-rich-hero-primary {
+.obsidian-agents-rich-hero-primary {
   border-radius: 12px;
   overflow: hidden;
   background: var(--background-secondary);
@@ -2436,21 +2436,21 @@ button.agentchat-composer-send-btn:disabled {
   min-height: 320px;
 }
 
-.agentchat-rich-hero-primary-img {
+.obsidian-agents-rich-hero-primary-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.agentchat-rich-hero-stack {
+.obsidian-agents-rich-hero-stack {
   display: grid;
   grid-template-rows: 1fr 1fr;
   gap: 8px;
   min-height: 320px;
 }
 
-.agentchat-rich-hero-secondary {
+.obsidian-agents-rich-hero-secondary {
   position: relative;
   border-radius: 12px;
   overflow: hidden;
@@ -2458,14 +2458,14 @@ button.agentchat-composer-send-btn:disabled {
   cursor: zoom-in;
 }
 
-.agentchat-rich-hero-secondary-img {
+.obsidian-agents-rich-hero-secondary-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.agentchat-rich-hero-badge {
+.obsidian-agents-rich-hero-badge {
   position: absolute;
   right: 8px;
   bottom: 8px;
@@ -2480,16 +2480,16 @@ button.agentchat-composer-send-btn:disabled {
   gap: 4px;
   pointer-events: none;
 }
-.agentchat-rich-hero-badge::before {
+.obsidian-agents-rich-hero-badge::before {
   content: "▦";
   font-size: 10px;
 }
 
 @media (max-width: 640px) {
-  .agentchat-rich-hero {
+  .obsidian-agents-rich-hero {
     grid-template-columns: 1fr;
   }
-  .agentchat-rich-hero-stack {
+  .obsidian-agents-rich-hero-stack {
     grid-template-rows: auto auto;
     grid-template-columns: 1fr 1fr;
   }
@@ -2498,61 +2498,61 @@ button.agentchat-composer-send-btn:disabled {
 /* Container-query variants: responsive to the chat panel width, not viewport.
    Obsidian panels can be narrow even on a wide screen, so viewport media
    queries aren't enough. */
-@container agentchat (max-width: 700px) {
-  .agentchat-rich-hero {
+@container obsidian-agents (max-width: 700px) {
+  .obsidian-agents-rich-hero {
     grid-template-columns: 1fr;
     min-height: 0;
   }
-  .agentchat-rich-hero-primary {
+  .obsidian-agents-rich-hero-primary {
     min-height: 220px;
   }
-  .agentchat-rich-hero-stack {
+  .obsidian-agents-rich-hero-stack {
     grid-template-rows: auto;
     grid-template-columns: 1fr 1fr;
     min-height: 0;
   }
 }
-@container agentchat (max-width: 480px) {
-  .agentchat-rich-hero-stack {
+@container obsidian-agents (max-width: 480px) {
+  .obsidian-agents-rich-hero-stack {
     grid-template-columns: 1fr;
   }
-  .agentchat-rich-hero-secondary {
+  .obsidian-agents-rich-hero-secondary {
     min-height: 140px;
   }
 }
 
 /* --- Map ---------------------------------------------------------------- */
 
-.agentchat-rich-map {
+.obsidian-agents-rich-map {
   width: 100%;
   border-radius: 12px;
   overflow: hidden;
 }
 
-.agentchat-rich-map-frame {
+.obsidian-agents-rich-map-frame {
   display: block;
 }
 
 /* --- Card list (places, results) ---------------------------------------- */
 
-.agentchat-rich-card-list {
+.obsidian-agents-rich-card-list {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-.agentchat-rich-card {
+.obsidian-agents-rich-card {
   display: flex;
   gap: 12px;
   padding: 14px 0;
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
-.agentchat-rich-card:last-child {
+.obsidian-agents-rich-card:last-child {
   border-bottom: none;
 }
 
-.agentchat-rich-card-thumb {
+.obsidian-agents-rich-card-thumb {
   flex: 0 0 64px;
   width: 64px;
   height: 64px;
@@ -2560,19 +2560,19 @@ button.agentchat-composer-send-btn:disabled {
   overflow: hidden;
   background: var(--background-secondary);
 }
-.agentchat-rich-card-thumb img {
+.obsidian-agents-rich-card-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.agentchat-rich-card-body {
+.obsidian-agents-rich-card-body {
   flex: 1;
   min-width: 0;
 }
 
-.agentchat-rich-card-title {
+.obsidian-agents-rich-card-title {
   font-weight: 600;
   font-size: 15px;
   color: var(--text-normal);
@@ -2582,25 +2582,25 @@ button.agentchat-composer-send-btn:disabled {
   margin-bottom: 3px;
 }
 
-.agentchat-rich-card-meta {
+.obsidian-agents-rich-card-meta {
   font-size: 13px;
   color: var(--text-muted);
   margin-bottom: 4px;
 }
 
-.agentchat-rich-card-status-open {
+.obsidian-agents-rich-card-status-open {
   color: #4caf50;
   font-weight: 500;
 }
-.agentchat-rich-card-status-closed {
+.obsidian-agents-rich-card-status-closed {
   color: #e06c75;
   font-weight: 500;
 }
-.agentchat-rich-card-status-neutral {
+.obsidian-agents-rich-card-status-neutral {
   color: var(--text-muted);
 }
 
-.agentchat-rich-card-description {
+.obsidian-agents-rich-card-description {
   font-size: 14px;
   color: var(--text-normal);
   line-height: 1.5;
@@ -2608,7 +2608,7 @@ button.agentchat-composer-send-btn:disabled {
 
 /* --- Rich lightbox extras (gallery/carousel navigation) ----------------- */
 
-.agentchat-rich-lightbox-counter {
+.obsidian-agents-rich-lightbox-counter {
   position: absolute;
   top: 20px;
   left: 50%;
@@ -2621,7 +2621,7 @@ button.agentchat-composer-send-btn:disabled {
   border-radius: 999px;
 }
 
-.agentchat-rich-lightbox-caption {
+.obsidian-agents-rich-lightbox-caption {
   position: absolute;
   bottom: 32px;
   left: 50%;
@@ -2636,7 +2636,7 @@ button.agentchat-composer-send-btn:disabled {
   pointer-events: none;
 }
 
-.agentchat-rich-lightbox-arrow {
+.obsidian-agents-rich-lightbox-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -2653,26 +2653,26 @@ button.agentchat-composer-send-btn:disabled {
   align-items: center;
   justify-content: center;
 }
-.agentchat-rich-lightbox-arrow:hover {
+.obsidian-agents-rich-lightbox-arrow:hover {
   background: rgba(255, 255, 255, 0.22) !important;
 }
-.agentchat-rich-lightbox-prev { left: 24px; }
-.agentchat-rich-lightbox-next { right: 24px; }
+.obsidian-agents-rich-lightbox-prev { left: 24px; }
+.obsidian-agents-rich-lightbox-next { right: 24px; }
 
 /* --- Split (visual + text side-by-side) -------------------------------- */
 
-.agentchat-rich-split {
+.obsidian-agents-rich-split {
   display: grid;
   gap: 20px;
   align-items: start;
   width: 100%;
 }
 
-.agentchat-rich-split-visual {
+.obsidian-agents-rich-split-visual {
   min-width: 0;
 }
 
-.agentchat-rich-split-text {
+.obsidian-agents-rich-split-text {
   min-width: 0;
   color: var(--text-normal);
   line-height: 1.55;
@@ -2680,34 +2680,34 @@ button.agentchat-composer-send-btn:disabled {
 
 /* Remove the top-margin on the first child of the text column so the prose
    aligns flush with the top of the visual. */
-.agentchat-rich-split-text > *:first-child {
+.obsidian-agents-rich-split-text > *:first-child {
   margin-top: 0;
 }
-.agentchat-rich-split-text > *:last-child {
+.obsidian-agents-rich-split-text > *:last-child {
   margin-bottom: 0;
 }
 
 /* Image visual inside a split */
-.agentchat-rich-split-image {
+.obsidian-agents-rich-split-image {
   border-radius: 12px;
   overflow: hidden;
   background: var(--background-secondary);
   cursor: zoom-in;
 }
-.agentchat-rich-split-image-img {
+.obsidian-agents-rich-split-image-img {
   width: 100%;
   height: auto;
   display: block;
   object-fit: cover;
 }
-.agentchat-rich-split-image-caption {
+.obsidian-agents-rich-split-image-caption {
   padding: 6px 10px 0;
   font-size: 12px;
   color: var(--text-muted);
 }
 
 /* Applet visual inside a split */
-.agentchat-rich-split-applet {
+.obsidian-agents-rich-split-applet {
   display: block;
   width: 100%;
   border-radius: 10px;
@@ -2715,47 +2715,47 @@ button.agentchat-composer-send-btn:disabled {
 
 /* Mobile / narrow panel: stack, visual first. */
 @media (max-width: 640px) {
-  .agentchat-rich-split {
+  .obsidian-agents-rich-split {
     grid-template-columns: 1fr !important;
   }
-  .agentchat-rich-split-left .agentchat-rich-split-visual,
-  .agentchat-rich-split-right .agentchat-rich-split-visual {
+  .obsidian-agents-rich-split-left .obsidian-agents-rich-split-visual,
+  .obsidian-agents-rich-split-right .obsidian-agents-rich-split-visual {
     order: -1;
   }
 }
 
 /* Container-query version: fires when the chat panel itself is narrow. */
-@container agentchat (max-width: 640px) {
-  .agentchat-rich-split {
+@container obsidian-agents (max-width: 640px) {
+  .obsidian-agents-rich-split {
     grid-template-columns: 1fr !important;
     gap: 14px;
   }
-  .agentchat-rich-split-left .agentchat-rich-split-visual,
-  .agentchat-rich-split-right .agentchat-rich-split-visual {
+  .obsidian-agents-rich-split-left .obsidian-agents-rich-split-visual,
+  .obsidian-agents-rich-split-right .obsidian-agents-rich-split-visual {
     order: -1;
   }
 }
 
 /* Gallery columns collapse with panel width. */
-@container agentchat (max-width: 560px) {
-  .agentchat-rich-gallery {
-    --agentchat-gallery-columns: 2 !important;
+@container obsidian-agents (max-width: 560px) {
+  .obsidian-agents-rich-gallery {
+    --obsidian-agents-gallery-columns: 2 !important;
   }
 }
-@container agentchat (max-width: 360px) {
-  .agentchat-rich-gallery {
-    --agentchat-gallery-columns: 1 !important;
+@container obsidian-agents (max-width: 360px) {
+  .obsidian-agents-rich-gallery {
+    --obsidian-agents-gallery-columns: 1 !important;
   }
 }
 
 /* Card list: drop the thumbnail on very narrow panels so the title/meta
    have room to breathe. */
-@container agentchat (max-width: 420px) {
-  .agentchat-rich-card {
+@container obsidian-agents (max-width: 420px) {
+  .obsidian-agents-rich-card {
     gap: 8px;
     padding: 12px 0;
   }
-  .agentchat-rich-card-thumb {
+  .obsidian-agents-rich-card-thumb {
     flex: 0 0 48px;
     width: 48px;
     height: 48px;
@@ -2763,8 +2763,8 @@ button.agentchat-composer-send-btn:disabled {
 }
 
 /* Carousel: smaller arrows on narrow panels. */
-@container agentchat (max-width: 480px) {
-  .agentchat-rich-carousel-arrow {
+@container obsidian-agents (max-width: 480px) {
+  .obsidian-agents-rich-carousel-arrow {
     width: 32px;
     height: 32px;
   }
@@ -2772,13 +2772,13 @@ button.agentchat-composer-send-btn:disabled {
 
 /* Term panel: take more of the panel width when things are narrow,
    so the slide-in doesn't feel cramped. */
-@container agentchat (max-width: 560px) {
-  .agentchat-term-panel {
+@container obsidian-agents (max-width: 560px) {
+  .obsidian-agents-term-panel {
     width: min(360px, 92%) !important;
   }
 }
-@container agentchat (max-width: 420px) {
-  .agentchat-term-panel {
+@container obsidian-agents (max-width: 420px) {
+  .obsidian-agents-term-panel {
     width: 100% !important;
   }
 }
@@ -2788,7 +2788,7 @@ button.agentchat-composer-send-btn:disabled {
    split image). Separate affordance from the click-to-lightbox so both
    can coexist — clicking the badge opens the external URL, clicking the
    image itself still opens the lightbox. */
-.agentchat-rich-link-badge {
+.obsidian-agents-rich-link-badge {
   position: absolute;
   top: 8px;
   right: 8px;
@@ -2807,42 +2807,42 @@ button.agentchat-composer-send-btn:disabled {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   transition: background 120ms ease, transform 120ms ease;
 }
-.agentchat-rich-link-badge:hover {
+.obsidian-agents-rich-link-badge:hover {
   background: rgba(0, 0, 0, 0.75);
   transform: translateY(-1px);
   color: #fff;
 }
-.agentchat-rich-link-badge svg {
+.obsidian-agents-rich-link-badge svg {
   display: block;
 }
 
 /* Ensure host cells position the badge correctly. */
-.agentchat-rich-gallery-cell,
-.agentchat-rich-carousel-slide,
-.agentchat-rich-hero-primary,
-.agentchat-rich-hero-secondary,
-.agentchat-rich-split-image {
+.obsidian-agents-rich-gallery-cell,
+.obsidian-agents-rich-carousel-slide,
+.obsidian-agents-rich-hero-primary,
+.obsidian-agents-rich-hero-secondary,
+.obsidian-agents-rich-split-image {
   position: relative;
 }
 
 /* ---------- Card links ---------- */
-.agentchat-rich-card-title-link {
+.obsidian-agents-rich-card-title-link {
   color: var(--text-normal);
   text-decoration: none;
   border-bottom: 1px solid transparent;
   transition: color 120ms ease, border-color 120ms ease;
 }
-.agentchat-rich-card-title-link:hover {
+.obsidian-agents-rich-card-title-link:hover {
   color: var(--interactive-accent);
   border-bottom-color: var(--interactive-accent);
 }
-.agentchat-rich-card-links {
+.obsidian-agents-rich-card-links {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 10px;
 }
-.agentchat-rich-card-link {
+.obsidian-agents-rich-card-link {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -2856,7 +2856,7 @@ button.agentchat-composer-send-btn:disabled {
   text-decoration: none;
   transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
 }
-.agentchat-rich-card-link:hover {
+.obsidian-agents-rich-card-link:hover {
   background: var(--interactive-accent);
   color: var(--text-on-accent);
   border-color: var(--interactive-accent);
@@ -2864,7 +2864,7 @@ button.agentchat-composer-send-btn:disabled {
 
 /* ---------- Sources footer ---------- */
 /* Subtle numbered citation strip that appears below any layout block. */
-.agentchat-rich-sources {
+.obsidian-agents-rich-sources {
   display: flex;
   flex-wrap: wrap;
   gap: 6px 10px;
@@ -2875,7 +2875,7 @@ button.agentchat-composer-send-btn:disabled {
   font-size: 12px;
   color: var(--text-muted);
 }
-.agentchat-rich-sources-label {
+.obsidian-agents-rich-sources-label {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -2883,7 +2883,7 @@ button.agentchat-composer-send-btn:disabled {
   color: var(--text-muted);
   margin-right: 2px;
 }
-.agentchat-rich-source {
+.obsidian-agents-rich-source {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -2896,12 +2896,12 @@ button.agentchat-composer-send-btn:disabled {
   max-width: 320px;
   transition: background 120ms ease, border-color 120ms ease;
 }
-.agentchat-rich-source:hover {
+.obsidian-agents-rich-source:hover {
   background: var(--background-modifier-hover, var(--background-secondary-alt));
   border-color: var(--interactive-accent);
   color: var(--text-normal);
 }
-.agentchat-rich-source-num {
+.obsidian-agents-rich-source-num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2914,13 +2914,13 @@ button.agentchat-composer-send-btn:disabled {
   font-weight: 700;
   flex-shrink: 0;
 }
-.agentchat-rich-source-label {
+.obsidian-agents-rich-source-label {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 220px;
 }
-.agentchat-rich-source-site {
+.obsidian-agents-rich-source-site {
   color: var(--text-muted);
   font-size: 10.5px;
   padding-left: 4px;
@@ -2928,7 +2928,7 @@ button.agentchat-composer-send-btn:disabled {
 }
 
 /* Sources inside a split should span both columns. */
-.agentchat-rich-split-sources {
+.obsidian-agents-rich-split-sources {
   grid-column: 1 / -1;
 }
 
@@ -2936,7 +2936,7 @@ button.agentchat-composer-send-btn:disabled {
 /* Rendered by activateTermLinks from `[[Label]]{#slug}` markers. Looks
    like a Wikipedia-style hyperlink but is an in-chat action that opens
    the TermPanel on the right. */
-.agentchat-term-pill {
+.obsidian-agents-term-pill {
   color: var(--interactive-accent);
   text-decoration: none;
   border-bottom: 1px solid color-mix(in srgb, var(--interactive-accent) 40%, transparent);
@@ -2945,7 +2945,7 @@ button.agentchat-composer-send-btn:disabled {
   padding: 0 1px;
   border-radius: 2px;
 }
-.agentchat-term-pill:hover {
+.obsidian-agents-term-pill:hover {
   color: var(--text-on-accent);
   background: var(--interactive-accent);
   border-bottom-color: var(--interactive-accent);
@@ -2954,13 +2954,13 @@ button.agentchat-composer-send-btn:disabled {
 /* ---------- Term detail panel ---------- */
 /* The host is positioned absolutely over the chat view so the panel can
    slide in without reflowing the message column. */
-.agentchat-term-panel-host {
+.obsidian-agents-term-panel-host {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 40;
 }
-.agentchat-term-panel-backdrop {
+.obsidian-agents-term-panel-backdrop {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0);
@@ -2968,7 +2968,7 @@ button.agentchat-composer-send-btn:disabled {
   transition: opacity 180ms ease;
   pointer-events: none;
 }
-.agentchat-term-panel {
+.obsidian-agents-term-panel {
   position: absolute;
   top: 0;
   right: 0;
@@ -2984,16 +2984,16 @@ button.agentchat-composer-send-btn:disabled {
   pointer-events: auto;
   overflow: hidden;
 }
-.agentchat-term-panel-host.is-open .agentchat-term-panel {
+.obsidian-agents-term-panel-host.is-open .obsidian-agents-term-panel {
   transform: translateX(0);
 }
-.agentchat-term-panel-host.is-open .agentchat-term-panel-backdrop {
+.obsidian-agents-term-panel-host.is-open .obsidian-agents-term-panel-backdrop {
   background: rgba(0, 0, 0, 0.35);
   opacity: 1;
   pointer-events: auto;
 }
 
-.agentchat-term-panel-header {
+.obsidian-agents-term-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3002,7 +3002,7 @@ button.agentchat-composer-send-btn:disabled {
   gap: 12px;
   flex-shrink: 0;
 }
-.agentchat-term-panel-title {
+.obsidian-agents-term-panel-title {
   font-size: 18px;
   font-weight: 600;
   margin: 0;
@@ -3011,7 +3011,7 @@ button.agentchat-composer-send-btn:disabled {
   flex: 1;
   min-width: 0;
 }
-.agentchat-term-panel-close {
+.obsidian-agents-term-panel-close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3026,19 +3026,19 @@ button.agentchat-composer-send-btn:disabled {
   transition: color 120ms ease;
   flex-shrink: 0;
 }
-.agentchat-term-panel-close:hover,
-.agentchat-term-panel-close:focus-visible {
+.obsidian-agents-term-panel-close:hover,
+.obsidian-agents-term-panel-close:focus-visible {
   background: transparent !important;
   color: var(--text-normal);
   outline: none;
 }
-.agentchat-term-panel-close svg {
+.obsidian-agents-term-panel-close svg {
   display: block;
   width: 26px;
   height: 26px;
 }
 
-.agentchat-term-panel-content {
+.obsidian-agents-term-panel-content {
   flex: 1;
   overflow-y: auto;
   padding: 14px 18px 22px;
@@ -3047,40 +3047,40 @@ button.agentchat-composer-send-btn:disabled {
   line-height: 1.55;
 }
 
-.agentchat-term-panel-missing {
+.obsidian-agents-term-panel-missing {
   color: var(--text-muted);
   font-style: italic;
   padding: 20px 0;
 }
 
 /* Panel carousel — a simple snap-scrolling row of images. */
-.agentchat-term-panel-carousel {
+.obsidian-agents-term-panel-carousel {
   margin: -14px -18px 14px;
   position: relative;
 }
-.agentchat-term-panel-carousel-track {
+.obsidian-agents-term-panel-carousel-track {
   display: flex;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
 }
-.agentchat-term-panel-carousel-track::-webkit-scrollbar {
+.obsidian-agents-term-panel-carousel-track::-webkit-scrollbar {
   display: none;
 }
-.agentchat-term-panel-carousel-slide {
+.obsidian-agents-term-panel-carousel-slide {
   flex: 0 0 100%;
   scroll-snap-align: center;
   position: relative;
   aspect-ratio: 16 / 10;
   background: var(--background-secondary);
 }
-.agentchat-term-panel-carousel-slide img {
+.obsidian-agents-term-panel-carousel-slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-.agentchat-term-panel-carousel-caption {
+.obsidian-agents-term-panel-carousel-caption {
   position: absolute;
   left: 0;
   right: 0;
@@ -3090,7 +3090,7 @@ button.agentchat-composer-send-btn:disabled {
   color: #fff;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
 }
-.agentchat-term-panel-carousel-dots {
+.obsidian-agents-term-panel-carousel-dots {
   position: absolute;
   left: 0;
   right: 0;
@@ -3100,22 +3100,22 @@ button.agentchat-composer-send-btn:disabled {
   gap: 6px;
   pointer-events: none;
 }
-.agentchat-term-panel-carousel-dot {
+.obsidian-agents-term-panel-carousel-dot {
   width: 6px;
   height: 6px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.5);
   transition: background 120ms ease, transform 120ms ease;
 }
-.agentchat-term-panel-carousel-dot.is-active {
+.obsidian-agents-term-panel-carousel-dot.is-active {
   background: #fff;
   transform: scale(1.25);
 }
 
-.agentchat-term-panel-linkrow {
+.obsidian-agents-term-panel-linkrow {
   margin-bottom: 10px;
 }
-.agentchat-term-panel-canonical {
+.obsidian-agents-term-panel-canonical {
   display: inline-block;
   font-size: 12px;
   color: var(--text-muted);
@@ -3126,42 +3126,42 @@ button.agentchat-composer-send-btn:disabled {
   border-radius: 999px;
   transition: color 120ms ease, border-color 120ms ease;
 }
-.agentchat-term-panel-canonical:hover {
+.obsidian-agents-term-panel-canonical:hover {
   color: var(--interactive-accent);
   border-color: var(--interactive-accent);
 }
 
-.agentchat-term-panel-summary {
+.obsidian-agents-term-panel-summary {
   color: var(--text-normal);
   margin-bottom: 18px;
 }
 
-.agentchat-term-panel-section-heading {
+.obsidian-agents-term-panel-section-heading {
   font-size: 14px;
   font-weight: 600;
   margin: 18px 0 8px;
   color: var(--text-normal);
 }
 
-.agentchat-term-panel-keyfacts-list {
+.obsidian-agents-term-panel-keyfacts-list {
   margin: 0;
   padding-left: 18px;
 }
-.agentchat-term-panel-keyfacts-list li {
+.obsidian-agents-term-panel-keyfacts-list li {
   margin-bottom: 6px;
   line-height: 1.55;
 }
 
-.agentchat-term-panel-section-body {
+.obsidian-agents-term-panel-section-body {
   margin-bottom: 14px;
 }
-.agentchat-term-panel-section-body > *:first-child {
+.obsidian-agents-term-panel-section-body > *:first-child {
   margin-top: 0;
 }
-.agentchat-term-panel-section-body > *:last-child {
+.obsidian-agents-term-panel-section-body > *:last-child {
   margin-bottom: 0;
 }
 
-.agentchat-term-panel-sources {
+.obsidian-agents-term-panel-sources {
   margin-top: 20px;
 }

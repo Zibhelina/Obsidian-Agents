@@ -63,13 +63,13 @@ export class Sidebar extends Component {
     this.callbacks = callbacks;
     this.agentName = agentName;
 
-    this.panelEl = container.createDiv({ cls: "agentchat-sidebar-panel" });
-    this.containerEl = this.panelEl.createDiv({ cls: "agentchat-sidebar" });
+    this.panelEl = container.createDiv({ cls: "obsidian-agents-sidebar-panel" });
+    this.containerEl = this.panelEl.createDiv({ cls: "obsidian-agents-sidebar" });
     this.buildHeader();
-    this.treeEl = this.containerEl.createDiv({ cls: "agentchat-sidebar-tree" });
+    this.treeEl = this.containerEl.createDiv({ cls: "obsidian-agents-sidebar-tree" });
 
     this.expandBtn = this.panelEl.createDiv({
-      cls: "agentchat-sidebar-expand-btn",
+      cls: "obsidian-agents-sidebar-expand-btn",
       attr: { "aria-label": "Expand sidebar" },
     });
     setIcon(this.expandBtn, "sidebar");
@@ -77,29 +77,29 @@ export class Sidebar extends Component {
   }
 
   private buildHeader(): void {
-    const header = this.containerEl.createDiv({ cls: "agentchat-sidebar-header" });
+    const header = this.containerEl.createDiv({ cls: "obsidian-agents-sidebar-header" });
 
-    this.titleEl = header.createDiv({ cls: "agentchat-sidebar-title" });
+    this.titleEl = header.createDiv({ cls: "obsidian-agents-sidebar-title" });
     this.titleEl.setText(this.agentName);
 
-    const actions = header.createDiv({ cls: "agentchat-sidebar-actions" });
+    const actions = header.createDiv({ cls: "obsidian-agents-sidebar-actions" });
 
     const newFolderBtn = actions.createEl("button", {
-      cls: "agentchat-icon-btn",
+      cls: "obsidian-agents-icon-btn",
       attr: { "aria-label": "New folder" },
     });
     setIcon(newFolderBtn, "folder-plus");
     this.registerDomEvent(newFolderBtn, "click", () => this.callbacks.onCreateFolder());
 
     const newChatBtn = actions.createEl("button", {
-      cls: "agentchat-icon-btn",
+      cls: "obsidian-agents-icon-btn",
       attr: { "aria-label": "New chat" },
     });
     setIcon(newChatBtn, "square-pen");
     this.registerDomEvent(newChatBtn, "click", () => this.callbacks.onCreateSession());
 
     const collapseBtn = actions.createEl("button", {
-      cls: "agentchat-icon-btn",
+      cls: "obsidian-agents-icon-btn",
       attr: { "aria-label": "Collapse sidebar" },
     });
     setIcon(collapseBtn, "sidebar");
@@ -108,7 +108,7 @@ export class Sidebar extends Component {
 
   private setCollapsed(value: boolean): void {
     this.collapsed = value;
-    this.panelEl.toggleClass("agentchat-sidebar-collapsed", value);
+    this.panelEl.toggleClass("obsidian-agents-sidebar-collapsed", value);
     this.updateBackdrop();
   }
 
@@ -118,7 +118,7 @@ export class Sidebar extends Component {
     if (!this.collapsed && isMobile) {
       if (!this.backdropEl) {
         this.backdropEl = this.panelEl.parentElement!.createDiv({
-          cls: "agentchat-sidebar-backdrop",
+          cls: "obsidian-agents-sidebar-backdrop",
         });
         this.registerDomEvent(this.backdropEl, "click", () => this.setCollapsed(true));
       }
@@ -154,7 +154,7 @@ export class Sidebar extends Component {
 
     // --- Projects (folders) — no section header, rendered directly ---
     if (topLevelFolders.length > 0) {
-      const projectsBody = this.treeEl.createDiv({ cls: "agentchat-section-body agentchat-projects-body" });
+      const projectsBody = this.treeEl.createDiv({ cls: "obsidian-agents-section-body obsidian-agents-projects-body" });
       for (const folder of topLevelFolders) {
         this.renderFolder(projectsBody, folder, visibleSessions);
       }
@@ -169,29 +169,29 @@ export class Sidebar extends Component {
     this.treeEl.addEventListener("dragover", (e) => {
       if (this.draggingSessionId || this.draggingFolderId) {
         e.preventDefault();
-        this.treeEl.classList.add("agentchat-drop-root");
+        this.treeEl.classList.add("obsidian-agents-drop-root");
       }
     });
     this.treeEl.addEventListener("dragleave", () => {
-      this.treeEl.classList.remove("agentchat-drop-root");
+      this.treeEl.classList.remove("obsidian-agents-drop-root");
     });
     this.treeEl.addEventListener("drop", (e) => {
       if (this.draggingSessionId) {
         e.preventDefault();
-        this.treeEl.classList.remove("agentchat-drop-root");
+        this.treeEl.classList.remove("obsidian-agents-drop-root");
         this.callbacks.onMoveSession(this.draggingSessionId, null);
         this.draggingSessionId = null;
       } else if (this.draggingFolderId) {
         e.preventDefault();
-        this.treeEl.classList.remove("agentchat-drop-root");
+        this.treeEl.classList.remove("obsidian-agents-drop-root");
         this.callbacks.onMoveFolder?.(this.draggingFolderId, null);
         this.draggingFolderId = null;
       }
     });
 
     if (visibleSessions.length === 0 && folders.length === 0) {
-      const empty = this.treeEl.createDiv({ cls: "agentchat-empty-state" });
-      empty.createDiv({ cls: "agentchat-empty-state-text", text: "No chats yet" });
+      const empty = this.treeEl.createDiv({ cls: "obsidian-agents-empty-state" });
+      empty.createDiv({ cls: "obsidian-agents-empty-state-text", text: "No chats yet" });
     }
   }
 
@@ -210,13 +210,13 @@ export class Sidebar extends Component {
       const groupSessions = grouped.get(group);
       if (!groupSessions || groupSessions.length === 0) continue;
 
-      const groupEl = container.createDiv({ cls: "agentchat-date-group" });
+      const groupEl = container.createDiv({ cls: "obsidian-agents-date-group" });
       groupEl.createDiv({
-        cls: "agentchat-date-group-label",
+        cls: "obsidian-agents-date-group-label",
         text: DATE_GROUP_LABELS[group],
       });
 
-      const groupBody = groupEl.createDiv({ cls: "agentchat-date-group-body" });
+      const groupBody = groupEl.createDiv({ cls: "obsidian-agents-date-group-body" });
       for (const session of groupSessions) {
         this.renderSession(groupBody, session);
       }
@@ -241,18 +241,18 @@ export class Sidebar extends Component {
     folder: SessionFolder,
     visibleSessions: ChatSession[]
   ): void {
-    const folderEl = container.createDiv({ cls: "agentchat-tree-folder" });
+    const folderEl = container.createDiv({ cls: "obsidian-agents-tree-folder" });
     folderEl.setAttribute("data-folder-id", folder.id);
 
-    const header = folderEl.createDiv({ cls: "agentchat-tree-folder-header" });
+    const header = folderEl.createDiv({ cls: "obsidian-agents-tree-folder-header" });
     header.setAttribute("draggable", "true");
-    const caret = header.createSpan({ cls: "agentchat-tree-caret" });
+    const caret = header.createSpan({ cls: "obsidian-agents-tree-caret" });
     setIcon(caret, folder.collapsed ? "chevron-right" : "chevron-down");
-    const nameSpan = header.createSpan({ cls: "agentchat-tree-label", text: folder.name });
+    const nameSpan = header.createSpan({ cls: "obsidian-agents-tree-label", text: folder.name });
 
     header.addEventListener("dragstart", (e) => {
       this.draggingFolderId = folder.id;
-      folderEl.classList.add("agentchat-dragging");
+      folderEl.classList.add("obsidian-agents-dragging");
       if (e.dataTransfer) {
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("text/plain", folder.id);
@@ -261,14 +261,14 @@ export class Sidebar extends Component {
     });
     header.addEventListener("dragend", () => {
       this.draggingFolderId = null;
-      folderEl.classList.remove("agentchat-dragging");
+      folderEl.classList.remove("obsidian-agents-dragging");
     });
 
     header.addEventListener("dragover", (e) => {
       if (this.draggingSessionId) {
         e.preventDefault();
         e.stopPropagation();
-        header.classList.add("agentchat-drop-target");
+        header.classList.add("obsidian-agents-drop-target");
       } else if (
         this.draggingFolderId &&
         this.draggingFolderId !== folder.id &&
@@ -276,17 +276,17 @@ export class Sidebar extends Component {
       ) {
         e.preventDefault();
         e.stopPropagation();
-        header.classList.add("agentchat-drop-target");
+        header.classList.add("obsidian-agents-drop-target");
       }
     });
     header.addEventListener("dragleave", () => {
-      header.classList.remove("agentchat-drop-target");
+      header.classList.remove("obsidian-agents-drop-target");
     });
     header.addEventListener("drop", (e) => {
       if (this.draggingSessionId) {
         e.preventDefault();
         e.stopPropagation();
-        header.classList.remove("agentchat-drop-target");
+        header.classList.remove("obsidian-agents-drop-target");
         this.callbacks.onMoveSession(this.draggingSessionId, folder.id);
         this.draggingSessionId = null;
       } else if (
@@ -296,14 +296,14 @@ export class Sidebar extends Component {
       ) {
         e.preventDefault();
         e.stopPropagation();
-        header.classList.remove("agentchat-drop-target");
+        header.classList.remove("obsidian-agents-drop-target");
         this.callbacks.onMoveFolder?.(this.draggingFolderId, folder.id);
         this.draggingFolderId = null;
       }
     });
 
     const childrenEl = folderEl.createDiv({
-      cls: "agentchat-tree-folder-children",
+      cls: "obsidian-agents-tree-folder-children",
     });
     childrenEl.style.display = folder.collapsed ? "none" : "block";
 
@@ -339,8 +339,8 @@ export class Sidebar extends Component {
 
   private renderSession(container: HTMLElement, session: ChatSession): void {
     const sessionEl = container.createDiv({
-      cls: `agentchat-tree-item ${
-        session.id === this.activeSessionId ? "agentchat-active" : ""
+      cls: `obsidian-agents-tree-item ${
+        session.id === this.activeSessionId ? "obsidian-agents-active" : ""
       }`,
     });
     sessionEl.setAttribute("data-session-id", session.id);
@@ -348,7 +348,7 @@ export class Sidebar extends Component {
 
     sessionEl.addEventListener("dragstart", (e) => {
       this.draggingSessionId = session.id;
-      sessionEl.classList.add("agentchat-dragging");
+      sessionEl.classList.add("obsidian-agents-dragging");
       if (e.dataTransfer) {
         e.dataTransfer.effectAllowed = "move";
         e.dataTransfer.setData("text/plain", session.id);
@@ -356,20 +356,20 @@ export class Sidebar extends Component {
     });
     sessionEl.addEventListener("dragend", () => {
       this.draggingSessionId = null;
-      sessionEl.classList.remove("agentchat-dragging");
+      sessionEl.classList.remove("obsidian-agents-dragging");
     });
 
-    const nameSpan = sessionEl.createSpan({ cls: "agentchat-tree-label", text: session.name });
+    const nameSpan = sessionEl.createSpan({ cls: "obsidian-agents-tree-label", text: session.name });
 
     const menuBtn = sessionEl.createEl("button", {
-      cls: "agentchat-tree-item-menu",
+      cls: "obsidian-agents-tree-item-menu",
       attr: { "aria-label": "More options" },
     });
     setIcon(menuBtn, "more-horizontal");
 
     this.registerDomEvent(sessionEl, "click", (evt: MouseEvent) => {
       if ((evt.target as HTMLElement).tagName === "INPUT") return;
-      if ((evt.target as HTMLElement).closest(".agentchat-tree-item-menu")) return;
+      if ((evt.target as HTMLElement).closest(".obsidian-agents-tree-item-menu")) return;
       this.callbacks.onSelectSession(session.id);
     });
 
@@ -399,7 +399,7 @@ export class Sidebar extends Component {
     const input = document.createElement("input");
     input.type = "text";
     input.value = currentName;
-    input.className = "agentchat-inline-rename";
+    input.className = "obsidian-agents-inline-rename";
 
     span.replaceWith(input);
     input.focus();
@@ -435,7 +435,7 @@ export class Sidebar extends Component {
     menu.addItem((item) =>
       item.setTitle("Rename").setIcon("pencil").onClick(() => {
         const el = this.treeEl.querySelector(
-          `[data-session-id="${session.id}"] .agentchat-tree-label`
+          `[data-session-id="${session.id}"] .obsidian-agents-tree-label`
         ) as HTMLElement;
         if (el) {
           this.startInlineRename(el, session.name, (newName) => {
@@ -495,13 +495,13 @@ export class Sidebar extends Component {
     menu.addItem((item) =>
       item.setTitle("Rename").setIcon("pencil").onClick(() => {
         const folderEls = Array.from(
-          this.treeEl.querySelectorAll(".agentchat-tree-folder-header")
+          this.treeEl.querySelectorAll(".obsidian-agents-tree-folder-header")
         );
         const target = folderEls.find((el) => {
-          const label = el.querySelector(".agentchat-tree-label") as HTMLElement;
+          const label = el.querySelector(".obsidian-agents-tree-label") as HTMLElement;
           return label && label.getText() === folder.name;
         });
-        const nameSpan = target?.querySelector(".agentchat-tree-label") as HTMLElement;
+        const nameSpan = target?.querySelector(".obsidian-agents-tree-label") as HTMLElement;
         if (nameSpan) {
           this.startInlineRename(nameSpan, folder.name, (newName) => {
             this.callbacks.onRenameFolder(folder.id, newName);

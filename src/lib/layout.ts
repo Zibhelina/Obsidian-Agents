@@ -13,9 +13,9 @@ export function parseLayoutBlocks(html: string): LayoutBlock[] {
 	const doc = parser.parseFromString(html, "text/html");
 	const blocks: LayoutBlock[] = [];
 
-	const elements = doc.querySelectorAll("[data-agentchat-layout]");
+	const elements = doc.querySelectorAll("[data-obsidian-agents-layout]");
 	elements.forEach((el) => {
-		const attr = el.getAttribute("data-agentchat-layout");
+		const attr = el.getAttribute("data-obsidian-agents-layout");
 		if (!attr) return;
 
 		let position: LayoutPosition = "inline";
@@ -46,7 +46,7 @@ export function parseLayoutBlocks(html: string): LayoutBlock[] {
 
 export function createLayoutContainer(): HTMLElement {
 	const div = document.createElement("div");
-	div.className = "agentchat-layout-container";
+	div.className = "obsidian-agents-layout-container";
 	div.style.display = "grid";
 	div.style.gridTemplateColumns = "1fr 1fr";
 	div.style.gap = "8px";
@@ -56,7 +56,7 @@ export function createLayoutContainer(): HTMLElement {
 export function applyLayout(container: HTMLElement): void {
 	const children = Array.from(container.children) as HTMLElement[];
 	children.forEach((child) => {
-		const attr = child.getAttribute("data-agentchat-layout");
+		const attr = child.getAttribute("data-obsidian-agents-layout");
 		if (!attr) return;
 
 		let position: LayoutPosition = "inline";

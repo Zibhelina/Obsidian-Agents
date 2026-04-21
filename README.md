@@ -1,4 +1,4 @@
-# AgentChat
+# Obsidian Agents
 
 A high-quality chat interface for Hermes agents inside Obsidian.
 
@@ -19,8 +19,8 @@ A high-quality chat interface for Hermes agents inside Obsidian.
 1. Clone or copy this repository into your vault's `.obsidian/plugins/` folder:
    ```bash
    cd /path/to/your/vault/.obsidian/plugins/
-   git clone https://github.com/Zibhelina/Obsidian-Agent-Chat.git agentchat
-   cd agentchat
+   git clone https://github.com/Zibhelina/Obsidian-Agent-Chat.git obsidian-agents
+   cd obsidian-agents
    ```
 
 2. Install dependencies and build:
@@ -29,7 +29,7 @@ A high-quality chat interface for Hermes agents inside Obsidian.
    npm run build
    ```
 
-3. Enable **AgentChat** in Obsidian's Community Plugins settings.
+3. Enable **Obsidian Agents** in Obsidian's Community Plugins settings.
 
 ### Development
 
@@ -40,9 +40,9 @@ npm run dev
 
 ## Usage
 
-Open AgentChat via:
+Open Obsidian Agents via:
 - The **message-circle** ribbon icon
-- The Command Palette: `AgentChat: Open AgentChat`
+- The Command Palette: `Obsidian Agents: Open Obsidian Agents`
 
 ### Keyboard Shortcuts
 
@@ -52,7 +52,7 @@ Open AgentChat via:
 
 ### Settings
 
-AgentChat keeps settings minimal:
+Obsidian Agents keeps settings minimal:
 
 | Setting       | Description                                      |
 |---------------|--------------------------------------------------|

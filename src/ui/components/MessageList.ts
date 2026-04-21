@@ -19,7 +19,7 @@ export class MessageList extends Component {
 
   constructor(container: HTMLElement) {
     super();
-    this.containerEl = container.createDiv({ cls: "agentchat-message-list" });
+    this.containerEl = container.createDiv({ cls: "obsidian-agents-message-list" });
     this.listEl = this.containerEl;
 
     // Update followBottom from the user's own scrolling. Without this,

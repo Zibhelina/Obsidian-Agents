@@ -2,7 +2,7 @@
  * Rich layout blocks: gallery, carousel, hero, map, card-list, split.
  *
  * The agent emits a fenced code block like:
- *   ```agentchat-gallery
+ *   ```obsidian-agents-gallery
  *   { "columns": 3, "items": [...] }
  *   ```
  *
@@ -132,8 +132,8 @@ type SplitVisual =
     }
   | {
       kind: "applet";
-      // Either raw HTML body (for agentchat-applet) or a React component
-      // body (for agentchat-react). The applet is rendered in a sandboxed
+      // Either raw HTML body (for obsidian-agents-applet) or a React component
+      // body (for obsidian-agents-react). The applet is rendered in a sandboxed
       // iframe exactly like standalone applets.
       language: "html" | "react";
       code: string;
@@ -182,20 +182,20 @@ interface TermsSpec {
   terms: TermDefinition[];
 }
 
-// Global registry keyed by term id. Populated by `agentchat-terms` blocks at
+// Global registry keyed by term id. Populated by `obsidian-agents-terms` blocks at
 // render time and consumed by the inline click handler + the TermPanel.
 // Scoped to `window` so every view in the workspace shares definitions.
 declare global {
   interface Window {
-    __agentchatTerms?: Map<string, TermDefinition>;
+    __obsidian-agentsTerms?: Map<string, TermDefinition>;
   }
 }
 
 function getTermRegistry(): Map<string, TermDefinition> {
-  if (!window.__agentchatTerms) {
-    window.__agentchatTerms = new Map();
+  if (!window.__obsidian-agentsTerms) {
+    window.__obsidian-agentsTerms = new Map();
   }
-  return window.__agentchatTerms;
+  return window.__obsidian-agentsTerms;
 }
 
 export function registerTerm(def: TermDefinition): void {
@@ -207,7 +207,7 @@ export function getTerm(id: string): TermDefinition | undefined {
   return getTermRegistry().get(id);
 }
 
-const RE = /```agentchat-(gallery|carousel|hero|map|card-list|split|terms)[^\n]*\n([\s\S]*?)```/g;
+const RE = /```obsidian-agents-(gallery|carousel|hero|map|card-list|split|terms)[^\n]*\n([\s\S]*?)```/g;
 
 export function parseRichLayouts(content: string): {
   content: string;
@@ -216,7 +216,7 @@ export function parseRichLayouts(content: string): {
   const layouts: ParsedRichLayout[] = [];
   let idx = 0;
   const out = content.replace(RE, (_m, kind: string, body: string) => {
-    const id = `agentchat-rich-${idx++}`;
+    const id = `obsidian-agents-rich-${idx++}`;
     let data: unknown = null;
     try {
       data = JSON.parse(body);
@@ -224,7 +224,7 @@ export function parseRichLayouts(content: string): {
       data = { __error: "Invalid JSON", raw: body.trim() };
     }
     layouts.push({ placeholder: id, kind: kind as RichLayoutKind, data });
-    return `\n\n<div data-agentchat-rich="${id}"></div>\n\n`;
+    return `\n\n<div data-obsidian-agents-rich="${id}"></div>\n\n`;
   });
   return { content: out, layouts };
 }
@@ -266,7 +266,7 @@ function hostnameOf(href: string): string {
  * explicit, separate affordance so both behaviors coexist.
  */
 function mountLinkBadge(host: HTMLElement, href: string): void {
-  const badge = host.createEl("a", { cls: "agentchat-rich-link-badge" });
+  const badge = host.createEl("a", { cls: "obsidian-agents-rich-link-badge" });
   badge.href = href;
   badge.target = "_blank";
   badge.rel = "noopener noreferrer";
@@ -281,20 +281,20 @@ function mountLinkBadge(host: HTMLElement, href: string): void {
 
 function renderSourcesFooter(host: HTMLElement, sources: LayoutSource[] | undefined): void {
   if (!Array.isArray(sources) || sources.length === 0) return;
-  const footer = host.createDiv({ cls: "agentchat-rich-sources" });
-  footer.createSpan({ cls: "agentchat-rich-sources-label", text: "Sources" });
+  const footer = host.createDiv({ cls: "obsidian-agents-rich-sources" });
+  footer.createSpan({ cls: "obsidian-agents-rich-sources-label", text: "Sources" });
   sources.forEach((s, i) => {
     const href = safeHref(s?.href);
     if (!href) return;
-    const link = footer.createEl("a", { cls: "agentchat-rich-source" });
+    const link = footer.createEl("a", { cls: "obsidian-agents-rich-source" });
     link.href = href;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.createSpan({ cls: "agentchat-rich-source-num", text: `${i + 1}` });
-    link.createSpan({ cls: "agentchat-rich-source-label", text: s.label || hostnameOf(href) });
+    link.createSpan({ cls: "obsidian-agents-rich-source-num", text: `${i + 1}` });
+    link.createSpan({ cls: "obsidian-agents-rich-source-label", text: s.label || hostnameOf(href) });
     const site = s.site || hostnameOf(href);
     if (site) {
-      link.createSpan({ cls: "agentchat-rich-source-site", text: site });
+      link.createSpan({ cls: "obsidian-agents-rich-source-site", text: site });
     }
   });
 }
@@ -307,12 +307,12 @@ interface LightboxItem {
 }
 
 function openLightboxGallery(items: LightboxItem[], startIndex: number): void {
-  const overlay = document.body.createDiv({ cls: "agentchat-lightbox" });
+  const overlay = document.body.createDiv({ cls: "obsidian-agents-lightbox" });
   overlay.setAttribute("role", "dialog");
 
-  const counter = overlay.createDiv({ cls: "agentchat-rich-lightbox-counter" });
-  const img = overlay.createEl("img", { cls: "agentchat-lightbox-img" });
-  const caption = overlay.createDiv({ cls: "agentchat-rich-lightbox-caption" });
+  const counter = overlay.createDiv({ cls: "obsidian-agents-rich-lightbox-counter" });
+  const img = overlay.createEl("img", { cls: "obsidian-agents-lightbox-img" });
+  const caption = overlay.createDiv({ cls: "obsidian-agents-rich-lightbox-caption" });
 
   let i = Math.max(0, Math.min(startIndex, items.length - 1));
 
@@ -334,7 +334,7 @@ function openLightboxGallery(items: LightboxItem[], startIndex: number): void {
 
   if (items.length > 1) {
     const prevBtn = overlay.createEl("button", {
-      cls: "agentchat-rich-lightbox-arrow agentchat-rich-lightbox-prev",
+      cls: "obsidian-agents-rich-lightbox-arrow obsidian-agents-rich-lightbox-prev",
       attr: { "aria-label": "Previous" },
     });
     prevBtn.innerHTML = "‹";
@@ -343,7 +343,7 @@ function openLightboxGallery(items: LightboxItem[], startIndex: number): void {
       prev();
     });
     const nextBtn = overlay.createEl("button", {
-      cls: "agentchat-rich-lightbox-arrow agentchat-rich-lightbox-next",
+      cls: "obsidian-agents-rich-lightbox-arrow obsidian-agents-rich-lightbox-next",
       attr: { "aria-label": "Next" },
     });
     nextBtn.innerHTML = "›";
@@ -354,7 +354,7 @@ function openLightboxGallery(items: LightboxItem[], startIndex: number): void {
   }
 
   const close = overlay.createEl("button", {
-    cls: "agentchat-lightbox-close",
+    cls: "obsidian-agents-lightbox-close",
     attr: { "aria-label": "Close" },
   });
   close.innerHTML =
@@ -384,9 +384,9 @@ function renderGallery(host: HTMLElement, spec: GallerySpec): void {
   const items = Array.isArray(spec?.items) ? spec.items : [];
   if (items.length === 0) return;
 
-  host.addClass("agentchat-rich-gallery");
+  host.addClass("obsidian-agents-rich-gallery");
   const columns = Math.max(1, Math.min(4, Number(spec.columns) || Math.min(items.length, 3)));
-  host.style.setProperty("--agentchat-gallery-columns", String(columns));
+  host.style.setProperty("--obsidian-agents-gallery-columns", String(columns));
 
   const lightboxItems: LightboxItem[] = items.map((it) => ({
     src: it.src,
@@ -394,14 +394,14 @@ function renderGallery(host: HTMLElement, spec: GallerySpec): void {
   }));
 
   items.forEach((item, idx) => {
-    const cell = host.createDiv({ cls: "agentchat-rich-gallery-cell" });
-    const img = cell.createEl("img", { cls: "agentchat-rich-gallery-img" });
+    const cell = host.createDiv({ cls: "obsidian-agents-rich-gallery-cell" });
+    const img = cell.createEl("img", { cls: "obsidian-agents-rich-gallery-img" });
     img.src = item.src;
     img.alt = item.alt || "";
     img.loading = "lazy";
     img.addEventListener("click", () => openLightboxGallery(lightboxItems, idx));
     if (item.caption) {
-      cell.createDiv({ cls: "agentchat-rich-gallery-caption", text: item.caption });
+      cell.createDiv({ cls: "obsidian-agents-rich-gallery-caption", text: item.caption });
     }
 
     const linkHref = safeHref(item.href);
@@ -409,7 +409,7 @@ function renderGallery(host: HTMLElement, spec: GallerySpec): void {
 
     // Show a "+N" badge on the last tile if more items exist than the first row.
     if (idx === columns - 1 && items.length > columns) {
-      const badge = cell.createDiv({ cls: "agentchat-rich-gallery-badge" });
+      const badge = cell.createDiv({ cls: "obsidian-agents-rich-gallery-badge" });
       badge.setText(`+${items.length - columns}`);
     }
   });
@@ -421,44 +421,44 @@ function renderCarousel(host: HTMLElement, spec: CarouselSpec): void {
   const items = Array.isArray(spec?.items) ? spec.items : [];
   if (items.length === 0) return;
 
-  host.addClass("agentchat-rich-carousel");
+  host.addClass("obsidian-agents-rich-carousel");
   if (spec.height) {
-    host.style.setProperty("--agentchat-carousel-height", spec.height);
+    host.style.setProperty("--obsidian-agents-carousel-height", spec.height);
   }
 
-  const track = host.createDiv({ cls: "agentchat-rich-carousel-track" });
+  const track = host.createDiv({ cls: "obsidian-agents-rich-carousel-track" });
   const lightboxItems: LightboxItem[] = items.map((it) => ({
     src: it.src,
     caption: it.caption || it.alt,
   }));
 
   items.forEach((item, idx) => {
-    const slide = track.createDiv({ cls: "agentchat-rich-carousel-slide" });
-    const img = slide.createEl("img", { cls: "agentchat-rich-carousel-img" });
+    const slide = track.createDiv({ cls: "obsidian-agents-rich-carousel-slide" });
+    const img = slide.createEl("img", { cls: "obsidian-agents-rich-carousel-img" });
     img.src = item.src;
     img.alt = item.alt || "";
     img.loading = "lazy";
     img.addEventListener("click", () => openLightboxGallery(lightboxItems, idx));
     if (item.caption) {
-      slide.createDiv({ cls: "agentchat-rich-carousel-caption", text: item.caption });
+      slide.createDiv({ cls: "obsidian-agents-rich-carousel-caption", text: item.caption });
     }
     const linkHref = safeHref(item.href);
     if (linkHref) mountLinkBadge(slide, linkHref);
   });
 
-  const counter = host.createDiv({ cls: "agentchat-rich-carousel-counter" });
+  const counter = host.createDiv({ cls: "obsidian-agents-rich-carousel-counter" });
   counter.setText(`${items.length}`);
 
   if (items.length > 1) {
     const mkArrow = (dir: "prev" | "next", symbol: string) => {
       const btn = host.createEl("button", {
-        cls: `agentchat-rich-carousel-arrow agentchat-rich-carousel-${dir}`,
+        cls: `obsidian-agents-rich-carousel-arrow obsidian-agents-rich-carousel-${dir}`,
         attr: { "aria-label": dir === "prev" ? "Previous" : "Next" },
       });
       btn.innerHTML = symbol;
       btn.addEventListener("click", (e) => {
         e.preventDefault();
-        const slide = track.querySelector<HTMLElement>(".agentchat-rich-carousel-slide");
+        const slide = track.querySelector<HTMLElement>(".obsidian-agents-rich-carousel-slide");
         const w = slide ? slide.offsetWidth + 12 : 300;
         track.scrollBy({ left: dir === "next" ? w : -w, behavior: "smooth" });
       });
@@ -472,7 +472,7 @@ function renderCarousel(host: HTMLElement, spec: CarouselSpec): void {
 
 function renderHero(host: HTMLElement, spec: HeroSpec): void {
   if (!spec?.primary?.src) return;
-  host.addClass("agentchat-rich-hero");
+  host.addClass("obsidian-agents-rich-hero");
 
   const secondary = Array.isArray(spec.secondary) ? spec.secondary : [];
   const allItems: LightboxItem[] = [
@@ -480,8 +480,8 @@ function renderHero(host: HTMLElement, spec: HeroSpec): void {
     ...secondary.map((s) => ({ src: s.src, caption: s.alt })),
   ];
 
-  const primaryCell = host.createDiv({ cls: "agentchat-rich-hero-primary" });
-  const primaryImg = primaryCell.createEl("img", { cls: "agentchat-rich-hero-primary-img" });
+  const primaryCell = host.createDiv({ cls: "obsidian-agents-rich-hero-primary" });
+  const primaryImg = primaryCell.createEl("img", { cls: "obsidian-agents-rich-hero-primary-img" });
   primaryImg.src = spec.primary.src;
   primaryImg.alt = spec.primary.alt || "";
   primaryImg.loading = "lazy";
@@ -490,14 +490,14 @@ function renderHero(host: HTMLElement, spec: HeroSpec): void {
   if (primaryHref) mountLinkBadge(primaryCell, primaryHref);
 
   if (secondary.length > 0) {
-    const stack = host.createDiv({ cls: "agentchat-rich-hero-stack" });
+    const stack = host.createDiv({ cls: "obsidian-agents-rich-hero-stack" });
     // Up to 2 visible tiles; rest collapses into a "+N" overlay on the last.
     const visible = secondary.slice(0, 2);
     const extra = secondary.length - visible.length;
 
     visible.forEach((item, idx) => {
-      const cell = stack.createDiv({ cls: "agentchat-rich-hero-secondary" });
-      const img = cell.createEl("img", { cls: "agentchat-rich-hero-secondary-img" });
+      const cell = stack.createDiv({ cls: "obsidian-agents-rich-hero-secondary" });
+      const img = cell.createEl("img", { cls: "obsidian-agents-rich-hero-secondary-img" });
       img.src = item.src;
       img.alt = item.alt || "";
       img.loading = "lazy";
@@ -508,7 +508,7 @@ function renderHero(host: HTMLElement, spec: HeroSpec): void {
 
       if (idx === visible.length - 1 && (extra > 0 || secondary.length >= 2)) {
         const total = 1 + secondary.length;
-        const badge = cell.createDiv({ cls: "agentchat-rich-hero-badge" });
+        const badge = cell.createDiv({ cls: "obsidian-agents-rich-hero-badge" });
         badge.setText(String(total));
       }
     });
@@ -547,7 +547,7 @@ function renderMap(host: HTMLElement, spec: MapSpec): void {
   const pins = Array.isArray(spec?.pins) ? spec.pins : [];
   if (pins.length === 0) return;
 
-  host.addClass("agentchat-rich-map");
+  host.addClass("obsidian-agents-rich-map");
 
   // Figure out center.
   let center = spec.center;
@@ -723,7 +723,7 @@ function renderMap(host: HTMLElement, spec: MapSpec): void {
 </script>
 </body></html>`;
 
-  const iframe = host.createEl("iframe", { cls: "agentchat-rich-map-frame" });
+  const iframe = host.createEl("iframe", { cls: "obsidian-agents-rich-map-frame" });
   iframe.srcdoc = srcdoc;
   iframe.style.width = "100%";
   iframe.style.height = height;
@@ -743,36 +743,36 @@ function renderCardList(host: HTMLElement, spec: CardListSpec): void {
   const items = Array.isArray(spec?.items) ? spec.items : [];
   if (items.length === 0) return;
 
-  host.addClass("agentchat-rich-card-list");
+  host.addClass("obsidian-agents-rich-card-list");
 
   for (const item of items) {
-    const card = host.createDiv({ cls: "agentchat-rich-card" });
+    const card = host.createDiv({ cls: "obsidian-agents-rich-card" });
 
     if (item.thumbnail) {
-      const thumb = card.createDiv({ cls: "agentchat-rich-card-thumb" });
+      const thumb = card.createDiv({ cls: "obsidian-agents-rich-card-thumb" });
       const img = thumb.createEl("img");
       img.src = item.thumbnail;
       img.alt = item.title || "";
       img.loading = "lazy";
     }
 
-    const body = card.createDiv({ cls: "agentchat-rich-card-body" });
+    const body = card.createDiv({ cls: "obsidian-agents-rich-card-body" });
     const titleHref = safeHref(item.href);
     if (titleHref) {
-      const titleLink = body.createEl("a", { cls: "agentchat-rich-card-title agentchat-rich-card-title-link" });
+      const titleLink = body.createEl("a", { cls: "obsidian-agents-rich-card-title obsidian-agents-rich-card-title-link" });
       titleLink.href = titleHref;
       titleLink.target = "_blank";
       titleLink.rel = "noopener noreferrer";
       titleLink.setText(item.title || "");
     } else {
-      body.createDiv({ cls: "agentchat-rich-card-title", text: item.title || "" });
+      body.createDiv({ cls: "obsidian-agents-rich-card-title", text: item.title || "" });
     }
 
     const parts: string[] = [];
     if (item.rating != null) parts.push(`★ ${item.rating}`);
     if (item.category) parts.push(item.category);
     if (parts.length > 0 || item.status) {
-      const meta = body.createDiv({ cls: "agentchat-rich-card-meta" });
+      const meta = body.createDiv({ cls: "obsidian-agents-rich-card-meta" });
       if (parts.length > 0) {
         meta.createSpan({ text: parts.join(" • ") });
       }
@@ -781,24 +781,24 @@ function renderCardList(host: HTMLElement, spec: CardListSpec): void {
         const statusLower = item.status.toLowerCase();
         const statusCls =
           statusLower === "open"
-            ? "agentchat-rich-card-status-open"
+            ? "obsidian-agents-rich-card-status-open"
             : statusLower === "closed"
-            ? "agentchat-rich-card-status-closed"
-            : "agentchat-rich-card-status-neutral";
+            ? "obsidian-agents-rich-card-status-closed"
+            : "obsidian-agents-rich-card-status-neutral";
         meta.createSpan({ cls: statusCls, text: item.status });
       }
     }
 
     if (item.body) {
-      body.createDiv({ cls: "agentchat-rich-card-description", text: item.body });
+      body.createDiv({ cls: "obsidian-agents-rich-card-description", text: item.body });
     }
 
     if (Array.isArray(item.links) && item.links.length > 0) {
-      const linksRow = body.createDiv({ cls: "agentchat-rich-card-links" });
+      const linksRow = body.createDiv({ cls: "obsidian-agents-rich-card-links" });
       for (const l of item.links) {
         const href = safeHref(l?.href);
         if (!href) continue;
-        const a = linksRow.createEl("a", { cls: "agentchat-rich-card-link" });
+        const a = linksRow.createEl("a", { cls: "obsidian-agents-rich-card-link" });
         a.href = href;
         a.target = "_blank";
         a.rel = "noopener noreferrer";
@@ -856,8 +856,8 @@ ${code}
 
 function renderSplitVisual(host: HTMLElement, visual: SplitVisual): void {
   if (visual.kind === "image") {
-    const cell = host.createDiv({ cls: "agentchat-rich-split-image" });
-    const img = cell.createEl("img", { cls: "agentchat-rich-split-image-img" });
+    const cell = host.createDiv({ cls: "obsidian-agents-rich-split-image" });
+    const img = cell.createEl("img", { cls: "obsidian-agents-rich-split-image-img" });
     img.src = visual.src;
     img.alt = visual.alt || "";
     img.loading = "lazy";
@@ -865,7 +865,7 @@ function renderSplitVisual(host: HTMLElement, visual: SplitVisual): void {
       openLightboxGallery([{ src: visual.src, caption: visual.caption || visual.alt }], 0)
     );
     if (visual.caption) {
-      cell.createDiv({ cls: "agentchat-rich-split-image-caption", text: visual.caption });
+      cell.createDiv({ cls: "obsidian-agents-rich-split-image-caption", text: visual.caption });
     }
     const linkHref = safeHref(visual.href);
     if (linkHref) mountLinkBadge(cell, linkHref);
@@ -900,7 +900,7 @@ function renderSplitVisual(host: HTMLElement, visual: SplitVisual): void {
       if (v) themeVars[k] = v;
     }
     const srcdoc = buildAppletSrcdoc(visual.language, visual.code, themeVars);
-    const iframe = host.createEl("iframe", { cls: "agentchat-rich-split-applet" });
+    const iframe = host.createEl("iframe", { cls: "obsidian-agents-rich-split-applet" });
     iframe.srcdoc = srcdoc;
     iframe.style.width = "100%";
     iframe.style.border = "none";
@@ -939,8 +939,8 @@ function renderSplit(host: HTMLElement, spec: SplitSpec, ctx: SplitRenderContext
   if (!spec || !spec.visual || typeof spec.text !== "string") return;
 
   const side: "left" | "right" = spec.side === "left" ? "left" : "right";
-  host.addClass("agentchat-rich-split");
-  host.addClass(`agentchat-rich-split-${side}`);
+  host.addClass("obsidian-agents-rich-split");
+  host.addClass(`obsidian-agents-rich-split-${side}`);
 
   // Grid template: visual-first or text-first depending on side.
   // Default 1fr : 1.4fr favoring text (more readable paragraphs).
@@ -956,11 +956,11 @@ function renderSplit(host: HTMLElement, spec: SplitSpec, ctx: SplitRenderContext
   host.style.gridTemplateColumns = ratio;
 
   const visualCell = document.createElement("div");
-  visualCell.className = "agentchat-rich-split-visual";
+  visualCell.className = "obsidian-agents-rich-split-visual";
   renderSplitVisual(visualCell, spec.visual);
 
   const textCell = document.createElement("div");
-  textCell.className = "agentchat-rich-split-text markdown-rendered";
+  textCell.className = "obsidian-agents-rich-split-text markdown-rendered";
   if (ctx.app && ctx.component) {
     MarkdownRenderer.render(
       ctx.app,
@@ -986,7 +986,7 @@ function renderSplit(host: HTMLElement, spec: SplitSpec, ctx: SplitRenderContext
 
   if (Array.isArray(spec.sources) && spec.sources.length > 0) {
     const footerHost = document.createElement("div");
-    footerHost.className = "agentchat-rich-split-sources";
+    footerHost.className = "obsidian-agents-rich-split-sources";
     renderSourcesFooter(footerHost, spec.sources);
     host.appendChild(footerHost);
   }
@@ -995,10 +995,10 @@ function renderSplit(host: HTMLElement, spec: SplitSpec, ctx: SplitRenderContext
 // --- Terms registry block -----------------------------------------------
 
 /**
- * `agentchat-terms` blocks are *silent by default*: they register their
+ * `obsidian-agents-terms` blocks are *silent by default*: they register their
  * term definitions into a global map and emit no visible UI. The inline
  * `[[Label]]{#slug}` markers in the surrounding prose become clickable
- * pills that dispatch an `agentchat:open-term` event the ChatView
+ * pills that dispatch an `obsidian-agents:open-term` event the ChatView
  * listens for — the ChatView then slides in a detail panel.
  */
 function renderTerms(host: HTMLElement, spec: TermsSpec): void {
@@ -1012,7 +1012,7 @@ function renderTerms(host: HTMLElement, spec: TermsSpec): void {
   }
 
   // Hide the block entirely — it has no visible content of its own.
-  host.addClass("agentchat-rich-terms-registry");
+  host.addClass("obsidian-agents-rich-terms-registry");
   host.style.display = "none";
 }
 
@@ -1033,7 +1033,7 @@ function renderTerms(host: HTMLElement, spec: TermsSpec): void {
  * JSON inside layout blocks is safe because those blocks are already
  * lifted out as placeholders before markdown processing.
  *
- * The dispatched `agentchat:open-term` event bubbles to the ChatView,
+ * The dispatched `obsidian-agents:open-term` event bubbles to the ChatView,
  * which routes it into the TermPanel.
  */
 const BRACKET_TERM_RE = /\[\[([^\]]+?)\]\]\{#([a-z0-9][a-z0-9_-]*)\}/gi;
@@ -1042,7 +1042,7 @@ const BARE_TERM_RE = /([A-Za-z0-9][\w'’.\- ]{0,80}?)\{#([a-z0-9][a-z0-9_-]*)\}
 
 function buildTermPill(label: string, id: string): HTMLAnchorElement {
   const pill = document.createElement("a");
-  pill.className = "agentchat-term-pill";
+  pill.className = "obsidian-agents-term-pill";
   pill.setAttribute("data-term-id", id.toLowerCase());
   pill.href = "#";
   pill.textContent = label;
@@ -1051,7 +1051,7 @@ function buildTermPill(label: string, id: string): HTMLAnchorElement {
     ev.stopPropagation();
     const detail = { id: id.toLowerCase(), anchor: pill };
     pill.dispatchEvent(
-      new CustomEvent("agentchat:open-term", {
+      new CustomEvent("obsidian-agents:open-term", {
         detail,
         bubbles: true,
         composed: true,
@@ -1145,7 +1145,7 @@ function replaceInTextNodes(
 
   for (const text of targets) {
     // Skip nodes that sit inside existing term pills to avoid double work.
-    if (text.parentElement?.closest(".agentchat-term-pill")) continue;
+    if (text.parentElement?.closest(".obsidian-agents-term-pill")) continue;
 
     const raw = text.nodeValue || "";
     const frag = document.createDocumentFragment();
@@ -1181,12 +1181,12 @@ export function mountRichLayout(
   ctx: MountContext = {}
 ): void {
   const wrap = document.createElement("div");
-  wrap.className = "agentchat-rich-layout agentchat-layout-block agentchat-layout-below";
+  wrap.className = "obsidian-agents-rich-layout obsidian-agents-layout-block obsidian-agents-layout-below";
 
   const data = layout.data as Record<string, unknown> | null;
 
   if (data && typeof data === "object" && "__error" in (data as object)) {
-    const err = wrap.createDiv({ cls: "agentchat-rich-error" });
+    const err = wrap.createDiv({ cls: "obsidian-agents-rich-error" });
     err.setText(`Invalid ${layout.kind} JSON`);
     const pre = wrap.createEl("pre");
     pre.setText(String((data as any).raw || ""));
@@ -1219,7 +1219,7 @@ export function mountRichLayout(
         break;
     }
   } catch (e) {
-    const err = wrap.createDiv({ cls: "agentchat-rich-error" });
+    const err = wrap.createDiv({ cls: "obsidian-agents-rich-error" });
     err.setText(`Failed to render ${layout.kind}: ${(e as Error).message}`);
   }
 

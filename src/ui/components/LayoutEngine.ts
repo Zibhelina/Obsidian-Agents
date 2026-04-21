@@ -4,12 +4,12 @@ import { parseRichLayouts, mountRichLayout, activateTermLinks } from "./rich-lay
 
 function positionToClass(pos: LayoutPosition): string {
   switch (pos) {
-    case "left": return "agentchat-layout-left";
-    case "right": return "agentchat-layout-right";
-    case "above": return "agentchat-layout-above";
-    case "below": return "agentchat-layout-below";
-    case "inline": return "agentchat-layout-inline";
-    default: return "agentchat-layout-inline";
+    case "left": return "obsidian-agents-layout-left";
+    case "right": return "obsidian-agents-layout-right";
+    case "above": return "obsidian-agents-layout-above";
+    case "below": return "obsidian-agents-layout-below";
+    case "inline": return "obsidian-agents-layout-inline";
+    default: return "obsidian-agents-layout-inline";
   }
 }
 
@@ -23,7 +23,7 @@ interface ParsedApplet {
 }
 
 /**
- * Parse ```agentchat-applet ...``` and ```agentchat-react ...``` fenced blocks
+ * Parse ```obsidian-agents-applet ...``` and ```obsidian-agents-react ...``` fenced blocks
  * out of markdown. Each block is replaced by a placeholder token in the text;
  * the block is rendered as an iframe after markdown rendering, at the spot of
  * the placeholder (or floated left/right).
@@ -35,10 +35,10 @@ interface ParsedApplet {
  */
 function parseApplets(content: string): { content: string; applets: ParsedApplet[] } {
   const applets: ParsedApplet[] = [];
-  const re = /```agentchat-(applet|react)([^\n]*)\n([\s\S]*?)```/g;
+  const re = /```obsidian-agents-(applet|react)([^\n]*)\n([\s\S]*?)```/g;
   let idx = 0;
   const out = content.replace(re, (_m, kind: string, attrs: string, body: string) => {
-    const id = `agentchat-applet-${idx++}`;
+    const id = `obsidian-agents-applet-${idx++}`;
     const pos = (attrs.match(/position=(\w+)/)?.[1] || "inline") as LayoutPosition;
     const width = attrs.match(/width=([^\s]+)/)?.[1];
     const height = attrs.match(/height=([^\s]+)/)?.[1];
@@ -51,7 +51,7 @@ function parseApplets(content: string): { content: string; applets: ParsedApplet
       kind: kind as "html" | "react",
     });
     // Use a unique inline code placeholder — renderer preserves it verbatim.
-    return `\n\n<p data-agentchat-applet="${id}"></p>\n\n`;
+    return `\n\n<p data-obsidian-agents-applet="${id}"></p>\n\n`;
   });
   return { content: out, applets };
 }
@@ -163,11 +163,11 @@ function buildAppletFrame(
 ): { host: HTMLElement; iframe: HTMLIFrameElement } {
   // Host wrapper provides a positioning context for the hover-expand button.
   const host = document.createElement("div");
-  host.className = "agentchat-applet-host";
+  host.className = "obsidian-agents-applet-host";
   host.style.position = "relative";
 
   const iframe = document.createElement("iframe");
-  iframe.className = "agentchat-layout-applet";
+  iframe.className = "obsidian-agents-layout-applet";
   iframe.srcdoc = srcdoc;
   iframe.style.width = widthOverride || "100%";
   iframe.style.border = "none";
@@ -222,7 +222,7 @@ function buildAppletFrame(
 
   const expandBtn = document.createElement("button");
   expandBtn.type = "button";
-  expandBtn.className = "agentchat-applet-expand-btn";
+  expandBtn.className = "obsidian-agents-applet-expand-btn";
   expandBtn.setAttribute("aria-label", "Open applet full screen");
   expandBtn.innerHTML =
     '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
@@ -238,16 +238,16 @@ function buildAppletFrame(
 
 function openAppletFullScreen(srcdoc: string): void {
   const overlay = document.createElement("div");
-  overlay.className = "agentchat-applet-fullscreen";
+  overlay.className = "obsidian-agents-applet-fullscreen";
 
   const frame = document.createElement("iframe");
-  frame.className = "agentchat-applet-fullscreen-frame";
+  frame.className = "obsidian-agents-applet-fullscreen-frame";
   frame.srcdoc = srcdoc;
   frame.setAttribute("sandbox", "allow-scripts allow-same-origin allow-forms");
 
   const close = document.createElement("button");
   close.type = "button";
-  close.className = "agentchat-applet-fullscreen-close";
+  close.className = "obsidian-agents-applet-fullscreen-close";
   close.setAttribute("aria-label", "Close full-screen applet");
   close.innerHTML =
     '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
@@ -280,7 +280,7 @@ function mountAppletInto(
 
   if (applet.position === "left" || applet.position === "right") {
     const wrap = document.createElement("span");
-    wrap.className = `agentchat-layout-block ${positionToClass(applet.position)}`;
+    wrap.className = `obsidian-agents-layout-block ${positionToClass(applet.position)}`;
     wrap.style.cssFloat = applet.position;
     wrap.style.margin = applet.position === "left" ? "4px 12px 8px 0" : "4px 0 8px 12px";
     wrap.style.maxWidth = applet.width || "50%";
@@ -289,7 +289,7 @@ function mountAppletInto(
     target.replaceWith(wrap);
   } else {
     const wrap = document.createElement("div");
-    wrap.className = `agentchat-layout-block ${positionToClass(applet.position)}`;
+    wrap.className = `obsidian-agents-layout-block ${positionToClass(applet.position)}`;
     wrap.style.margin = "12px 0";
     wrap.appendChild(host);
     target.replaceWith(wrap);
@@ -305,14 +305,14 @@ export class LayoutEngine {
     component?: Component,
     sourcePath = ""
   ): HTMLElement {
-    const wrapper = container.createDiv({ cls: "agentchat-layout-engine" });
-    const textEl = wrapper.createDiv({ cls: "agentchat-layout-text markdown-rendered" });
+    const wrapper = container.createDiv({ cls: "obsidian-agents-layout-engine" });
+    const textEl = wrapper.createDiv({ cls: "obsidian-agents-layout-text markdown-rendered" });
 
     // Extract agent-authored applets from markdown
     const parsed = parseApplets(content);
     // Then extract rich layouts (gallery/carousel/hero/map/card-list) from what remains.
     const rich = parseRichLayouts(parsed.content);
-    const themeVars = readThemeVars(container.closest(".agentchat-view") as HTMLElement | null);
+    const themeVars = readThemeVars(container.closest(".obsidian-agents-view") as HTMLElement | null);
 
     const doRender = async () => {
       if (app && component) {
@@ -327,16 +327,16 @@ export class LayoutEngine {
       // Replace applet placeholders
       for (const applet of parsed.applets) {
         const ph = textEl.querySelector(
-          `[data-agentchat-applet="${applet.placeholder}"]`
+          `[data-obsidian-agents-applet="${applet.placeholder}"]`
         ) as HTMLElement | null;
         if (ph) mountAppletInto(ph, applet, themeVars);
       }
       // Replace rich-layout placeholders. This must run before
-      // activateTermLinks so that any `agentchat-terms` blocks have
+      // activateTermLinks so that any `obsidian-agents-terms` blocks have
       // registered their definitions.
       for (const layout of rich.layouts) {
         const ph = textEl.querySelector(
-          `[data-agentchat-rich="${layout.placeholder}"]`
+          `[data-obsidian-agents-rich="${layout.placeholder}"]`
         ) as HTMLElement | null;
         if (ph) mountRichLayout(ph, layout, { app, component, sourcePath });
       }
@@ -347,14 +347,14 @@ export class LayoutEngine {
     doRender();
 
     for (const block of blocks) {
-      const blockEl = wrapper.createDiv({ cls: `agentchat-layout-block ${positionToClass(block.position)}` });
+      const blockEl = wrapper.createDiv({ cls: `obsidian-agents-layout-block ${positionToClass(block.position)}` });
 
       if (block.width) {
         blockEl.style.width = block.width;
       }
 
       if (block.type === "image") {
-        const img = blockEl.createEl("img", { cls: "agentchat-layout-image" });
+        const img = blockEl.createEl("img", { cls: "obsidian-agents-layout-image" });
         img.src = block.content;
         img.style.maxWidth = "100%";
       } else if (block.type === "applet") {

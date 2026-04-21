@@ -22,14 +22,14 @@ export class MessageBubble extends Component {
     this.plugin = plugin;
 
     this.wrapper = container.createDiv({
-      cls: `agentchat-message-wrapper ${
-        message.role === "user" ? "agentchat-message-wrapper-user" : "agentchat-message-wrapper-agent"
+      cls: `obsidian-agents-message-wrapper ${
+        message.role === "user" ? "obsidian-agents-message-wrapper-user" : "obsidian-agents-message-wrapper-agent"
       }`,
     });
 
     this.bubble = this.wrapper.createDiv({
-      cls: `agentchat-message-bubble ${
-        message.role === "user" ? "agentchat-message-bubble-user" : "agentchat-message-bubble-agent"
+      cls: `obsidian-agents-message-bubble ${
+        message.role === "user" ? "obsidian-agents-message-bubble-user" : "obsidian-agents-message-bubble-agent"
       }`,
     });
 
@@ -61,8 +61,8 @@ export class MessageBubble extends Component {
 
     // Recreate bubble
     this.bubble = this.wrapper.createDiv({
-      cls: `agentchat-message-bubble ${
-        isUser ? "agentchat-message-bubble-user" : "agentchat-message-bubble-agent"
+      cls: `obsidian-agents-message-bubble ${
+        isUser ? "obsidian-agents-message-bubble-user" : "obsidian-agents-message-bubble-agent"
       }`,
     });
 
@@ -105,12 +105,12 @@ export class MessageBubble extends Component {
 
       if (images.length > 0) {
         const imgContainer = document.createElement("div");
-        imgContainer.className = "agentchat-user-attachments agentchat-user-attachments-images";
+        imgContainer.className = "obsidian-agents-user-attachments obsidian-agents-user-attachments-images";
         // Insert before the bubble so images sit above the text bubble
         this.wrapper.insertBefore(imgContainer, this.bubble);
 
         for (const att of images) {
-          const img = imgContainer.createEl("img", { cls: "agentchat-user-attachment-img" });
+          const img = imgContainer.createEl("img", { cls: "obsidian-agents-user-attachment-img" });
           img.src = att.dataUrl!;
           img.alt = att.name;
           img.style.cursor = "zoom-in";
@@ -120,9 +120,9 @@ export class MessageBubble extends Component {
 
       if (files.length > 0) {
         // Non-image files still sit inside/below the bubble text
-        const fileContainer = this.bubble.createDiv({ cls: "agentchat-user-attachments" });
+        const fileContainer = this.bubble.createDiv({ cls: "obsidian-agents-user-attachments" });
         for (const att of files) {
-          const fileEl = fileContainer.createDiv({ cls: "agentchat-user-attachment-file" });
+          const fileEl = fileContainer.createDiv({ cls: "obsidian-agents-user-attachment-file" });
           fileEl.setText(`📄 ${att.name}`);
         }
       }
@@ -130,10 +130,10 @@ export class MessageBubble extends Component {
 
     // Re-attach the streaming indicator if we're still streaming
     if (this.isStreaming) {
-      this.streamingEl = this.bubble.createDiv({ cls: "agentchat-streaming-indicator" });
-      this.streamingEl.createDiv({ cls: "agentchat-streaming-dot" });
-      this.streamingEl.createDiv({ cls: "agentchat-streaming-dot" });
-      this.streamingEl.createDiv({ cls: "agentchat-streaming-dot" });
+      this.streamingEl = this.bubble.createDiv({ cls: "obsidian-agents-streaming-indicator" });
+      this.streamingEl.createDiv({ cls: "obsidian-agents-streaming-dot" });
+      this.streamingEl.createDiv({ cls: "obsidian-agents-streaming-dot" });
+      this.streamingEl.createDiv({ cls: "obsidian-agents-streaming-dot" });
     } else {
       this.streamingEl = null;
     }
@@ -146,9 +146,9 @@ export class MessageBubble extends Component {
   }
 
   private renderActions(): void {
-    const row = this.wrapper.createDiv({ cls: "agentchat-message-actions" });
+    const row = this.wrapper.createDiv({ cls: "obsidian-agents-message-actions" });
     const copyBtn = row.createEl("button", {
-      cls: "agentchat-message-action-btn",
+      cls: "obsidian-agents-message-action-btn",
       attr: { "aria-label": "Copy" },
     });
     setIcon(copyBtn, "copy");
@@ -165,7 +165,7 @@ export class MessageBubble extends Component {
 
     if (this.message.role === "agent") {
       const replyBtn = row.createEl("button", {
-        cls: "agentchat-message-action-btn",
+        cls: "obsidian-agents-message-action-btn",
         attr: { "aria-label": "Reply" },
       });
       setIcon(replyBtn, "reply");
@@ -175,21 +175,21 @@ export class MessageBubble extends Component {
         const sel = window.getSelection()?.toString().trim();
         const quote = sel || this.message.content;
         this.wrapper.dispatchEvent(
-          new CustomEvent("agentchat:reply", { detail: quote, bubbles: true })
+          new CustomEvent("obsidian-agents:reply", { detail: quote, bubbles: true })
         );
       });
     }
   }
 
   private openLightbox(src: string, name: string): void {
-    const overlay = document.body.createDiv({ cls: "agentchat-lightbox" });
+    const overlay = document.body.createDiv({ cls: "obsidian-agents-lightbox" });
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-label", `Preview ${name}`);
-    const img = overlay.createEl("img", { cls: "agentchat-lightbox-img" });
+    const img = overlay.createEl("img", { cls: "obsidian-agents-lightbox-img" });
     img.src = src;
     img.alt = name;
     const close = overlay.createEl("button", {
-      cls: "agentchat-lightbox-close",
+      cls: "obsidian-agents-lightbox-close",
       attr: { "aria-label": "Close preview" },
     });
     setIcon(close, "x");
@@ -202,7 +202,7 @@ export class MessageBubble extends Component {
       if (e.key === "Escape") dismiss();
     };
     overlay.addEventListener("click", (e) => {
-      if (e.target === overlay || (e.target as HTMLElement).closest(".agentchat-lightbox-close")) {
+      if (e.target === overlay || (e.target as HTMLElement).closest(".obsidian-agents-lightbox-close")) {
         dismiss();
       }
     });

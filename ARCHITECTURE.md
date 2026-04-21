@@ -1,7 +1,7 @@
-# AgentChat Plugin Architecture
+# Obsidian Agents Plugin Architecture
 
 ## Overview
-AgentChat is a high-quality Obsidian chat interface for Hermes agents. It is focused on rich UI, session management, and seamless Hermes CLI integration.
+Obsidian Agents is a high-quality Obsidian chat interface for Hermes agents. It is focused on rich UI, session management, and seamless Hermes CLI integration.
 
 ## Tech Stack
 - TypeScript + esbuild (same as AIUI)
@@ -33,7 +33,7 @@ src/
     commands.ts                  -- Hermes CLI command autocomplete/suggestions
     applets.ts                   -- Dynamic applet registry & renderer
   ui/
-    ChatView.ts                  -- Main ItemView ("agentchat")
+    ChatView.ts                  -- Main ItemView ("obsidian-agents")
     components/
       Sidebar.ts                 -- Session tree with folders
       Composer.ts                -- Input with @mention popover, file paste
@@ -120,7 +120,7 @@ interface PendingPermission {
 type PermissionDecision = { action: "accept" } | { action: "deny" } | { action: "explain"; reason: string };
 
 // Settings
-interface AgentChatSettings {
+interface ObsidianAgentsSettings {
   agentName: string;
   model: string;
   effortLevel: "low" | "medium" | "high";
@@ -141,7 +141,7 @@ interface AgentChatSettings {
 
 ## Hermes Integration Strategy
 
-AgentChat inherits Hermes CLI config by default. The plugin communicates with the Hermes gateway (same pattern as AIUI) or spawns the CLI directly. For v1, we use a local gateway approach:
+Obsidian Agents inherits Hermes CLI config by default. The plugin communicates with the Hermes gateway (same pattern as AIUI) or spawns the CLI directly. For v1, we use a local gateway approach:
 
 - `src/hermes.ts` exposes `sendMessage(session, message, handlers)`
 - Handlers: onToken, onThinking, onToolCall, onComplete, onError
@@ -152,14 +152,14 @@ AgentChat inherits Hermes CLI config by default. The plugin communicates with th
 Messages from the agent can contain layout directives:
 
 ```markdown
-<div data-agentchat-layout="right" data-agentchat-width="300px">
+<div data-obsidian-agents-layout="right" data-obsidian-agents-width="300px">
   ![image](path)
 </div>
 
 Some text here that wraps around the image.
 ```
 
-The LayoutEngine scans rendered HTML for `data-agentchat-layout` attributes and repositions elements using CSS flex/grid. Applets use `<iframe>` or sandboxed `<div>` with the same positioning system.
+The LayoutEngine scans rendered HTML for `data-obsidian-agents-layout` attributes and repositions elements using CSS flex/grid. Applets use `<iframe>` or sandboxed `<div>` with the same positioning system.
 
 ## Mention System
 

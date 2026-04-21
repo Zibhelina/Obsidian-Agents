@@ -14,14 +14,14 @@ export function createAppletElement(
 	id: string,
 	props: Record<string, unknown>
 ): HTMLElement {
-	const wrapper = document.createDiv({ cls: "agentchat-applet" });
+	const wrapper = document.createDiv({ cls: "obsidian-agents-applet" });
 	wrapper.dataset.appletId = id;
 
 	const def = registry.get(id);
 	if (def) {
 		def.render(wrapper, props);
 	} else {
-		const fallback = wrapper.createDiv({ cls: "agentchat-applet-error" });
+		const fallback = wrapper.createDiv({ cls: "obsidian-agents-applet-error" });
 		fallback.setText(`Unknown applet: ${id}`);
 	}
 
@@ -32,10 +32,10 @@ export function createAppletElement(
 registerApplet({
 	id: "code-block",
 	render(container, props) {
-		container.addClass("agentchat-applet-code");
+		container.addClass("obsidian-agents-applet-code");
 		const code = String(props.code ?? props.content ?? "");
 		const lang = String(props.language ?? props.lang ?? "");
-		const pre = container.createEl("pre", { cls: "agentchat-applet-code-pre" });
+		const pre = container.createEl("pre", { cls: "obsidian-agents-applet-code-pre" });
 		const el = pre.createEl("code", {
 			cls: lang ? `language-${lang}` : undefined,
 		});
@@ -47,8 +47,8 @@ registerApplet({
 registerApplet({
 	id: "chart",
 	render(container, props) {
-		container.addClass("agentchat-applet-chart");
-		const canvas = container.createEl("canvas", { cls: "agentchat-applet-chart-canvas" });
+		container.addClass("obsidian-agents-applet-chart");
+		const canvas = container.createEl("canvas", { cls: "obsidian-agents-applet-chart-canvas" });
 		canvas.width = Number(props.width ?? 400);
 		canvas.height = Number(props.height ?? 200);
 		// Placeholder: consumers can draw on the canvas via props or external hooks

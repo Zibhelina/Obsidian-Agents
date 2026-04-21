@@ -14,7 +14,7 @@ import {
 } from "./lib/hermesConfig";
 import type { ApprovalMode } from "./types";
 import {
-  AgentChatSettings,
+  ObsidianAgentsSettings,
   ChatSession,
   ChatMessage,
   Attachment,
@@ -30,8 +30,8 @@ import { HermesInterface } from "./hermes";
 import { resolveMentions, injectContextIntoMessage } from "./features/mentions";
 import { generateId } from "./lib/id";
 
-export default class AgentChatPlugin extends Plugin {
-  settings: AgentChatSettings;
+export default class ObsidianAgentsPlugin extends Plugin {
+  settings: ObsidianAgentsSettings;
   sessions: ChatSession[] = [];
   foldersList: SessionFolder[] = [];
   activeSessionId: string | null = null;
@@ -71,17 +71,17 @@ export default class AgentChatPlugin extends Plugin {
       return view;
     });
 
-    this.addRibbonIcon("message-circle", "Open AgentChat", () => {
+    this.addRibbonIcon("message-circle", "Open Obsidian Agents", () => {
       this.activateView();
     });
 
     this.addCommand({
-      id: "open-agentchat",
-      name: "Open AgentChat",
+      id: "open-obsidian-agents",
+      name: "Open Obsidian Agents",
       callback: () => this.activateView(),
     });
 
-    this.addSettingTab(new AgentChatSettingTab(this.app, this));
+    this.addSettingTab(new ObsidianAgentsSettingTab(this.app, this));
 
     if (this.sessions.length === 0) {
       const session = createSession(null);
@@ -414,10 +414,10 @@ export default class AgentChatPlugin extends Plugin {
   }
 }
 
-class AgentChatSettingTab extends PluginSettingTab {
-  plugin: AgentChatPlugin;
+class ObsidianAgentsSettingTab extends PluginSettingTab {
+  plugin: ObsidianAgentsPlugin;
 
-  constructor(app: App, plugin: AgentChatPlugin) {
+  constructor(app: App, plugin: ObsidianAgentsPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
@@ -425,7 +425,7 @@ class AgentChatSettingTab extends PluginSettingTab {
   display(): void {
     const { containerEl } = this;
     containerEl.empty();
-    containerEl.createEl("h2", { text: "AgentChat Settings" });
+    containerEl.createEl("h2", { text: "Obsidian Agents Settings" });
 
     new Setting(containerEl)
       .setName("Agent name")

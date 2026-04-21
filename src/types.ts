@@ -70,7 +70,7 @@ export type PermissionDecision =
 
 export type ApprovalMode = "manual" | "smart" | "off";
 
-export interface AgentChatSettings {
+export interface ObsidianAgentsSettings {
   agentName: string;
   model: string;
   effortLevel: "low" | "medium" | "high";
@@ -80,7 +80,7 @@ export interface AgentChatSettings {
   approvalMode: ApprovalMode;
 }
 
-export const DEFAULT_SETTINGS: AgentChatSettings = {
+export const DEFAULT_SETTINGS: ObsidianAgentsSettings = {
   agentName: "Hermes",
   model: "auto",
   effortLevel: "medium",

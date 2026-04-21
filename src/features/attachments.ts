@@ -84,20 +84,20 @@ export function renderAttachmentPreview(
 		return;
 	}
 	container.style.display = "flex";
-	container.addClass("agentchat-attachment-list");
+	container.addClass("obsidian-agents-attachment-list");
 
 	for (const att of attachments) {
-		const chip = container.createDiv({ cls: "agentchat-attachment-chip" });
+		const chip = container.createDiv({ cls: "obsidian-agents-attachment-chip" });
 
-		const label = chip.createSpan({ cls: "agentchat-attachment-name" });
+		const label = chip.createSpan({ cls: "obsidian-agents-attachment-name" });
 		label.setText(att.name);
 
 		if (att.dataUrl && att.type === "image") {
-			const thumb = chip.createEl("img", { cls: "agentchat-attachment-thumb" });
+			const thumb = chip.createEl("img", { cls: "obsidian-agents-attachment-thumb" });
 			thumb.src = att.dataUrl;
 		}
 
-		const removeBtn = chip.createEl("button", { cls: "agentchat-attachment-remove" });
+		const removeBtn = chip.createEl("button", { cls: "obsidian-agents-attachment-remove" });
 		removeBtn.setText("\u00d7");
 		removeBtn.addEventListener("click", () => onRemove(att.id));
 	}

@@ -1,4 +1,4 @@
-import { AgentChatSettings, ChatMessage, StreamHandlers, ToolCall } from "./types";
+import { ObsidianAgentsSettings, ChatMessage, StreamHandlers, ToolCall } from "./types";
 import { estimateTokens } from "./tokenizer";
 import { existsSync, readFileSync } from "fs";
 import { homedir } from "os";
@@ -47,7 +47,7 @@ function normalizeGatewayUrl(url: string): string {
   }
 }
 
-function getGatewayUrl(settings: AgentChatSettings): string {
+function getGatewayUrl(settings: ObsidianAgentsSettings): string {
   if (settings.hermesGatewayUrl) {
     const normalized = normalizeGatewayUrl(settings.hermesGatewayUrl);
     if (normalized) return normalized;
@@ -58,38 +58,38 @@ function getGatewayUrl(settings: AgentChatSettings): string {
   return `http://${host}:${port}/v1`;
 }
 
-function getApiKey(settings: AgentChatSettings): string {
+function getApiKey(settings: ObsidianAgentsSettings): string {
   if (settings.hermesApiKey) return settings.hermesApiKey;
   const env = parseEnv(readTextFile(HERMES_ENV_PATH));
   return env.API_SERVER_KEY || "";
 }
 
-const AGENTCHAT_SYSTEM_PROMPT = `You are running inside the AgentChat Obsidian plugin. The UI renders your responses as markdown and supports a special capability: **inline applets** (interactive HTML or React) that you can embed and position anywhere in your reply.
+const AGENTCHAT_SYSTEM_PROMPT = `You are running inside the Obsidian Agents Obsidian plugin. The UI renders your responses as markdown and supports a special capability: **inline applets** (interactive HTML or React) that you can embed and position anywhere in your reply.
 
 ## Reasoning trace
 
-The AgentChat UI has a collapsible "Reasoning" panel on each agent message that is hidden by default and opens when the user clicks it. Put any thinking, planning, or tool-use commentary you'd like to expose inside \`<thinking>…</thinking>\` tags. Everything between those tags is routed to the Reasoning panel and does NOT appear in the visible reply.
+The Obsidian Agents UI has a collapsible "Reasoning" panel on each agent message that is hidden by default and opens when the user clicks it. Put any thinking, planning, or tool-use commentary you'd like to expose inside \`<thinking>…</thinking>\` tags. Everything between those tags is routed to the Reasoning panel and does NOT appear in the visible reply.
 
 Guidelines:
 - Use \`<thinking>\` for step-by-step reasoning, plans, uncertainty, and narration of what tool calls you're about to make. Close the tag before you start writing the user-facing answer.
 - Keep the visible reply outside the thinking block focused, polished, and final — no "Let me check…" preambles out there.
 - You may open/close \`<thinking>\` tags multiple times in one turn if you need to reason, write a paragraph, then reason again.
-- Do not put rich layout blocks (\`agentchat-hero\`, \`agentchat-gallery\`, etc.) inside \`<thinking>\` — only the final visible reply should contain them.
+- Do not put rich layout blocks (\`obsidian-agents-hero\`, \`obsidian-agents-gallery\`, etc.) inside \`<thinking>\` — only the final visible reply should contain them.
 
 
 ## Applet syntax
 
-Use a fenced code block with language \`agentchat-applet\` (for raw HTML + vanilla JS) or \`agentchat-react\` (for React 18). The info line accepts these attributes:
+Use a fenced code block with language \`obsidian-agents-applet\` (for raw HTML + vanilla JS) or \`obsidian-agents-react\` (for React 18). The info line accepts these attributes:
 
 - \`position=inline|left|right|above|below\` — default: \`inline\`. Use \`left\` / \`right\` to float the applet and let surrounding paragraphs wrap around it (Wikipedia-style).
 - \`width=320px\` (or any CSS length)
 - \`height=240px\`
 
-### agentchat-react format
+### obsidian-agents-react format
 
 Write your component as a named or arrow function and assign it to \`App\` — the renderer mounts it automatically:
 
-\`\`\`agentchat-react
+\`\`\`obsidian-agents-react
 const App = () => {
   const [count, setCount] = React.useState(0);
   return React.createElement('div', null,
@@ -101,7 +101,7 @@ const App = () => {
 
 If you prefer JSX-style syntax, you must call \`createRoot\` yourself:
 
-\`\`\`agentchat-react
+\`\`\`obsidian-agents-react
 import { useState } from "https://esm.sh/react@18";
 const App = () => {
   const [n, setN] = useState(0);
@@ -119,7 +119,7 @@ createRoot(document.getElementById('root')).render(React.createElement(App));
   import * as THREE from "https://esm.sh/three@0.160";
   import * as d3 from "https://esm.sh/d3@7";
   \`\`\`
-- For 3D / canvas visualizations that don't need React state, prefer \`agentchat-applet\` (raw HTML) — it has fewer constraints and supports importmaps in the \`<head>\`.
+- For 3D / canvas visualizations that don't need React state, prefer \`obsidian-agents-applet\` (raw HTML) — it has fewer constraints and supports importmaps in the \`<head>\`.
 
 ## Theming
 
@@ -139,17 +139,17 @@ Only emit an applet when it adds genuine interactive or visual value — otherwi
 
 ## Rich layout blocks
 
-In addition to applets, AgentChat renders JSON-driven layout blocks for polished media-heavy replies (see the \`agentchat-layouts\` skill for full schemas):
+In addition to applets, Obsidian Agents renders JSON-driven layout blocks for polished media-heavy replies (see the \`obsidian-agents-layouts\` skill for full schemas):
 
-- \`\`\`agentchat-hero\`\`\` — one large image + 1-2 stacked thumbnails (Wikipedia-style opener).
-- \`\`\`agentchat-gallery\`\`\` — responsive grid of images (good for moodboards, comparisons).
-- \`\`\`agentchat-carousel\`\`\` — horizontal scroller with arrows + counter (sequential browsing).
-- \`\`\`agentchat-map\`\`\` — Leaflet map with rating-style pins \`[{lat, lng, label, rating}]\`.
-- \`\`\`agentchat-card-list\`\`\` — vertical list of result cards (title, rating, category, status, body, thumbnail).
-- \`\`\`agentchat-split\`\`\` — visual (image / mini-gallery / interactive applet) on one side, markdown prose on the other. Use when the text is a first-class partner to the visual.
-- \`\`\`agentchat-terms\`\`\` — silent glossary block; pair with inline \`[[Label]]{#slug}\` markers to give key entities a click-to-open detail panel (hero images, summary, key facts, sources).
+- \`\`\`obsidian-agents-hero\`\`\` — one large image + 1-2 stacked thumbnails (Wikipedia-style opener).
+- \`\`\`obsidian-agents-gallery\`\`\` — responsive grid of images (good for moodboards, comparisons).
+- \`\`\`obsidian-agents-carousel\`\`\` — horizontal scroller with arrows + counter (sequential browsing).
+- \`\`\`obsidian-agents-map\`\`\` — Leaflet map with rating-style pins \`[{lat, lng, label, rating}]\`.
+- \`\`\`obsidian-agents-card-list\`\`\` — vertical list of result cards (title, rating, category, status, body, thumbnail).
+- \`\`\`obsidian-agents-split\`\`\` — visual (image / mini-gallery / interactive applet) on one side, markdown prose on the other. Use when the text is a first-class partner to the visual.
+- \`\`\`obsidian-agents-terms\`\`\` — silent glossary block; pair with inline \`[[Label]]{#slug}\` markers to give key entities a click-to-open detail panel (hero images, summary, key facts, sources).
 
-Use these blocks for images, maps, and structured results instead of plain markdown image lists. Load the \`agentchat-layouts\` skill for exact schemas and when-to-use guidance.`;
+Use these blocks for images, maps, and structured results instead of plain markdown image lists. Load the \`obsidian-agents-layouts\` skill for exact schemas and when-to-use guidance.`;
 
 type ContentPart =
   | { type: "text"; text: string }
@@ -329,9 +329,9 @@ class ThinkingStripper {
 }
 
 export class HermesInterface {
-  private settings: AgentChatSettings;
+  private settings: ObsidianAgentsSettings;
 
-  constructor(settings: AgentChatSettings) {
+  constructor(settings: ObsidianAgentsSettings) {
     this.settings = settings;
   }
 
@@ -349,7 +349,7 @@ export class HermesInterface {
     if (!gatewayUrl) {
       handlers.onError(
         new Error(
-          "Hermes gateway URL not configured. Set it in AgentChat settings or ensure ~/.hermes/.env has API_SERVER_HOST and API_SERVER_PORT."
+          "Hermes gateway URL not configured. Set it in Obsidian Agents settings or ensure ~/.hermes/.env has API_SERVER_HOST and API_SERVER_PORT."
         )
       );
       return;

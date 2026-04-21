@@ -18,9 +18,9 @@ import { ReplyHandle } from "./components/ReplyHandle";
 import { TermPanel } from "./components/TermPanel";
 import { generateId } from "../lib/id";
 
-export const CHAT_VIEW_TYPE = "agentchat";
+export const CHAT_VIEW_TYPE = "obsidian-agents";
 
-export interface IAgentChatPlugin {
+export interface IObsidianAgentsPlugin {
   app: any;
   settings: { agentName: string; model: string; contextWindow: number };
   sessions: ChatSession[];
@@ -51,7 +51,7 @@ export interface IAgentChatPlugin {
 
 export class ChatView extends ItemView {
   static VIEW_TYPE = CHAT_VIEW_TYPE;
-  private plugin: IAgentChatPlugin;
+  private plugin: IObsidianAgentsPlugin;
 
   private sidebar: Sidebar | null = null;
   private messageList: MessageList | null = null;
@@ -62,7 +62,7 @@ export class ChatView extends ItemView {
 
   private currentSessionId: string | null = null;
 
-  constructor(leaf: WorkspaceLeaf, plugin: IAgentChatPlugin) {
+  constructor(leaf: WorkspaceLeaf, plugin: IObsidianAgentsPlugin) {
     super(leaf);
     this.plugin = plugin;
   }
@@ -72,13 +72,13 @@ export class ChatView extends ItemView {
   }
 
   getDisplayText(): string {
-    return "AgentChat";
+    return "Obsidian Agents";
   }
 
   async onOpen(): Promise<void> {
     const container = this.containerEl.children[1] as HTMLElement;
     container.empty();
-    container.addClass("agentchat-view");
+    container.addClass("obsidian-agents-view");
     // Strip Obsidian's default view-content padding so we fill edge-to-edge
     container.style.padding = "0";
 
@@ -102,7 +102,7 @@ export class ChatView extends ItemView {
     this.addChild(this.sidebar);
 
     // Main chat area
-    const chatPanel = container.createDiv({ cls: "agentchat-chat-panel" });
+    const chatPanel = container.createDiv({ cls: "obsidian-agents-chat-panel" });
 
     this.messageList = new MessageList(chatPanel);
     this.addChild(this.messageList);
@@ -121,9 +121,9 @@ export class ChatView extends ItemView {
 
     // When the composer flips to expanded mode, add a root class so CSS
     // can reshape the layout into a right-side document view.
-    container.addEventListener("agentchat:composer-expanded", (e: Event) => {
+    container.addEventListener("obsidian-agents:composer-expanded", (e: Event) => {
       const expanded = (e as CustomEvent).detail as boolean;
-      container.toggleClass("agentchat-composer-docked", expanded);
+      container.toggleClass("obsidian-agents-composer-docked", expanded);
     });
 
     const mentionPopover = new MentionPopover(
@@ -138,7 +138,7 @@ export class ChatView extends ItemView {
     });
 
     // Reply button embedded in each agent message dispatches this event
-    container.addEventListener("agentchat:reply", (e: Event) => {
+    container.addEventListener("obsidian-agents:reply", (e: Event) => {
       const quote = (e as CustomEvent).detail as string;
       if (quote) this.composer?.setReplyQuote(quote);
     });
@@ -147,7 +147,7 @@ export class ChatView extends ItemView {
     // inline `[[Label]]{#slug}` pill in any agent message.
     this.termPanel = new TermPanel(container, this.plugin.app, "");
     this.addChild(this.termPanel);
-    container.addEventListener("agentchat:open-term", (e: Event) => {
+    container.addEventListener("obsidian-agents:open-term", (e: Event) => {
       const detail = (e as CustomEvent).detail as { id?: string } | undefined;
       if (detail?.id) this.termPanel?.open(detail.id);
     });
@@ -203,16 +203,16 @@ export class ChatView extends ItemView {
   private updateEmptyState(session: ChatSession): void {
     const hasUserMsg = session.messages.some((m) => m.role === "user");
     const panel = this.containerEl.querySelector(
-      ".agentchat-chat-panel"
+      ".obsidian-agents-chat-panel"
     ) as HTMLElement | null;
     if (!panel) return;
-    panel.classList.toggle("agentchat-empty", !hasUserMsg);
+    panel.classList.toggle("obsidian-agents-empty", !hasUserMsg);
 
-    let greeting = panel.querySelector(".agentchat-greeting") as HTMLElement | null;
+    let greeting = panel.querySelector(".obsidian-agents-greeting") as HTMLElement | null;
     if (!hasUserMsg) {
       if (!greeting) {
         greeting = document.createElement("div");
-        greeting.className = "agentchat-greeting";
+        greeting.className = "obsidian-agents-greeting";
         panel.insertBefore(greeting, panel.firstChild);
       }
       greeting.setText(this.pickGreeting());
@@ -247,11 +247,11 @@ export class ChatView extends ItemView {
 
     // Remove greeting / empty-state once the user sends something
     const panel = this.containerEl.querySelector(
-      ".agentchat-chat-panel"
+      ".obsidian-agents-chat-panel"
     ) as HTMLElement | null;
     if (panel) {
-      panel.classList.remove("agentchat-empty");
-      panel.querySelector(".agentchat-greeting")?.remove();
+      panel.classList.remove("obsidian-agents-empty");
+      panel.querySelector(".obsidian-agents-greeting")?.remove();
     }
 
     let agentMsgId: string | null = null;
@@ -377,7 +377,7 @@ export class ChatView extends ItemView {
   showPermissionWidget(toolCall: ToolCall): void {
     if (!this.messageList) return;
     const widgetContainer = this.messageList.containerEl.createDiv({
-      cls: "agentchat-permission-slot",
+      cls: "obsidian-agents-permission-slot",
     });
 
     const widget = new PermissionWidget(widgetContainer, toolCall, (decision) => {

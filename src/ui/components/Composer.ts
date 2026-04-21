@@ -51,23 +51,23 @@ export class Composer extends Component {
     this.onSend = onSend;
     this.onAbort = onAbort ?? null;
 
-    this.containerEl = container.createDiv({ cls: "agentchat-composer" });
+    this.containerEl = container.createDiv({ cls: "obsidian-agents-composer" });
 
-    this.attachmentsEl = this.containerEl.createDiv({ cls: "agentchat-attachment-list" });
+    this.attachmentsEl = this.containerEl.createDiv({ cls: "obsidian-agents-attachment-list" });
     this.attachmentsEl.style.display = "none";
 
-    const inputWrap = this.containerEl.createDiv({ cls: "agentchat-composer-input-wrap" });
+    const inputWrap = this.containerEl.createDiv({ cls: "obsidian-agents-composer-input-wrap" });
 
-    this.quoteEl = inputWrap.createDiv({ cls: "agentchat-reply-quote" });
+    this.quoteEl = inputWrap.createDiv({ cls: "obsidian-agents-reply-quote" });
     this.quoteEl.style.display = "none";
 
-    this.chipsEl = inputWrap.createDiv({ cls: "agentchat-mention-chips" });
+    this.chipsEl = inputWrap.createDiv({ cls: "obsidian-agents-mention-chips" });
     this.chipsEl.style.display = "none";
 
-    const inputRow = inputWrap.createDiv({ cls: "agentchat-composer-input-row" });
+    const inputRow = inputWrap.createDiv({ cls: "obsidian-agents-composer-input-row" });
 
     const attachBtn = inputRow.createEl("button", {
-      cls: "agentchat-composer-attach-btn",
+      cls: "obsidian-agents-composer-attach-btn",
       attr: { "aria-label": "Attach file" },
     });
     setIcon(attachBtn, "plus");
@@ -83,7 +83,7 @@ export class Composer extends Component {
       input.click();
     });
 
-    const editorHost = inputRow.createDiv({ cls: "agentchat-composer-editor-host" });
+    const editorHost = inputRow.createDiv({ cls: "obsidian-agents-composer-editor-host" });
     this.editor = new LivePreviewEditor(editorHost, {
       placeholder: "Ask anything",
       onChange: () => {
@@ -100,14 +100,14 @@ export class Composer extends Component {
     });
 
     this.sendBtn = inputRow.createEl("button", {
-      cls: "agentchat-composer-send-btn",
+      cls: "obsidian-agents-composer-send-btn",
       attr: { "aria-label": "Send message" },
     });
     setIcon(this.sendBtn, "arrow-up");
     this.updateSendButton();
 
     this.expandBtn = inputWrap.createEl("button", {
-      cls: "agentchat-composer-expand-btn",
+      cls: "obsidian-agents-composer-expand-btn",
       attr: { "aria-label": "Expand editor" },
     });
     this.renderExpandIcon(false);
@@ -233,7 +233,7 @@ export class Composer extends Component {
   setMentionPopover(popover: MentionPopover): void {
     this.mentionPopover = popover;
     const inputWrap = this.containerEl.querySelector(
-      ".agentchat-composer-input-wrap"
+      ".obsidian-agents-composer-input-wrap"
     ) as HTMLElement;
     if (inputWrap) {
       this.mentionPopover.mount(inputWrap, this.getTextInput(), (item) =>
@@ -257,19 +257,19 @@ export class Composer extends Component {
     }
     this.quoteEl.style.display = "flex";
 
-    const bar = this.quoteEl.createDiv({ cls: "agentchat-reply-quote-bar" });
+    const bar = this.quoteEl.createDiv({ cls: "obsidian-agents-reply-quote-bar" });
     bar.setText("");
 
-    const body = this.quoteEl.createDiv({ cls: "agentchat-reply-quote-body" });
-    const label = body.createDiv({ cls: "agentchat-reply-quote-label" });
+    const body = this.quoteEl.createDiv({ cls: "obsidian-agents-reply-quote-body" });
+    const label = body.createDiv({ cls: "obsidian-agents-reply-quote-label" });
     label.setText("Replying to");
-    const snippet = body.createDiv({ cls: "agentchat-reply-quote-text" });
+    const snippet = body.createDiv({ cls: "obsidian-agents-reply-quote-text" });
     const preview =
       this.replyQuote.length > 200 ? this.replyQuote.slice(0, 200) + "…" : this.replyQuote;
     snippet.setText(preview);
 
     const close = this.quoteEl.createEl("button", {
-      cls: "agentchat-reply-quote-remove",
+      cls: "obsidian-agents-reply-quote-remove",
       attr: { "aria-label": "Cancel reply" },
     });
     setIcon(close, "x");
@@ -301,12 +301,12 @@ export class Composer extends Component {
     }
     this.chipsEl.style.display = "flex";
     for (const m of this.mentions) {
-      const chip = this.chipsEl.createDiv({ cls: "agentchat-mention-chip" });
-      const icon = chip.createSpan({ cls: "agentchat-mention-chip-icon" });
+      const chip = this.chipsEl.createDiv({ cls: "obsidian-agents-mention-chip" });
+      const icon = chip.createSpan({ cls: "obsidian-agents-mention-chip-icon" });
       setIcon(icon, m.type === "folder" ? "folder" : "file-text");
-      chip.createSpan({ cls: "agentchat-mention-chip-label", text: m.displayName });
+      chip.createSpan({ cls: "obsidian-agents-mention-chip-label", text: m.displayName });
       const remove = chip.createEl("button", {
-        cls: "agentchat-mention-chip-remove",
+        cls: "obsidian-agents-mention-chip-remove",
         attr: { "aria-label": `Remove ${m.displayName}` },
       });
       setIcon(remove, "x");
@@ -331,7 +331,7 @@ export class Composer extends Component {
 
   setExpanded(expanded: boolean): void {
     this.expanded = expanded;
-    this.containerEl.toggleClass("agentchat-composer-expanded", expanded);
+    this.containerEl.toggleClass("obsidian-agents-composer-expanded", expanded);
     this.renderExpandIcon(expanded);
     this.expandBtn.setAttribute(
       "aria-label",
@@ -339,7 +339,7 @@ export class Composer extends Component {
     );
     this.autoResize();
     this.containerEl.dispatchEvent(
-      new CustomEvent("agentchat:composer-expanded", {
+      new CustomEvent("obsidian-agents:composer-expanded", {
         detail: expanded,
         bubbles: true,
       })
@@ -351,11 +351,11 @@ export class Composer extends Component {
     if (this.streaming) {
       setIcon(this.sendBtn, "square");
       this.sendBtn.setAttribute("aria-label", "Stop generation");
-      this.sendBtn.classList.add("agentchat-composer-send-btn-stop");
+      this.sendBtn.classList.add("obsidian-agents-composer-send-btn-stop");
       this.sendBtn.disabled = false;
       return;
     }
-    this.sendBtn.classList.remove("agentchat-composer-send-btn-stop");
+    this.sendBtn.classList.remove("obsidian-agents-composer-send-btn-stop");
     setIcon(this.sendBtn, "arrow-up");
     this.sendBtn.setAttribute("aria-label", "Send message");
     const hasContent =
@@ -389,10 +389,10 @@ export class Composer extends Component {
   private showCommandPopover(): void {
     if (!this.commandPopoverEl) {
       const inputWrap = this.containerEl.querySelector(
-        ".agentchat-composer-input-wrap"
+        ".obsidian-agents-composer-input-wrap"
       ) as HTMLElement;
       this.commandPopoverEl = (inputWrap || this.containerEl).createDiv({
-        cls: "agentchat-command-popover",
+        cls: "obsidian-agents-command-popover",
       });
     }
     this.renderCommandItems();
@@ -410,14 +410,14 @@ export class Composer extends Component {
     this.commandPopoverEl.style.display = "block";
     for (let i = 0; i < this.commandItems.length; i++) {
       const cmd = this.commandItems[i];
-      const row = this.commandPopoverEl.createDiv({ cls: "agentchat-command-item" });
+      const row = this.commandPopoverEl.createDiv({ cls: "obsidian-agents-command-item" });
       row.setText(cmd);
       if (i === this.commandSelectedIndex) {
         row.addClass("selected");
       }
       row.addEventListener("mouseenter", () => {
         this.commandSelectedIndex = i;
-        this.commandPopoverEl?.querySelectorAll(".agentchat-command-item.selected").forEach(
+        this.commandPopoverEl?.querySelectorAll(".obsidian-agents-command-item.selected").forEach(
           (e) => e.removeClass("selected")
         );
         row.addClass("selected");
@@ -481,17 +481,17 @@ export class Composer extends Component {
     for (const att of this.attachments) {
       const isImage = att.type === "image" && !!att.dataUrl;
       const chip = this.attachmentsEl.createDiv({
-        cls: `agentchat-attachment-chip${isImage ? " agentchat-attachment-chip-image" : ""}`,
+        cls: `obsidian-agents-attachment-chip${isImage ? " obsidian-agents-attachment-chip-image" : ""}`,
       });
 
       if (isImage) {
-        const thumb = chip.createEl("img", { cls: "agentchat-attachment-thumb" });
+        const thumb = chip.createEl("img", { cls: "obsidian-agents-attachment-thumb" });
         thumb.src = att.dataUrl!;
         thumb.alt = att.name;
         chip.setAttribute("role", "button");
         chip.setAttribute("aria-label", `Preview ${att.name}`);
         chip.addEventListener("click", (e) => {
-          if ((e.target as HTMLElement).closest(".agentchat-attachment-remove")) return;
+          if ((e.target as HTMLElement).closest(".obsidian-agents-attachment-remove")) return;
           this.openImageLightbox(att.dataUrl!, att.name);
         });
       } else {
@@ -499,7 +499,7 @@ export class Composer extends Component {
         label.setText(att.name);
       }
 
-      const removeBtn = chip.createEl("button", { cls: "agentchat-attachment-remove" });
+      const removeBtn = chip.createEl("button", { cls: "obsidian-agents-attachment-remove" });
       setIcon(removeBtn, "x");
       removeBtn.setAttribute("aria-label", `Remove ${att.name}`);
       removeBtn.addEventListener("click", (e) => {
@@ -513,14 +513,14 @@ export class Composer extends Component {
   }
 
   private openImageLightbox(src: string, name: string): void {
-    const overlay = document.body.createDiv({ cls: "agentchat-lightbox" });
+    const overlay = document.body.createDiv({ cls: "obsidian-agents-lightbox" });
     overlay.setAttribute("role", "dialog");
     overlay.setAttribute("aria-label", `Preview ${name}`);
-    const img = overlay.createEl("img", { cls: "agentchat-lightbox-img" });
+    const img = overlay.createEl("img", { cls: "obsidian-agents-lightbox-img" });
     img.src = src;
     img.alt = name;
     const close = overlay.createEl("button", {
-      cls: "agentchat-lightbox-close",
+      cls: "obsidian-agents-lightbox-close",
       attr: { "aria-label": "Close preview" },
     });
     setIcon(close, "x");
@@ -533,7 +533,7 @@ export class Composer extends Component {
       if (e.key === "Escape") dismiss();
     };
     overlay.addEventListener("click", (e) => {
-      if (e.target === overlay || (e.target as HTMLElement).closest(".agentchat-lightbox-close")) {
+      if (e.target === overlay || (e.target as HTMLElement).closest(".obsidian-agents-lightbox-close")) {
         dismiss();
       }
     });

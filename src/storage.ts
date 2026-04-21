@@ -2,7 +2,8 @@ import type { App } from "obsidian";
 import type { ChatSession, SessionFolder } from "./types";
 import { generateId } from "./lib/id";
 
-const SESSIONS_PATH = ".obsidian/agentchat-sessions.json";
+const SESSIONS_PATH = ".obsidian/obsidian-agents-sessions.json";
+const LEGACY_SESSIONS_PATH = ".obsidian/agentchat-sessions.json";
 
 export function createSession(folderId: string | null): ChatSession {
 	const now = Date.now();
@@ -29,13 +30,21 @@ export function createFolder(parentId: string | null): SessionFolder {
 export async function loadSessions(
 	app: App
 ): Promise<{ sessions: ChatSession[]; folders: SessionFolder[] }> {
-	try {
-		const data = await app.vault.adapter.read(SESSIONS_PATH);
-		const parsed = JSON.parse(data);
+	const parse = (raw: string) => {
+		const parsed = JSON.parse(raw);
 		return {
 			sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
 			folders: Array.isArray(parsed.folders) ? parsed.folders : [],
 		};
+	};
+	try {
+		return parse(await app.vault.adapter.read(SESSIONS_PATH));
+	} catch {}
+	// One-time migration from the legacy AgentChat filename.
+	try {
+		const legacy = parse(await app.vault.adapter.read(LEGACY_SESSIONS_PATH));
+		await saveSessions(app, legacy);
+		return legacy;
 	} catch {
 		return { sessions: [], folders: [] };
 	}

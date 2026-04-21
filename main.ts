@@ -1,2 +1,2 @@
-import AgentChatPlugin from "./src/plugin";
-export default AgentChatPlugin;
+import ObsidianAgentsPlugin from "./src/plugin";
+export default ObsidianAgentsPlugin;

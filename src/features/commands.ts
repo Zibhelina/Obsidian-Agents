@@ -24,18 +24,18 @@ export function renderCommandPopover(
 	commands: string[],
 	onSelect: (cmd: string) => void
 ): HTMLElement {
-	const popover = container.createDiv({ cls: "agentchat-command-popover" });
+	const popover = container.createDiv({ cls: "obsidian-agents-command-popover" });
 	popover.empty();
 
 	if (commands.length === 0) {
-		const empty = popover.createDiv({ cls: "agentchat-command-empty" });
+		const empty = popover.createDiv({ cls: "obsidian-agents-command-empty" });
 		empty.setText("No commands found");
 		return popover;
 	}
 
-	const list = popover.createEl("ul", { cls: "agentchat-command-list" });
+	const list = popover.createEl("ul", { cls: "obsidian-agents-command-list" });
 	for (const cmd of commands) {
-		const li = list.createEl("li", { cls: "agentchat-command-item" });
+		const li = list.createEl("li", { cls: "obsidian-agents-command-item" });
 		li.setText(cmd);
 		li.addEventListener("click", () => {
 			onSelect(cmd);

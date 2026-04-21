@@ -56,7 +56,7 @@ export class MentionPopover {
     // Mount into document body with fixed positioning so overflow:hidden
     // ancestors cannot clip the popover.
     this.el = document.body.createDiv({
-      cls: "agentchat-mention-popover agentchat-mention-popover-fixed",
+      cls: "obsidian-agents-mention-popover obsidian-agents-mention-popover-fixed",
     });
     this.el.style.display = "none";
 
@@ -157,7 +157,7 @@ export class MentionPopover {
     if (!this.active || !this.el) return;
     const target = e.target as HTMLElement;
     if (this.el.contains(target)) return;
-    if (target.closest(".agentchat-composer")) return;
+    if (target.closest(".obsidian-agents-composer")) return;
     this.hide();
   };
 
@@ -194,17 +194,17 @@ export class MentionPopover {
     for (let i = 0; i < visible.length; i++) {
       const item = visible[i];
       const row = this.el.createDiv({
-        cls: "agentchat-mention-item" + (i === this.selectedIndex ? " selected" : ""),
+        cls: "obsidian-agents-mention-item" + (i === this.selectedIndex ? " selected" : ""),
       });
       row.setAttribute("data-index", String(i));
 
-      const icon = row.createSpan({ cls: "agentchat-mention-icon" });
+      const icon = row.createSpan({ cls: "obsidian-agents-mention-icon" });
       setIcon(icon, item.type === "folder" ? "folder" : "file-text");
 
-      const text = row.createDiv({ cls: "agentchat-mention-text" });
-      text.createDiv({ cls: "agentchat-mention-name", text: item.displayName });
+      const text = row.createDiv({ cls: "obsidian-agents-mention-text" });
+      text.createDiv({ cls: "obsidian-agents-mention-name", text: item.displayName });
       if (item.path && item.path !== item.displayName) {
-        text.createDiv({ cls: "agentchat-mention-path", text: item.path });
+        text.createDiv({ cls: "obsidian-agents-mention-path", text: item.path });
       }
 
       row.addEventListener("mouseenter", () => {
@@ -222,7 +222,7 @@ export class MentionPopover {
 
   private updateSelection(): void {
     if (!this.el) return;
-    const rows = this.el.querySelectorAll<HTMLElement>(".agentchat-mention-item");
+    const rows = this.el.querySelectorAll<HTMLElement>(".obsidian-agents-mention-item");
     rows.forEach((row) => {
       const idx = Number(row.getAttribute("data-index"));
       if (idx === this.selectedIndex) {

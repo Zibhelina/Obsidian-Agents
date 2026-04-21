@@ -1,6 +1,6 @@
 {
-  "id": "agentchat",
-  "name": "AgentChat",
+  "id": "obsidian-agents",
+  "name": "Obsidian Agents",
   "version": "1.0.0",
   "minAppVersion": "1.6.0",
   "description": "A high-quality chat interface for Hermes agents with rich layout, session management, and tool integration.",
