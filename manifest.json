@@ -1,0 +1,10 @@
+{
+  "id": "agentchat",
+  "name": "AgentChat",
+  "version": "1.0.0",
+  "minAppVersion": "1.6.0",
+  "description": "A high-quality chat interface for Hermes agents with rich layout, session management, and tool integration.",
+  "author": "Joao Henrique Costa Araujo",
+  "authorUrl": "https://github.com/Zibhelina",
+  "isDesktopOnly": true
+}

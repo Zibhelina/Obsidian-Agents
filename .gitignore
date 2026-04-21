@@ -1,0 +1,8 @@
+node_modules/
+main.js
+*.map
+.env
+data.json
+sessions.json
+history*.json
+tool-media-cache/

@@ -1,0 +1,272 @@
+import { Component, setIcon } from "obsidian";
+import { MessageMetadata, ToolCall } from "../../types";
+
+/**
+ * Modern ChatGPT-style thinking trace.
+ *
+ * The message bubble only shows a subtle "Thought for 1m 13s >" line. Clicking
+ * it opens a right-side drawer (shared across messages — reused, not stacked)
+ * that displays the full reasoning trace. Close the drawer with the X or by
+ * clicking outside.
+ */
+export class ThinkingTrace extends Component {
+  containerEl: HTMLElement;
+  private headerEl!: HTMLElement;
+  private labelEl!: HTMLElement;
+  private caretEl!: HTMLElement;
+  private metadata: MessageMetadata;
+  private thinking: string;
+  private streaming: boolean;
+  private streamStart: number;
+
+  constructor(
+    container: HTMLElement,
+    metadata: MessageMetadata,
+    thinking: string,
+    streaming: boolean,
+    streamStart: number
+  ) {
+    super();
+    this.metadata = metadata;
+    this.thinking = thinking;
+    this.streaming = streaming;
+    this.streamStart = streamStart;
+    this.containerEl = container.createDiv({ cls: "agentchat-thinking-trace" });
+    this.build();
+  }
+
+  private build(): void {
+    this.headerEl = this.containerEl.createDiv({
+      cls: "agentchat-thinking-pill",
+      attr: { role: "button", tabindex: "0" },
+    });
+
+    this.labelEl = this.headerEl.createSpan({ cls: "agentchat-thinking-label" });
+    this.caretEl = this.headerEl.createSpan({ cls: "agentchat-thinking-caret" });
+    setIcon(this.caretEl, "chevron-right");
+
+    this.renderLabel();
+
+    const open = () => this.openDrawer();
+    this.registerDomEvent(this.headerEl, "click", open);
+    this.registerDomEvent(this.headerEl, "keydown", (evt: KeyboardEvent) => {
+      if (evt.key === "Enter" || evt.key === " ") {
+        evt.preventDefault();
+        open();
+      }
+    });
+  }
+
+  private renderLabel(): void {
+    // While streaming we show a live "Thinking..." + elapsed timer.
+    // Once done we show "Thought for 1m 13s" — matching the ChatGPT pattern.
+    const elapsedMs = this.streaming
+      ? Date.now() - this.streamStart
+      : this.metadata.durationMs;
+
+    const timeText = elapsedMs != null ? this.formatDuration(elapsedMs) : null;
+    const toolCount = this.metadata.toolCalls?.length ?? 0;
+    const toolSuffix = toolCount > 0
+      ? ` · ${toolCount} tool${toolCount > 1 ? "s" : ""}`
+      : "";
+
+    if (this.streaming) {
+      const base = timeText ? `Thinking ${timeText}` : "Thinking…";
+      this.labelEl.setText(base + toolSuffix);
+      this.headerEl.addClass("agentchat-thinking-pill-streaming");
+    } else {
+      this.headerEl.removeClass("agentchat-thinking-pill-streaming");
+      const base = timeText ? `Thought for ${timeText}` : "Reasoning";
+      this.labelEl.setText(base + toolSuffix);
+    }
+  }
+
+  private formatDuration(ms: number): string {
+    const s = ms / 1000;
+    if (s < 60) return `${s.toFixed(1)}s`;
+    const m = Math.floor(s / 60);
+    const rem = Math.round(s - m * 60);
+    return rem > 0 ? `${m}m ${rem}s` : `${m}m`;
+  }
+
+  private openDrawer(): void {
+    // One drawer at a time — reuse any existing instance and swap contents.
+    const existing = document.body.querySelector(".agentchat-thinking-drawer");
+    if (existing) existing.remove();
+
+    const drawer = document.body.createDiv({ cls: "agentchat-thinking-drawer" });
+    const header = drawer.createDiv({ cls: "agentchat-thinking-drawer-header" });
+
+    const title = header.createDiv({ cls: "agentchat-thinking-drawer-title" });
+    title.setText("Activity");
+
+    const elapsedMs = this.streaming
+      ? Date.now() - this.streamStart
+      : this.metadata.durationMs;
+    if (elapsedMs != null) {
+      const dot = header.createSpan({ cls: "agentchat-thinking-drawer-sep", text: "·" });
+      void dot;
+      const time = header.createDiv({ cls: "agentchat-thinking-drawer-time" });
+      time.setText(this.formatDuration(elapsedMs));
+    }
+
+    const meta = header.createDiv({ cls: "agentchat-thinking-drawer-meta" });
+    const parts: string[] = [];
+    if (this.metadata.model) parts.push(this.metadata.model);
+    if (this.metadata.tokensUsed != null) {
+      const used = this.metadata.tokensUsed;
+      const usedStr = used >= 1000 ? `${(used / 1000).toFixed(1)}k` : `${used}`;
+      parts.push(`${usedStr} tokens`);
+    }
+    meta.setText(parts.join(" · "));
+
+    const closeBtn = header.createEl("button", {
+      cls: "agentchat-thinking-drawer-close",
+      attr: { "aria-label": "Close" },
+    });
+    closeBtn.innerHTML =
+      '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+
+    const body = drawer.createDiv({ cls: "agentchat-thinking-drawer-body" });
+    const toolCalls = this.metadata.toolCalls ?? [];
+
+    if (toolCalls.length === 0 && !this.thinking) {
+      body.createDiv({
+        cls: "agentchat-thinking-empty",
+        text: "No reasoning was emitted for this message.",
+      });
+    } else {
+      body.createDiv({
+        cls: "agentchat-thinking-drawer-section-heading",
+        text: "Thinking",
+      });
+      const timeline = body.createDiv({ cls: "agentchat-thinking-timeline" });
+
+      // Interleave reasoning paragraphs (dot rows) with tool calls (icon rows),
+      // mirroring the ChatGPT Activity panel pattern.
+      const reasoningChunks = this.splitReasoning(this.thinking);
+      const toolCount = toolCalls.length;
+      const chunkCount = reasoningChunks.length;
+      const total = Math.max(toolCount, chunkCount);
+
+      // Alternate: reasoning chunk, then tool call, repeating. This is a heuristic
+      // since the upstream gateway doesn't interleave the streams — best we can do
+      // without per-event timestamps is show them paired.
+      for (let i = 0; i < total; i++) {
+        if (i < chunkCount && reasoningChunks[i]) {
+          this.renderReasoningRow(timeline, reasoningChunks[i]);
+        }
+        if (i < toolCount) {
+          this.renderToolRow(timeline, toolCalls[i]);
+        }
+      }
+    }
+
+    const dismiss = () => {
+      drawer.remove();
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onDocClick, true);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") dismiss();
+    };
+    const onDocClick = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (!drawer.contains(target) && !this.headerEl.contains(target)) dismiss();
+    };
+    closeBtn.addEventListener("click", dismiss);
+    document.addEventListener("keydown", onKey);
+    // Defer the outside-click listener so the click that opened the drawer
+    // doesn't immediately close it.
+    setTimeout(() => {
+      document.addEventListener("mousedown", onDocClick, true);
+    }, 0);
+  }
+
+  private splitReasoning(thinking: string): string[] {
+    if (!thinking) return [];
+    // Split on double-newline paragraphs; drop empties.
+    return thinking
+      .split(/\n{2,}/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
+  }
+
+  private renderReasoningRow(host: HTMLElement, text: string): void {
+    const row = host.createDiv({ cls: "agentchat-thinking-tl-row agentchat-thinking-tl-reason" });
+    row.createDiv({ cls: "agentchat-thinking-tl-bullet agentchat-thinking-tl-bullet-dot" });
+    const body = row.createDiv({ cls: "agentchat-thinking-tl-body" });
+    const p = body.createEl("p", { cls: "agentchat-thinking-tl-text" });
+    p.setText(text);
+  }
+
+  private renderToolRow(host: HTMLElement, call: ToolCall): void {
+    const row = host.createDiv({
+      cls: `agentchat-thinking-tl-row agentchat-thinking-tl-tool agentchat-thinking-tl-tool-${call.status}`,
+    });
+    const bullet = row.createDiv({ cls: "agentchat-thinking-tl-bullet agentchat-thinking-tl-bullet-icon" });
+    const icon = (call.arguments?.emoji as string) || "⚙";
+    bullet.setText(icon);
+
+    const body = row.createDiv({ cls: "agentchat-thinking-tl-body" });
+    const rawLabel = (call.arguments?.label as string) || "";
+    const name = call.name.replace(/_/g, " ");
+    const title = rawLabel && rawLabel !== call.name ? rawLabel : name;
+    const titleEl = body.createDiv({ cls: "agentchat-thinking-tl-title" });
+    titleEl.setText(title);
+
+    // Surface any URL arguments as site chips (github.com, etc).
+    const urls = this.extractUrls(call.arguments);
+    if (urls.length > 0) {
+      const chips = body.createDiv({ cls: "agentchat-thinking-tl-chips" });
+      for (const url of urls) {
+        const chip = chips.createEl("a", { cls: "agentchat-thinking-tl-chip" });
+        chip.href = url;
+        chip.target = "_blank";
+        chip.rel = "noopener noreferrer";
+        chip.setText(this.hostnameOf(url));
+      }
+    }
+  }
+
+  private extractUrls(args: Record<string, unknown> | undefined): string[] {
+    if (!args) return [];
+    const out: string[] = [];
+    const visit = (v: unknown) => {
+      if (typeof v === "string" && /^https?:\/\//i.test(v)) {
+        out.push(v);
+      } else if (Array.isArray(v)) {
+        v.forEach(visit);
+      } else if (v && typeof v === "object") {
+        Object.values(v).forEach(visit);
+      }
+    };
+    for (const [k, v] of Object.entries(args)) {
+      if (k === "emoji" || k === "label") continue;
+      visit(v);
+    }
+    // De-dupe preserving order, cap to 4 chips.
+    return Array.from(new Set(out)).slice(0, 4);
+  }
+
+  private hostnameOf(url: string): string {
+    try {
+      return new URL(url).hostname.replace(/^www\./, "");
+    } catch {
+      return url;
+    }
+  }
+
+  update(metadata: MessageMetadata, thinking: string, streaming: boolean): void {
+    this.metadata = metadata;
+    this.thinking = thinking;
+    this.streaming = streaming;
+    this.renderLabel();
+  }
+
+
+  /** Called every tick while streaming to update elapsed time. */
+  tickElapsed(): void {
+    if (this.streaming) this.renderLabel();
+  }
+}

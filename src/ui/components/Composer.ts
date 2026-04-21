@@ -1,0 +1,580 @@
+import { App, Component, setIcon } from "obsidian";
+import { Attachment, MentionItem } from "../../types";
+import { MentionPopover, TextInputLike } from "./MentionPopover";
+import { filterCommands } from "../../features/commands";
+import { generateId } from "../../lib/id";
+import { LivePreviewEditor } from "./LivePreviewEditor";
+
+const EXPAND_THRESHOLD = 80;
+
+/**
+ * Composer: attach + reply quote + mention chips + CM6 live-preview editor + send.
+ *
+ * The text input is a CodeMirror 6 editor configured to render markdown
+ * (headings, bold/italic, code fences, inline code, blockquote, lists) in
+ * place on any line the cursor isn't currently on — a pragmatic clone of
+ * Obsidian's native Live Preview for use inside a composer.
+ */
+export class Composer extends Component {
+  containerEl: HTMLElement;
+  private editor: LivePreviewEditor;
+  private chipsEl: HTMLElement;
+  private quoteEl: HTMLElement;
+  private attachmentsEl: HTMLElement;
+  private attachments: Attachment[] = [];
+  private mentions: MentionItem[] = [];
+  private replyQuote: string | null = null;
+  private onSend: (text: string, attachments: Attachment[]) => void;
+  private onAbort: (() => void) | null = null;
+  private streaming = false;
+  private mentionPopover: MentionPopover | null = null;
+  private commandPopoverEl: HTMLElement | null = null;
+  private commandQuery = "";
+  private commandStartIndex = -1;
+  private commandItems: string[] = [];
+  private commandSelectedIndex = 0;
+  private sendBtn: HTMLButtonElement;
+  private expandBtn: HTMLButtonElement;
+  private expanded = false;
+  private app: App | null = null;
+
+  // Event subscribers registered via the TextInputLike adapter.
+  private inputListeners = new Set<() => void>();
+  private keydownListeners = new Set<(e: KeyboardEvent) => void>();
+
+  constructor(
+    container: HTMLElement,
+    onSend: (text: string, attachments: Attachment[]) => void,
+    onAbort?: () => void
+  ) {
+    super();
+    this.onSend = onSend;
+    this.onAbort = onAbort ?? null;
+
+    this.containerEl = container.createDiv({ cls: "agentchat-composer" });
+
+    this.attachmentsEl = this.containerEl.createDiv({ cls: "agentchat-attachment-list" });
+    this.attachmentsEl.style.display = "none";
+
+    const inputWrap = this.containerEl.createDiv({ cls: "agentchat-composer-input-wrap" });
+
+    this.quoteEl = inputWrap.createDiv({ cls: "agentchat-reply-quote" });
+    this.quoteEl.style.display = "none";
+
+    this.chipsEl = inputWrap.createDiv({ cls: "agentchat-mention-chips" });
+    this.chipsEl.style.display = "none";
+
+    const inputRow = inputWrap.createDiv({ cls: "agentchat-composer-input-row" });
+
+    const attachBtn = inputRow.createEl("button", {
+      cls: "agentchat-composer-attach-btn",
+      attr: { "aria-label": "Attach file" },
+    });
+    setIcon(attachBtn, "plus");
+    this.registerDomEvent(attachBtn, "click", () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.multiple = true;
+      input.onchange = () => {
+        const files = input.files;
+        if (!files) return;
+        for (const f of Array.from(files)) this.handleFile(f);
+      };
+      input.click();
+    });
+
+    const editorHost = inputRow.createDiv({ cls: "agentchat-composer-editor-host" });
+    this.editor = new LivePreviewEditor(editorHost, {
+      placeholder: "Ask anything",
+      onChange: () => {
+        this.autoResize();
+        this.handleInput();
+        this.updateSendButton();
+        this.fireInput();
+        // Direct call — guaranteed to fire even if the Set adapter has issues.
+        this.mentionPopover?.onEditorChange();
+      },
+      onSubmit: () => this.send(),
+      onKeyDown: (evt) => this.handleEditorKeyDown(evt),
+      onPaste: (evt) => this.handlePaste(evt),
+    });
+
+    this.sendBtn = inputRow.createEl("button", {
+      cls: "agentchat-composer-send-btn",
+      attr: { "aria-label": "Send message" },
+    });
+    setIcon(this.sendBtn, "arrow-up");
+    this.updateSendButton();
+
+    this.expandBtn = inputWrap.createEl("button", {
+      cls: "agentchat-composer-expand-btn",
+      attr: { "aria-label": "Expand editor" },
+    });
+    this.renderExpandIcon(false);
+    this.expandBtn.style.display = "none";
+    this.registerDomEvent(this.expandBtn, "click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.setExpanded(!this.expanded);
+    });
+
+    this.registerDomEvent(this.sendBtn, "click", () => {
+      if (this.streaming) {
+        this.onAbort?.();
+      } else {
+        this.send();
+      }
+    });
+  }
+
+  setStreaming(streaming: boolean): void {
+    this.streaming = streaming;
+    this.updateSendButton();
+  }
+
+  private renderExpandIcon(expanded: boolean): void {
+    // Use an inline SVG so the icon renders reliably regardless of whether
+    // Obsidian's lucide sprite is loaded. Matches the "dot" bug where
+    // setIcon would sometimes leave a zero-sized svg behind.
+    const maximize =
+      '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+    const close =
+      '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    this.expandBtn.innerHTML = expanded ? close : maximize;
+  }
+
+  setApp(app: App): void {
+    this.app = app;
+    void this.app;
+  }
+
+  /**
+   * Adapter that exposes a textarea-like surface over the CM6 editor so
+   * MentionPopover can attach to it unchanged.
+   */
+  getTextInput(): TextInputLike {
+    const self = this;
+    return {
+      getValue: () => self.editor.getValue(),
+      setValue: (v) => self.editor.setValue(v),
+      getCursor: () => self.editor.getCursor(),
+      setCursor: (p) => self.editor.setCursor(p),
+      replaceRange: (from, to, insert) => self.editor.replaceRange(from, to, insert),
+      focus: () => self.editor.focus(),
+      addEventListener: (type, handler, _opts) => {
+        if (type === "input" || type === "keyup" || type === "click") {
+          self.inputListeners.add(handler as () => void);
+        } else if (type === "keydown") {
+          self.keydownListeners.add(handler as (e: KeyboardEvent) => void);
+        }
+      },
+      removeEventListener: (type, handler, _opts) => {
+        if (type === "input" || type === "keyup" || type === "click") {
+          self.inputListeners.delete(handler as () => void);
+        } else if (type === "keydown") {
+          self.keydownListeners.delete(handler as (e: KeyboardEvent) => void);
+        }
+      },
+    };
+  }
+
+  private fireInput(): void {
+    for (const fn of this.inputListeners) fn();
+  }
+
+  private handleEditorKeyDown(evt: KeyboardEvent): boolean {
+    // Command popover gets priority.
+    if (this.commandPopoverEl && this.commandPopoverEl.style.display !== "none") {
+      if (evt.key === "ArrowDown") {
+        this.commandSelectedIndex = (this.commandSelectedIndex + 1) % this.commandItems.length;
+        this.renderCommandItems();
+        return true;
+      } else if (evt.key === "ArrowUp") {
+        this.commandSelectedIndex =
+          (this.commandSelectedIndex - 1 + this.commandItems.length) % this.commandItems.length;
+        this.renderCommandItems();
+        return true;
+      } else if (evt.key === "Enter" || evt.key === "Tab") {
+        this.selectCommand(this.commandItems[this.commandSelectedIndex]);
+        return true;
+      } else if (evt.key === "Escape") {
+        this.hideCommandPopover();
+        return true;
+      }
+    }
+
+    // Forward to mention popover listeners (capture phase).
+    for (const fn of this.keydownListeners) fn(evt);
+    if (evt.defaultPrevented) return true;
+
+    if (evt.key === "Backspace" && this.mentions.length > 0) {
+      const cursor = this.editor.getCursor();
+      const sel = this.editor.getSelectionRange();
+      if (cursor === 0 && sel.from === 0 && sel.to === 0) {
+        this.mentions.pop();
+        this.renderChips();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private handlePaste(evt: ClipboardEvent): void {
+    const items = evt.clipboardData?.items;
+    if (!items) return;
+    for (const item of Array.from(items)) {
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        if (file) this.handleFile(file);
+      }
+    }
+  }
+
+  setMentionPopover(popover: MentionPopover): void {
+    this.mentionPopover = popover;
+    const inputWrap = this.containerEl.querySelector(
+      ".agentchat-composer-input-wrap"
+    ) as HTMLElement;
+    if (inputWrap) {
+      this.mentionPopover.mount(inputWrap, this.getTextInput(), (item) =>
+        this.addMention(item)
+      );
+    }
+  }
+
+  setReplyQuote(quote: string): void {
+    this.replyQuote = quote.trim();
+    this.renderQuote();
+    this.editor.focus();
+    this.updateSendButton();
+  }
+
+  private renderQuote(): void {
+    this.quoteEl.empty();
+    if (!this.replyQuote) {
+      this.quoteEl.style.display = "none";
+      return;
+    }
+    this.quoteEl.style.display = "flex";
+
+    const bar = this.quoteEl.createDiv({ cls: "agentchat-reply-quote-bar" });
+    bar.setText("");
+
+    const body = this.quoteEl.createDiv({ cls: "agentchat-reply-quote-body" });
+    const label = body.createDiv({ cls: "agentchat-reply-quote-label" });
+    label.setText("Replying to");
+    const snippet = body.createDiv({ cls: "agentchat-reply-quote-text" });
+    const preview =
+      this.replyQuote.length > 200 ? this.replyQuote.slice(0, 200) + "…" : this.replyQuote;
+    snippet.setText(preview);
+
+    const close = this.quoteEl.createEl("button", {
+      cls: "agentchat-reply-quote-remove",
+      attr: { "aria-label": "Cancel reply" },
+    });
+    setIcon(close, "x");
+    close.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.replyQuote = null;
+      this.renderQuote();
+      this.updateSendButton();
+      this.editor.focus();
+    });
+  }
+
+  private addMention(item: MentionItem): void {
+    if (!this.mentions.some((m) => m.path === item.path)) {
+      this.mentions.push(item);
+      this.renderChips();
+    }
+    this.editor.focus();
+    this.autoResize();
+    this.updateSendButton();
+  }
+
+  private renderChips(): void {
+    this.chipsEl.empty();
+    if (this.mentions.length === 0) {
+      this.chipsEl.style.display = "none";
+      return;
+    }
+    this.chipsEl.style.display = "flex";
+    for (const m of this.mentions) {
+      const chip = this.chipsEl.createDiv({ cls: "agentchat-mention-chip" });
+      const icon = chip.createSpan({ cls: "agentchat-mention-chip-icon" });
+      setIcon(icon, m.type === "folder" ? "folder" : "file-text");
+      chip.createSpan({ cls: "agentchat-mention-chip-label", text: m.displayName });
+      const remove = chip.createEl("button", {
+        cls: "agentchat-mention-chip-remove",
+        attr: { "aria-label": `Remove ${m.displayName}` },
+      });
+      setIcon(remove, "x");
+      remove.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.mentions = this.mentions.filter((x) => x.path !== m.path);
+        this.renderChips();
+        this.updateSendButton();
+        this.editor.focus();
+      });
+    }
+  }
+
+  private autoResize(): void {
+    const value = this.editor.getValue();
+    const multiLine = value.includes("\n");
+    const showExpand =
+      this.expanded || multiLine || value.length >= EXPAND_THRESHOLD;
+    this.expandBtn.style.display = showExpand ? "inline-flex" : "none";
+  }
+
+  setExpanded(expanded: boolean): void {
+    this.expanded = expanded;
+    this.containerEl.toggleClass("agentchat-composer-expanded", expanded);
+    this.renderExpandIcon(expanded);
+    this.expandBtn.setAttribute(
+      "aria-label",
+      expanded ? "Close expanded editor" : "Expand editor"
+    );
+    this.autoResize();
+    this.containerEl.dispatchEvent(
+      new CustomEvent("agentchat:composer-expanded", {
+        detail: expanded,
+        bubbles: true,
+      })
+    );
+    if (expanded) this.editor.focus();
+  }
+
+  private updateSendButton(): void {
+    if (this.streaming) {
+      setIcon(this.sendBtn, "square");
+      this.sendBtn.setAttribute("aria-label", "Stop generation");
+      this.sendBtn.classList.add("agentchat-composer-send-btn-stop");
+      this.sendBtn.disabled = false;
+      return;
+    }
+    this.sendBtn.classList.remove("agentchat-composer-send-btn-stop");
+    setIcon(this.sendBtn, "arrow-up");
+    this.sendBtn.setAttribute("aria-label", "Send message");
+    const hasContent =
+      this.editor.getValue().trim().length > 0 ||
+      this.attachments.length > 0 ||
+      this.mentions.length > 0 ||
+      this.replyQuote != null;
+    this.sendBtn.disabled = !hasContent;
+  }
+
+  private handleInput(): void {
+    const cursor = this.editor.getCursor();
+    const text = this.editor.getValue();
+    const beforeCursor = text.slice(0, cursor);
+
+    const lastNewline = beforeCursor.lastIndexOf("\n");
+    const lineStart = lastNewline === -1 ? 0 : lastNewline + 1;
+    const lineText = beforeCursor.slice(lineStart);
+
+    if (lineText.startsWith("/") && !lineText.includes(" ")) {
+      this.commandQuery = lineText.slice(1);
+      this.commandStartIndex = lineStart;
+      this.commandItems = filterCommands(this.commandQuery);
+      this.commandSelectedIndex = 0;
+      this.showCommandPopover();
+    } else {
+      this.hideCommandPopover();
+    }
+  }
+
+  private showCommandPopover(): void {
+    if (!this.commandPopoverEl) {
+      const inputWrap = this.containerEl.querySelector(
+        ".agentchat-composer-input-wrap"
+      ) as HTMLElement;
+      this.commandPopoverEl = (inputWrap || this.containerEl).createDiv({
+        cls: "agentchat-command-popover",
+      });
+    }
+    this.renderCommandItems();
+  }
+
+  private renderCommandItems(): void {
+    if (!this.commandPopoverEl) return;
+    this.commandPopoverEl.empty();
+
+    if (this.commandItems.length === 0) {
+      this.commandPopoverEl.style.display = "none";
+      return;
+    }
+
+    this.commandPopoverEl.style.display = "block";
+    for (let i = 0; i < this.commandItems.length; i++) {
+      const cmd = this.commandItems[i];
+      const row = this.commandPopoverEl.createDiv({ cls: "agentchat-command-item" });
+      row.setText(cmd);
+      if (i === this.commandSelectedIndex) {
+        row.addClass("selected");
+      }
+      row.addEventListener("mouseenter", () => {
+        this.commandSelectedIndex = i;
+        this.commandPopoverEl?.querySelectorAll(".agentchat-command-item.selected").forEach(
+          (e) => e.removeClass("selected")
+        );
+        row.addClass("selected");
+      });
+      row.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        this.selectCommand(cmd);
+      });
+    }
+  }
+
+  private selectCommand(cmd: string): void {
+    if (this.commandStartIndex < 0) return;
+    const cursor = this.editor.getCursor();
+    this.editor.replaceRange(this.commandStartIndex, cursor, cmd + " ");
+    this.editor.focus();
+    this.hideCommandPopover();
+    this.updateSendButton();
+  }
+
+  private hideCommandPopover(): void {
+    if (this.commandPopoverEl) {
+      this.commandPopoverEl.style.display = "none";
+    }
+    this.commandQuery = "";
+    this.commandItems = [];
+  }
+
+  private handleFile(file: File): void {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      const type: Attachment["type"] = file.type.startsWith("image/")
+        ? "image"
+        : file.type === "application/pdf"
+        ? "pdf"
+        : "file";
+
+      const attachment: Attachment = {
+        id: generateId(),
+        type,
+        name: file.name,
+        path: file.name,
+        dataUrl,
+      };
+      this.attachments.push(attachment);
+      this.renderAttachments();
+      this.updateSendButton();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  private renderAttachments(): void {
+    this.attachmentsEl.empty();
+    if (this.attachments.length === 0) {
+      this.attachmentsEl.style.display = "none";
+      return;
+    }
+    this.attachmentsEl.style.display = "flex";
+
+    for (const att of this.attachments) {
+      const isImage = att.type === "image" && !!att.dataUrl;
+      const chip = this.attachmentsEl.createDiv({
+        cls: `agentchat-attachment-chip${isImage ? " agentchat-attachment-chip-image" : ""}`,
+      });
+
+      if (isImage) {
+        const thumb = chip.createEl("img", { cls: "agentchat-attachment-thumb" });
+        thumb.src = att.dataUrl!;
+        thumb.alt = att.name;
+        chip.setAttribute("role", "button");
+        chip.setAttribute("aria-label", `Preview ${att.name}`);
+        chip.addEventListener("click", (e) => {
+          if ((e.target as HTMLElement).closest(".agentchat-attachment-remove")) return;
+          this.openImageLightbox(att.dataUrl!, att.name);
+        });
+      } else {
+        const label = chip.createSpan();
+        label.setText(att.name);
+      }
+
+      const removeBtn = chip.createEl("button", { cls: "agentchat-attachment-remove" });
+      setIcon(removeBtn, "x");
+      removeBtn.setAttribute("aria-label", `Remove ${att.name}`);
+      removeBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.attachments = this.attachments.filter((a) => a.id !== att.id);
+        this.renderAttachments();
+        this.updateSendButton();
+      });
+    }
+  }
+
+  private openImageLightbox(src: string, name: string): void {
+    const overlay = document.body.createDiv({ cls: "agentchat-lightbox" });
+    overlay.setAttribute("role", "dialog");
+    overlay.setAttribute("aria-label", `Preview ${name}`);
+    const img = overlay.createEl("img", { cls: "agentchat-lightbox-img" });
+    img.src = src;
+    img.alt = name;
+    const close = overlay.createEl("button", {
+      cls: "agentchat-lightbox-close",
+      attr: { "aria-label": "Close preview" },
+    });
+    setIcon(close, "x");
+
+    const dismiss = () => {
+      overlay.remove();
+      document.removeEventListener("keydown", onKey);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") dismiss();
+    };
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay || (e.target as HTMLElement).closest(".agentchat-lightbox-close")) {
+        dismiss();
+      }
+    });
+    document.addEventListener("keydown", onKey);
+  }
+
+  private send(): void {
+    const text = this.editor.getValue().trim();
+    if (!text && this.attachments.length === 0 && this.mentions.length === 0) return;
+
+    const mentionPrefix = this.mentions
+      .map((m) => `@[${m.displayName}](${m.path})`)
+      .join(" ");
+
+    const quotePrefix = this.replyQuote
+      ? this.replyQuote
+          .split("\n")
+          .map((line) => `> ${line}`)
+          .join("\n") + "\n\n"
+      : "";
+
+    const bodyText = mentionPrefix
+      ? `${mentionPrefix}${text ? " " : ""}${text}`
+      : text;
+    const fullText = `${quotePrefix}${bodyText}`;
+
+    this.onSend(fullText, [...this.attachments]);
+    this.editor.setValue("");
+    this.attachments = [];
+    this.mentions = [];
+    this.replyQuote = null;
+    this.renderAttachments();
+    this.renderChips();
+    this.renderQuote();
+    this.hideCommandPopover();
+    this.updateSendButton();
+    if (this.expanded) this.setExpanded(false);
+    this.expandBtn.style.display = "none";
+  }
+
+  onunload(): void {
+    this.editor.destroy();
+  }
+}
