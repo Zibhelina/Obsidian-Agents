@@ -207,7 +207,11 @@ export function getTerm(id: string): TermDefinition | undefined {
   return getTermRegistry().get(id);
 }
 
-const RE = /```obsidian-agents-(gallery|carousel|hero|map|card-list|split|terms)[^\n]*\n([\s\S]*?)```/g;
+// Accept both the current `obsidian-agents-*` fence prefix and the legacy
+// `agentchat-*` prefix. The plugin was renamed, but the Hermes-side skill
+// documentation has baked the old prefix into the model's context for
+// long-running sessions — without the alias every reply renders as raw JSON.
+const RE = /```(?:obsidian-agents|agentchat)-(gallery|carousel|hero|map|card-list|split|terms)[^\n]*\n([\s\S]*?)```/g;
 
 export function parseRichLayouts(content: string): {
   content: string;

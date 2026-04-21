@@ -35,7 +35,9 @@ interface ParsedApplet {
  */
 function parseApplets(content: string): { content: string; applets: ParsedApplet[] } {
   const applets: ParsedApplet[] = [];
-  const re = /```obsidian-agents-(applet|react)([^\n]*)\n([\s\S]*?)```/g;
+  // Accept both the current `obsidian-agents-*` fence prefix and the legacy
+  // `agentchat-*` prefix — see rich-layouts.ts for why.
+  const re = /```(?:obsidian-agents|agentchat)-(applet|react)([^\n]*)\n([\s\S]*?)```/g;
   let idx = 0;
   const out = content.replace(re, (_m, kind: string, attrs: string, body: string) => {
     const id = `obsidian-agents-applet-${idx++}`;
