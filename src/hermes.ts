@@ -10,6 +10,7 @@ import { generateId } from "./lib/id";
 import { SkillRegistry } from "./skills";
 
 const HERMES_ENV_PATH = join(homedir(), ".hermes", ".env");
+const REQUEST_TIMEOUT_MS = 3600000; // 1 hour
 
 function parseEnv(text: string): Record<string, string> {
   const result: Record<string, string> = {};
@@ -456,6 +457,7 @@ export class HermesInterface {
           port: url.port || (isHttps ? 443 : 80),
           path: `${url.pathname}${url.search}`,
           headers: { ...headers, "Content-Length": Buffer.byteLength(payload) },
+          timeout: REQUEST_TIMEOUT_MS,
         },
         (res) => {
           const status = res.statusCode ?? 0;
@@ -676,6 +678,11 @@ export class HermesInterface {
           return;
         }
         reject(err);
+      });
+
+      req.on("timeout", () => {
+        req.destroy();
+        reject(new Error(`Request timed out after ${REQUEST_TIMEOUT_MS / 60000} minutes`));
       });
 
       const onAbort = () => {
