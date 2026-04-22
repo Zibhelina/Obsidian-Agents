@@ -412,7 +412,12 @@ export default class ObsidianAgentsPlugin extends Plugin {
   isSessionUnread(sessionId: string): boolean {
     const session = this.sessions.find((s) => s.id === sessionId);
     if (!session) return false;
-    const readCursor = session.lastReadAt ?? session.updatedAt;
+    // Fallback is 0 (not updatedAt!) — updatedAt is bumped on every onComplete,
+    // so using it as the fallback would make the read cursor race ahead of
+    // the agent message timestamp and permanently suppress the dot.
+    // Historical sessions are handled by the loadSessionsData() migration,
+    // which stamps lastReadAt once on first load.
+    const readCursor = session.lastReadAt ?? 0;
     const latestAgent = session.messages
       .filter((m) => m.role === "agent")
       .reduce((acc, m) => Math.max(acc, m.timestamp), 0);
