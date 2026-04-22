@@ -1058,6 +1058,45 @@ button.obsidian-agents-message-action-btn:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
+/* Compact mode — single-line prompt with no skills/attachments/quote.
+   Collapse the stacked layout into one inline row (+ | editor | send)
+   wrapped in a pill. The moment anything non-trivial appears we flip
+   back to the full box layout. */
+.obsidian-agents-composer-compact .obsidian-agents-composer-input-wrap {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 6px;
+}
+
+.obsidian-agents-composer-compact .obsidian-agents-composer-editor-host {
+  flex: 1;
+  min-width: 0;
+  padding: 0 4px;
+  order: 2;
+}
+
+.obsidian-agents-composer-compact .obsidian-agents-composer-bottom-bar {
+  display: contents;
+}
+
+.obsidian-agents-composer-compact .obsidian-agents-composer-attach-btn {
+  order: 1;
+}
+
+.obsidian-agents-composer-compact .obsidian-agents-composer-bottom-spacer,
+.obsidian-agents-composer-compact .obsidian-agents-composer-skill-chips {
+  display: none;
+}
+
+.obsidian-agents-composer-compact .obsidian-agents-composer-expand-btn {
+  order: 3;
+}
+
+.obsidian-agents-composer-compact .obsidian-agents-composer-send-btn {
+  order: 4;
+}
+
 /* Bottom action bar: + | skill-chips | spacer | expand | send.
    Prompt editor sits on its own row above this bar. */
 .obsidian-agents-composer-bottom-bar {

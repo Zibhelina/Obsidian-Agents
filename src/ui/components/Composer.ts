@@ -140,6 +140,8 @@ export class Composer extends Component {
       }
     });
 
+    this.autoResize();
+
     // Dismiss the add-menu when clicking elsewhere.
     this.registerDomEvent(document, "click", (e) => {
       if (!this.addMenuEl) return;
@@ -283,6 +285,7 @@ export class Composer extends Component {
   }
 
   private renderQuote(): void {
+    this.autoResize();
     this.quoteEl.empty();
     if (!this.replyQuote) {
       this.quoteEl.style.display = "none";
@@ -327,6 +330,7 @@ export class Composer extends Component {
   }
 
   private renderChips(): void {
+    this.autoResize();
     this.chipsEl.empty();
     if (this.mentions.length === 0) {
       this.chipsEl.style.display = "none";
@@ -355,6 +359,7 @@ export class Composer extends Component {
   }
 
   private renderSkillChips(): void {
+    this.autoResize();
     this.skillChipsEl.empty();
     if (this.activeSkills.length === 0) {
       this.skillChipsEl.style.display = "none";
@@ -395,6 +400,16 @@ export class Composer extends Component {
     const showExpand =
       this.expanded || multiLine || value.length >= EXPAND_THRESHOLD;
     this.expandBtn.style.display = showExpand ? "inline-flex" : "none";
+    // Compact (single-row, pill-shaped) mode: no skills + no multi-line.
+    // Anything richer collapses back to the stacked box layout.
+    const compact =
+      !this.expanded &&
+      !multiLine &&
+      this.activeSkills.length === 0 &&
+      this.attachments.length === 0 &&
+      this.mentions.length === 0 &&
+      this.replyQuote == null;
+    this.containerEl.toggleClass("obsidian-agents-composer-compact", compact);
   }
 
   /**
@@ -692,6 +707,7 @@ export class Composer extends Component {
   }
 
   private renderAttachments(): void {
+    this.autoResize();
     this.attachmentsEl.empty();
     if (this.attachments.length === 0) {
       this.attachmentsEl.style.display = "none";
