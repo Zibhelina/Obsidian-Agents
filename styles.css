@@ -1070,8 +1070,8 @@ button.obsidian-agents-message-action-btn:hover {
      on the same curve + duration so the change reads as one motion
      rather than staggered parallel tracks. */
   transition: border-color 0.15s, box-shadow 0.15s,
-    padding 0.26s cubic-bezier(0.22, 0.61, 0.36, 1),
-    min-height 0.26s cubic-bezier(0.22, 0.61, 0.36, 1);
+    padding 0.34s cubic-bezier(0.33, 0, 0.15, 1),
+    min-height 0.34s cubic-bezier(0.33, 0, 0.15, 1);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
@@ -1083,8 +1083,8 @@ button.obsidian-agents-message-action-btn:hover {
   overflow: hidden;
   max-width: 100%;
   opacity: 1;
-  transition: max-width 0.26s cubic-bezier(0.22, 0.61, 0.36, 1),
-    opacity 0.22s ease, margin 0.26s ease;
+  transition: max-width 0.34s cubic-bezier(0.33, 0, 0.15, 1),
+    opacity 0.28s ease-out, margin 0.34s cubic-bezier(0.33, 0, 0.15, 1);
 }
 
 .obsidian-agents-composer-skill-chips-empty {
