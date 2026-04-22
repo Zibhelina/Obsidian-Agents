@@ -60,6 +60,31 @@ export class MessageBubble extends Component {
       this.addChild(this.trace);
     }
 
+    // If slash skills were active on a user message, render a chip row
+    // OUTSIDE the bubble (right above it) so the chips aren't crammed
+    // inside the same pill as the text.
+    if (isUser) {
+      const skillIds = this.message.skillIds ?? [];
+      if (skillIds.length > 0) {
+        const chipRow = this.wrapper.createDiv({
+          cls: "obsidian-agents-message-skill-chips",
+        });
+        for (const id of skillIds) {
+          const skill = getSkill(id);
+          const chip = chipRow.createSpan({
+            cls: "obsidian-agents-message-skill-chip",
+            attr: skill ? { title: skill.description } : {},
+          });
+          const iconEl = chip.createSpan({ cls: "obsidian-agents-message-skill-chip-icon" });
+          setIcon(iconEl, skill?.icon ?? "sparkles");
+          chip.createSpan({
+            cls: "obsidian-agents-message-skill-chip-label",
+            text: skill?.label ?? id.replace(/^\//, ""),
+          });
+        }
+      }
+    }
+
     // Recreate bubble
     this.bubble = this.wrapper.createDiv({
       cls: `obsidian-agents-message-bubble ${
@@ -77,27 +102,6 @@ export class MessageBubble extends Component {
       const displayText = this.message.content
         .replace(/@\[[^\]]*\]\([^)]*\)/g, "")
         .trim();
-      // If slash skills were active, render a chip row above the text so
-      // the trace of which skills applied survives into the bubble.
-      const skillIds = this.message.skillIds ?? [];
-      if (skillIds.length > 0) {
-        const chipRow = this.contentEl.createDiv({
-          cls: "obsidian-agents-message-skill-chips",
-        });
-        for (const id of skillIds) {
-          const skill = getSkill(id);
-          const chip = chipRow.createSpan({
-            cls: "obsidian-agents-message-skill-chip",
-            attr: skill ? { title: skill.description } : {},
-          });
-          const iconEl = chip.createSpan({ cls: "obsidian-agents-message-skill-chip-icon" });
-          setIcon(iconEl, skill?.icon ?? "sparkles");
-          chip.createSpan({
-            cls: "obsidian-agents-message-skill-chip-label",
-            text: skill?.label ?? id.replace(/^\//, ""),
-          });
-        }
-      }
       this.contentEl.appendText(displayText || this.message.content);
     } else {
       const blocks: LayoutBlock[] = [];

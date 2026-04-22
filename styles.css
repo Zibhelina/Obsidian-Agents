@@ -1040,6 +1040,17 @@ button.obsidian-agents-message-action-btn:hover {
   box-sizing: border-box;
 }
 
+/* Compact composer (no skills, no multi-line) is capped narrower and
+   sits a bit thicker — matches ChatGPT's resting input. */
+.obsidian-agents-composer.obsidian-agents-composer-compact
+  > .obsidian-agents-composer-input-wrap {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 8px 10px 8px 10px;
+  border-radius: 999px;
+  min-height: 52px;
+}
+
 .obsidian-agents-composer-input-wrap {
   position: relative;
   display: flex;
@@ -2211,12 +2222,14 @@ button.obsidian-agents-composer-send-btn:disabled {
   line-height: 1.3;
 }
 
-/* --- Message bubble skill chips (trace of skills used) --- */
+/* --- Message bubble skill chips (trace of skills used) ---
+   Rendered OUTSIDE the bubble, in the message wrapper — so in a
+   user (right-aligned) wrapper they right-align automatically. */
 .obsidian-agents-message-skill-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  margin-bottom: 6px;
+  margin: 0 0 6px 0;
 }
 
 .obsidian-agents-message-skill-chip {
