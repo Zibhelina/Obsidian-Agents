@@ -1650,20 +1650,28 @@ textarea.obsidian-agents-composer-textarea:focus {
 .obsidian-agents-mention-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 4px 3px 8px;
+  padding: 6px 10px 6px 8px;
   background: var(--background-modifier-hover);
   border: 1px solid var(--background-modifier-border);
-  border-radius: 6px;
+  border-radius: 999px;
   font-size: 12px;
   color: var(--text-normal);
   max-width: 240px;
+  transition: padding 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.obsidian-agents-mention-chip:hover {
+  padding-right: 8px;
 }
 
 .obsidian-agents-mention-chip-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--background-secondary);
   color: var(--interactive-accent);
   flex-shrink: 0;
 }
@@ -1674,6 +1682,7 @@ textarea.obsidian-agents-composer-textarea:focus {
 }
 
 .obsidian-agents-mention-chip-label {
+  margin-left: 7px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1684,8 +1693,10 @@ textarea.obsidian-agents-composer-textarea:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
+  width: 0;
   height: 18px;
+  margin-left: 0;
+  overflow: hidden;
   border-radius: 4px;
   border: none;
   background: transparent;
@@ -1694,11 +1705,13 @@ textarea.obsidian-agents-composer-textarea:focus {
   padding: 0;
   flex-shrink: 0;
   opacity: 0;
-  transition: opacity 0.12s, background 0.12s;
+  transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), width 0.22s cubic-bezier(0.4, 0, 0.2, 1), margin-left 0.22s cubic-bezier(0.4, 0, 0.2, 1), background 0.12s;
 }
 
 .obsidian-agents-mention-chip:hover .obsidian-agents-mention-chip-remove {
   opacity: 1;
+  width: 18px;
+  margin-left: 2px;
 }
 
 .obsidian-agents-mention-chip-remove:hover {
