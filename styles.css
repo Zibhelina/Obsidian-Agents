@@ -1039,7 +1039,7 @@ button.obsidian-agents-message-action-btn:hover {
    the pill horizontally, only vertically. */
 .obsidian-agents-composer > * {
   width: 100%;
-  max-width: 620px;
+  max-width: 520px;
   box-sizing: border-box;
   margin: 0 auto;
 }
@@ -2166,8 +2166,9 @@ button.obsidian-agents-composer-send-btn:disabled {
 }
 
 .obsidian-agents-composer-skill-chip-remove:hover {
-  background: var(--background-modifier-hover);
+  background: transparent;
   opacity: 1;
+  color: var(--text-normal);
 }
 
 .obsidian-agents-composer-skill-chip-remove .svg-icon {
