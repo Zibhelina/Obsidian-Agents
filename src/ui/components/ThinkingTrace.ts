@@ -197,17 +197,21 @@ export class ThinkingTrace extends Component {
     const MIN_WIDTH = 320;
     const MIN_CHAT_WIDTH = 400;
 
-    let dragging = false;
-
-    const onDown = (e: PointerEvent) => {
-      dragging = true;
-      resizer.setPointerCapture(e.pointerId);
-      document.body.classList.add("obsidian-agents-col-resizing");
-      e.preventDefault();
+    const endDrag = () => {
+      document.body.classList.remove("obsidian-agents-col-resizing");
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", endDrag);
+      window.removeEventListener("pointercancel", endDrag);
+      window.removeEventListener("blur", endDrag);
     };
 
     const onMove = (e: PointerEvent) => {
-      if (!dragging) return;
+      // If the drawer got detached mid-drag (e.g. user switched chats),
+      // abort cleanly so the body class doesn't get stuck.
+      if (!drawer.isConnected) {
+        endDrag();
+        return;
+      }
       const hostRect = host.getBoundingClientRect();
       const rawWidth = hostRect.right - e.clientX;
       const hostWidth = hostRect.width;
@@ -223,17 +227,18 @@ export class ThinkingTrace extends Component {
       }
     };
 
-    const onUp = (e: PointerEvent) => {
-      if (!dragging) return;
-      dragging = false;
-      try { resizer.releasePointerCapture(e.pointerId); } catch { /* no-op */ }
-      document.body.classList.remove("obsidian-agents-col-resizing");
+    const onDown = (e: PointerEvent) => {
+      e.preventDefault();
+      document.body.classList.add("obsidian-agents-col-resizing");
+      // Listen on the window so pointerup always fires even if the cursor
+      // leaves the resizer, the drawer is removed, or focus is lost.
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", endDrag);
+      window.addEventListener("pointercancel", endDrag);
+      window.addEventListener("blur", endDrag);
     };
 
     resizer.addEventListener("pointerdown", onDown);
-    resizer.addEventListener("pointermove", onMove);
-    resizer.addEventListener("pointerup", onUp);
-    resizer.addEventListener("pointercancel", onUp);
   }
 
   private splitReasoning(thinking: string): string[] {
