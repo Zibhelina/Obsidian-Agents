@@ -324,6 +324,10 @@ export class MessageBubble extends Component {
     this.stopTicker();
   }
 
+  detach(): void {
+    this.wrapper.remove();
+  }
+
   updateMeta(): void {
     // Called after metadata/thinking updates — re-render trace panel
     this.render();

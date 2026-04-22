@@ -10,7 +10,7 @@ import { generateId } from "./lib/id";
 import { SkillRegistry } from "./skills";
 
 const HERMES_ENV_PATH = join(homedir(), ".hermes", ".env");
-const REQUEST_TIMEOUT_MS = 3600000; // 1 hour
+const REQUEST_TIMEOUT_MS = 7200000; // 2 hours
 
 function parseEnv(text: string): Record<string, string> {
   const result: Record<string, string> = {};

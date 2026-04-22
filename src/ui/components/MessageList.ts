@@ -57,6 +57,14 @@ export class MessageList extends Component {
     bubble.setMessage(updated);
   }
 
+  removeMessage(id: string): void {
+    const idx = this.bubbles.findIndex((b) => b.getId() === id);
+    if (idx === -1) return;
+    const [bubble] = this.bubbles.splice(idx, 1);
+    bubble.detach();
+    this.removeChild(bubble);
+  }
+
   clear(): void {
     this.listEl.empty();
     this.bubbles = [];

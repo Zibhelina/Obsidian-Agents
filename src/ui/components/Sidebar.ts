@@ -12,6 +12,11 @@ export interface SidebarCallbacks {
   onDeleteFolder: (id: string) => void;
   onRenameFolder: (id: string, name: string) => void;
   onToggleFolderCollapse: (id: string) => void;
+  // Optional — Sidebar uses these to decorate items with a streaming spinner
+  // or unread-reply dot. Kept optional so tests / stubs don't have to wire
+  // them up; when absent the indicator column is simply empty.
+  isSessionStreaming?: (id: string) => boolean;
+  isSessionUnread?: (id: string) => boolean;
 }
 
 type DateGroup = "today" | "yesterday" | "last7days" | "older";
@@ -344,6 +349,17 @@ export class Sidebar extends Component {
     });
 
     const nameSpan = sessionEl.createSpan({ cls: "obsidian-agents-tree-label", text: session.name });
+
+    // Unread dot / streaming spinner — mutually exclusive. Streaming wins
+    // because a dot for a chat that's still actively generating would be
+    // misleading.
+    const streaming = this.callbacks.isSessionStreaming?.(session.id) ?? false;
+    const unread = !streaming && (this.callbacks.isSessionUnread?.(session.id) ?? false);
+    if (streaming) {
+      sessionEl.createSpan({ cls: "obsidian-agents-session-indicator obsidian-agents-session-spinner" });
+    } else if (unread) {
+      sessionEl.createSpan({ cls: "obsidian-agents-session-indicator obsidian-agents-session-unread-dot" });
+    }
 
     const menuBtn = sessionEl.createEl("button", {
       cls: "obsidian-agents-tree-item-menu",

@@ -1,6 +1,7 @@
 import { ItemView, WorkspaceLeaf, Component } from "obsidian";
 import {
   ChatSession,
+  ChatMessage,
   Attachment,
   ToolCall,
   PermissionDecision,
@@ -62,6 +63,20 @@ export class ChatView extends ItemView {
   private termPanel: TermPanel | null = null;
 
   private currentSessionId: string | null = null;
+  // Steering queue: when the user sends a message while a turn is still
+  // streaming, we don't interrupt the in-flight request (SSE can't inject
+  // mid-turn anyway). We show the user message immediately and flush the
+  // queue as a fresh turn once the current stream completes. Keyed by
+  // session so each chat queues independently.
+  private steeringQueue = new Map<
+    string,
+    {
+      text: string;
+      attachments: Attachment[];
+      skillIds: string[];
+      previewBubbleId: string;
+    }[]
+  >();
 
   constructor(leaf: WorkspaceLeaf, plugin: IObsidianAgentsPlugin) {
     super(leaf);
@@ -112,6 +127,8 @@ export class ChatView extends ItemView {
         onDeleteFolder: (id) => this.plugin.deleteFolder(id),
         onRenameFolder: (id, name) => this.plugin.renameFolder(id, name),
         onToggleFolderCollapse: (id) => this.plugin.toggleFolderCollapse(id),
+        isSessionStreaming: (id) => this.plugin.isStreaming(id),
+        isSessionUnread: (id) => this.plugin.isSessionUnread(id),
       },
       this.plugin.settings.agentName
     );
@@ -267,12 +284,40 @@ export class ChatView extends ItemView {
   private async doSendMessage(
     text: string,
     attachments: Attachment[],
-    skillIds: string[] = []
+    skillIds: string[] = [],
+    targetSessionId?: string
   ): Promise<void> {
-    if (!this.currentSessionId) return;
-    // Capture the session id at send-time so late stream events apply to the
-    // right session even if the user navigates away.
-    const sessionId = this.currentSessionId;
+    // Normally we dispatch to the session the user is viewing, but the
+    // steering-queue flush needs to target the session that queued the
+    // messages even if the user navigated away mid-turn.
+    const sessionId = targetSessionId ?? this.currentSessionId;
+    if (!sessionId) return;
+
+    // If a turn is still streaming, treat this send as steering: render the
+    // user's message in the transcript immediately (so they get the same
+    // feedback as a normal send) and queue the payload for dispatch once the
+    // current stream resolves. The live agent bubble keeps streaming
+    // undisturbed.
+    if (this.plugin.isStreaming(sessionId)) {
+      const previewBubbleId = generateId();
+      const queue = this.steeringQueue.get(sessionId) ?? [];
+      queue.push({ text, attachments, skillIds, previewBubbleId });
+      this.steeringQueue.set(sessionId, queue);
+
+      const userBubble: ChatMessage = {
+        id: previewBubbleId,
+        role: "user",
+        content: text,
+        attachments,
+        timestamp: Date.now(),
+        skillIds: skillIds.length > 0 ? skillIds : undefined,
+      };
+      if (sessionId === this.currentSessionId) {
+        this.messageList?.addMessage(userBubble, this.plugin);
+        this.messageList?.scrollToBottomIfFollowing();
+      }
+      return;
+    }
 
     // Remove greeting / empty-state once the user sends something
     const panel = this.containerEl.querySelector(
@@ -390,6 +435,7 @@ export class ChatView extends ItemView {
           }
           this.composer?.setStreaming(false);
         });
+        this.flushSteeringQueue(sessionId);
       },
       onError: (error) => {
         onUI(() => {
@@ -403,10 +449,55 @@ export class ChatView extends ItemView {
           }
           this.composer?.setStreaming(false);
         });
+        // Don't chain steering messages on top of a failed turn — the user
+        // will want to see the error before deciding whether to resend. Drop
+        // the queue so they can retry manually.
+        this.steeringQueue.delete(sessionId);
       },
     };
 
     await this.plugin.sendMessage(sessionId, text, attachments, handlers, skillIds);
+  }
+
+  private flushSteeringQueue(sessionId: string): void {
+    const queue = this.steeringQueue.get(sessionId);
+    if (!queue || queue.length === 0) {
+      this.steeringQueue.delete(sessionId);
+      return;
+    }
+    // Coalesce every queued steering message into a single follow-up turn.
+    // The preview user bubbles we already rendered during streaming stay in
+    // the transcript — they're already appended to the session too, via the
+    // normal sendMessage path below (plugin.sendMessage appends one user
+    // message per call, so we dispatch once with concatenated text).
+    //
+    // Why coalesce: if the user fired three steering messages in a row, we
+    // don't want three separate agent replies — one consolidated reply that
+    // addresses all the corrections reads better. The individual bubbles we
+    // rendered during streaming do NOT enter session.messages (addMessage
+    // only touches the UI list), so concatenating here is the single write.
+    const combinedText = queue.map((q) => q.text).join("\n\n");
+    const combinedAttachments = queue.flatMap((q) => q.attachments);
+    const combinedSkillIds = Array.from(
+      new Set(queue.flatMap((q) => q.skillIds))
+    );
+    this.steeringQueue.delete(sessionId);
+
+    // Remove the preview bubbles we rendered during streaming — the real
+    // turn's onStart will render the canonical user bubble backed by the
+    // session store. Leaving both in place would double them up.
+    if (sessionId === this.currentSessionId) {
+      for (const item of queue) {
+        this.messageList?.removeMessage(item.previewBubbleId);
+      }
+    }
+
+    void this.doSendMessage(
+      combinedText,
+      combinedAttachments,
+      combinedSkillIds,
+      sessionId
+    );
   }
 
   showPermissionWidget(toolCall: ToolCall): void {

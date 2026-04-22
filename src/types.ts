@@ -6,6 +6,11 @@ export interface ChatSession {
   createdAt: number;
   updatedAt: number;
   model: string;
+  // Last time the user viewed this chat. Used by the sidebar to surface an
+  // unread indicator for chats with a newer agent reply than the user has
+  // seen. Optional for backwards compat with sessions saved before this
+  // field existed — treated as "read up to createdAt" in that case.
+  lastReadAt?: number;
 }
 
 export interface SessionFolder {

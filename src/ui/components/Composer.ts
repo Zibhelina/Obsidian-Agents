@@ -148,7 +148,15 @@ export class Composer extends Component {
 
     this.registerDomEvent(this.sendBtn, "click", () => {
       if (this.streaming) {
-        this.onAbort?.();
+        // While streaming, the button doubles as send/stop depending on
+        // composer content. With content, hitting send queues a steering
+        // message for the current turn without killing the in-flight stream.
+        // Empty composer, streaming → stop.
+        if (this.hasSendableContent()) {
+          this.send();
+        } else {
+          this.onAbort?.();
+        }
       } else {
         this.send();
       }
@@ -493,8 +501,22 @@ export class Composer extends Component {
     if (expanded) this.editor.focus();
   }
 
+  private hasSendableContent(): boolean {
+    return (
+      this.editor.getValue().trim().length > 0 ||
+      this.attachments.length > 0 ||
+      this.mentions.length > 0 ||
+      this.activeSkills.length > 0 ||
+      this.replyQuote != null
+    );
+  }
+
   private updateSendButton(): void {
-    if (this.streaming) {
+    const hasContent = this.hasSendableContent();
+    // Streaming + empty → stop button. Streaming + content → send button
+    // (treated by ChatView as a steering message for the live turn).
+    // Idle + empty → disabled send. Idle + content → enabled send.
+    if (this.streaming && !hasContent) {
       setIcon(this.sendBtn, "square");
       this.sendBtn.setAttribute("aria-label", "Stop generation");
       this.sendBtn.classList.add("obsidian-agents-composer-send-btn-stop");
@@ -503,13 +525,10 @@ export class Composer extends Component {
     }
     this.sendBtn.classList.remove("obsidian-agents-composer-send-btn-stop");
     setIcon(this.sendBtn, "arrow-up");
-    this.sendBtn.setAttribute("aria-label", "Send message");
-    const hasContent =
-      this.editor.getValue().trim().length > 0 ||
-      this.attachments.length > 0 ||
-      this.mentions.length > 0 ||
-      this.activeSkills.length > 0 ||
-      this.replyQuote != null;
+    this.sendBtn.setAttribute(
+      "aria-label",
+      this.streaming ? "Send steering message" : "Send message"
+    );
     this.sendBtn.disabled = !hasContent;
   }
 

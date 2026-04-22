@@ -382,6 +382,10 @@ export default class ObsidianAgentsPlugin extends Plugin {
     this.activeSessionId = id;
     const session = this.getSession(id);
     if (session) {
+      // Stamp the read cursor so the sidebar's unread-dot derivation
+      // (lastReadAt vs latest agent message) knows the user has caught up.
+      session.lastReadAt = Date.now();
+      this.saveSessionsData();
       this.chatView?.loadSession(session);
     }
     this.chatView?.renderSidebar(this.sessions, this.foldersList, this.activeSessionId);
@@ -389,6 +393,21 @@ export default class ObsidianAgentsPlugin extends Plugin {
 
   isStreaming(sessionId: string): boolean {
     return this.activeStreams.has(sessionId);
+  }
+
+  // True when the session has an agent message newer than the user's
+  // last-read cursor, AND it's not the currently active session (viewing
+  // counts as reading). Sessions without a lastReadAt are treated as
+  // read-up-to createdAt so pre-existing chats don't all light up.
+  isSessionUnread(sessionId: string): boolean {
+    if (sessionId === this.activeSessionId) return false;
+    const session = this.sessions.find((s) => s.id === sessionId);
+    if (!session) return false;
+    const readCursor = session.lastReadAt ?? session.createdAt;
+    const latestAgent = session.messages
+      .filter((m) => m.role === "agent")
+      .reduce((acc, m) => Math.max(acc, m.timestamp), 0);
+    return latestAgent > readCursor;
   }
 
   getStreamMessageId(sessionId: string): string | null {
@@ -404,6 +423,7 @@ export default class ObsidianAgentsPlugin extends Plugin {
     if (stream) {
       stream.abort.abort();
       this.activeStreams.delete(sessionId);
+      this.chatView?.renderSidebar(this.sessions, this.foldersList, this.activeSessionId);
     }
   }
 
@@ -469,6 +489,8 @@ export default class ObsidianAgentsPlugin extends Plugin {
     this.activeStreams.set(sessionId, { messageId: agentMsgId, abort, startTime });
 
     handlers.onStart?.({ userMsg, agentMsg });
+    // Refresh sidebar so the spinner shows up for this session.
+    this.chatView?.renderSidebar(this.sessions, this.foldersList, this.activeSessionId);
 
     // Stream handlers that update session + UI
     const wrappedHandlers: StreamHandlers = {
@@ -499,15 +521,25 @@ export default class ObsidianAgentsPlugin extends Plugin {
           durationMs,
         };
         session.updatedAt = Date.now();
+        // If the user is actively viewing this session when it finishes,
+        // mark the reply as already read so the unread dot doesn't pop up
+        // on the chat they're looking at.
+        if (this.activeSessionId === sessionId) {
+          session.lastReadAt = session.updatedAt;
+        }
         this.activeStreams.delete(sessionId);
         this.saveSessionsData();
         handlers.onComplete(metadata);
+        // Refresh the sidebar so the spinner disappears and (if off-screen)
+        // the unread dot appears for this session.
+        this.chatView?.renderSidebar(this.sessions, this.foldersList, this.activeSessionId);
       },
       onError: (error) => {
         agentMsg.content += `\n\n[Error: ${error.message}]`;
         this.activeStreams.delete(sessionId);
         this.saveSessionsData();
         handlers.onError(error);
+        this.chatView?.renderSidebar(this.sessions, this.foldersList, this.activeSessionId);
       },
     };
 
