@@ -6,7 +6,6 @@ import {
   DecorationSet,
   ViewPlugin,
   WidgetType,
-  keymap,
   placeholder,
 } from "@codemirror/view";
 import { renderMath, finishRenderMath, loadMathJax } from "obsidian";
@@ -436,16 +435,6 @@ export class LivePreviewEditor {
       }
     });
 
-    const keyHandler = keymap.of([
-      {
-        key: "Mod-Enter",
-        run: () => {
-          opts.onSubmit?.();
-          return true;
-        },
-      },
-    ]);
-
     const state = EditorState.create({
       doc: opts.initialValue || "",
       extensions: [
@@ -453,7 +442,6 @@ export class LivePreviewEditor {
         this.placeholderCompartment.of(placeholder(opts.placeholder || "Ask anything")),
         livePreviewPlugin,
         updateListener,
-        keyHandler,
         EditorView.theme({
           "&": {
             fontFamily: "var(--font-interface)",
@@ -474,11 +462,16 @@ export class LivePreviewEditor {
 
     this.view = new EditorView({ state, parent: this.dom });
 
-    if (opts.onKeyDown) {
+    if (opts.onKeyDown || opts.onSubmit) {
       this.view.dom.addEventListener(
         "keydown",
         (e) => {
-          if (opts.onKeyDown!(e)) {
+          if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+            e.preventDefault();
+            opts.onSubmit?.();
+            return;
+          }
+          if (opts.onKeyDown?.(e)) {
             e.preventDefault();
           }
         },
