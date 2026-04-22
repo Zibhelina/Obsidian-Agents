@@ -403,16 +403,15 @@ export default class ObsidianAgentsPlugin extends Plugin {
   }
 
   // True when the session has an agent message newer than the user's
-  // last-read cursor, AND it's not the currently active session (viewing
-  // counts as reading). Sessions without a lastReadAt are treated as
-  // read-up-to createdAt so pre-existing chats don't all light up.
+  // last-read cursor. The read cursor advances only on explicit
+  // selectSession(), so a reply that arrives while the user is viewing
+  // a chat still produces a dot — the dot clears the next time they
+  // click the session. Sessions without a lastReadAt are treated as
+  // read up to the session's latest activity so pre-existing chats
+  // from before this feature shipped don't all light up.
   isSessionUnread(sessionId: string): boolean {
-    if (sessionId === this.activeSessionId) return false;
     const session = this.sessions.find((s) => s.id === sessionId);
     if (!session) return false;
-    // Missing lastReadAt → treat as read up to the session's latest activity,
-    // so sessions that existed before this feature shipped don't all show
-    // an unread dot.
     const readCursor = session.lastReadAt ?? session.updatedAt;
     const latestAgent = session.messages
       .filter((m) => m.role === "agent")
