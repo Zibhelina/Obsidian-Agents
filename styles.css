@@ -1034,18 +1034,21 @@ button.obsidian-agents-message-action-btn:hover {
   align-items: center;
 }
 
+/* Single width cap for every composer state. Width is ONLY a function of
+   viewport — adding a skill chip or a multi-line prompt must not resize
+   the pill horizontally, only vertically. */
 .obsidian-agents-composer > * {
   width: 100%;
-  max-width: 760px;
+  max-width: 620px;
   box-sizing: border-box;
+  margin: 0 auto;
 }
 
-/* Compact composer (no skills, no multi-line) is capped narrower and
-   sits a bit thicker — matches ChatGPT's resting input. */
+/* Compact composer (no skills, no multi-line) is a bit thicker with a
+   pill border-radius — matches ChatGPT's resting input. The ONLY
+   difference from the expanded layout is height/padding, never width. */
 .obsidian-agents-composer.obsidian-agents-composer-compact
   > .obsidian-agents-composer-input-wrap {
-  max-width: 620px;
-  margin: 0 auto;
   padding: 8px 10px 8px 10px;
   border-radius: 999px;
   min-height: 52px;
@@ -1060,8 +1063,16 @@ button.obsidian-agents-message-action-btn:hover {
   border: 1px solid var(--background-modifier-border);
   border-radius: 28px;
   padding: 6px 8px 6px 8px;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s,
+    border-radius 0.18s ease, padding 0.18s ease, min-height 0.18s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* Animate the skill-chip row sliding down into view when the first
+   chip is added (expanding the composer vertically). */
+.obsidian-agents-composer-skill-chips {
+  transition: max-height 0.18s ease, opacity 0.18s ease,
+    padding 0.18s ease;
 }
 
 .obsidian-agents-composer-input-wrap:focus-within {
