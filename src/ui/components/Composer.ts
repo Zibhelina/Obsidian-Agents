@@ -111,10 +111,14 @@ export class Composer extends Component {
       cls: "obsidian-agents-composer-skill-chips obsidian-agents-composer-skill-chips-empty",
     });
 
-    // Spacer pushes expand + send to the right edge regardless of chip count.
+    // Spacer pushes send to the right edge regardless of chip count.
     bottomBar.createDiv({ cls: "obsidian-agents-composer-bottom-spacer" });
 
-    this.expandBtn = bottomBar.createEl("button", {
+    // Expand button lives on the input-wrap itself (not inside bottom-bar)
+    // so it can be absolutely anchored to the top-right corner AND survive
+    // when bottom-bar is hidden in the expanded state (where it becomes
+    // the close X).
+    this.expandBtn = inputWrap.createEl("button", {
       cls: "obsidian-agents-composer-expand-btn",
       attr: { "aria-label": "Expand editor" },
     });

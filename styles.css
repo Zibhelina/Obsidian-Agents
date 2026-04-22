@@ -1128,10 +1128,6 @@ button.obsidian-agents-message-action-btn:hover {
   display: none;
 }
 
-.obsidian-agents-composer-compact .obsidian-agents-composer-expand-btn {
-  order: 3;
-}
-
 .obsidian-agents-composer-compact .obsidian-agents-composer-send-btn {
   order: 4;
 }
@@ -1157,17 +1153,20 @@ button.obsidian-agents-message-action-btn:hover {
   min-width: 0;
 }
 
-/* Expand toggle — a small muted chip floating just above the
-   composer's top-right corner. Secondary action: subtle so it
-   doesn't compete with the primary send button. */
+/* Expand toggle — absolutely anchored to the input-wrap's top-right
+   corner so it never lives inside the bottom action row. Small, muted,
+   hover-reveals a chip background. The input-wrap has position:relative
+   so this anchor works. */
 .obsidian-agents-composer-expand-btn,
 button.obsidian-agents-composer-expand-btn {
-  position: static;
+  position: absolute;
+  top: 6px;
+  right: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: none !important;
   background: transparent !important;
@@ -1177,6 +1176,7 @@ button.obsidian-agents-composer-expand-btn {
   box-shadow: none !important;
   transition: color 0.12s, background 0.12s;
   flex-shrink: 0;
+  z-index: 2;
 }
 
 .obsidian-agents-composer-expand-btn:hover,
