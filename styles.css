@@ -46,7 +46,6 @@
   min-width: 220px;
   max-width: 320px;
   background: var(--background-secondary);
-  border-right: 1px solid var(--background-modifier-border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -3928,7 +3927,10 @@ button.obsidian-agents-tree-item-menu {
    the rule below. */
 .obsidian-agents-session-indicator {
   position: absolute;
-  right: 2px;
+  /* Align inside the row's 10px horizontal padding so the indicator has
+     breathing room from the active-state highlight's right edge, instead
+     of tangent-kissing it. */
+  right: 10px;
   top: calc(50% - 7px);
   width: 14px;
   height: 14px;
