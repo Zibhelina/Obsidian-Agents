@@ -48,6 +48,15 @@ export class Composer extends Component {
   private expanded = false;
   private app: App | null = null;
 
+  // Hysteresis for compact↔stacked flipping driven by visual wrap. Compact
+  // mode makes the editor narrower than stacked mode, so a string that wraps
+  // in compact may fit in stacked and vice versa — measuring post-layout
+  // oscillates on every keystroke near the wrap boundary. Once wrap kicks us
+  // out of compact, we remember the string length that caused it and refuse
+  // to re-enter compact until the value shrinks meaningfully below that
+  // length (WRAP_HYSTERESIS_CHARS).
+  private wrapLatchLength: number | null = null;
+
   // Event subscribers registered via the TextInputLike adapter.
   private inputListeners = new Set<() => void>();
   private keydownListeners = new Set<(e: KeyboardEvent) => void>();
@@ -417,7 +426,29 @@ export class Composer extends Component {
       const lineHeight = parseFloat(cs.lineHeight || "0") || line.clientHeight;
       visuallyWrapped = lineHeight > 0 && line.clientHeight > lineHeight * 1.5;
     }
-    const multiLine = hasNewline || visuallyWrapped;
+
+    // Latch the wrap decision so compact mode doesn't oscillate across the
+    // wrap boundary: compact width < stacked width, so a string that wraps
+    // in compact may not wrap in stacked, which would flip us right back to
+    // compact on the next keystroke. Remember the length that tripped wrap
+    // and only release once the user shrinks the text meaningfully below it.
+    const WRAP_HYSTERESIS_CHARS = 4;
+    if (visuallyWrapped) {
+      if (
+        this.wrapLatchLength == null ||
+        value.length < this.wrapLatchLength
+      ) {
+        this.wrapLatchLength = value.length;
+      }
+    } else if (
+      this.wrapLatchLength != null &&
+      value.length <= this.wrapLatchLength - WRAP_HYSTERESIS_CHARS
+    ) {
+      this.wrapLatchLength = null;
+    }
+    const wrapActive = visuallyWrapped || this.wrapLatchLength != null;
+
+    const multiLine = hasNewline || wrapActive;
     const showExpand =
       this.expanded || multiLine || value.length >= EXPAND_THRESHOLD;
     this.expandBtn.style.display = showExpand ? "inline-flex" : "none";
