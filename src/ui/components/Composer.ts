@@ -35,6 +35,14 @@ export class Composer extends Component {
   private addMenuEl: HTMLElement | null = null;
   private addBtn: HTMLButtonElement;
   private skills = getSkillRegistry();
+
+  // Inline slash-autocomplete popover — triggered by typing "/" anywhere the
+  // editor is empty of meaningful content. Lets power users skip the + menu.
+  private slashPopoverEl: HTMLElement | null = null;
+  private slashItems: Skill[] = [];
+  private slashSelectedIndex = 0;
+  private slashStartIndex = -1;
+  private slashQuery = "";
   private sendBtn: HTMLButtonElement;
   private expandBtn: HTMLButtonElement;
   private expanded = false;
@@ -66,9 +74,28 @@ export class Composer extends Component {
     this.chipsEl = inputWrap.createDiv({ cls: "obsidian-agents-mention-chips" });
     this.chipsEl.style.display = "none";
 
-    const inputRow = inputWrap.createDiv({ cls: "obsidian-agents-composer-input-row" });
+    // The prompt sits on its own row above; + / skill-chips / expand / send
+    // share the bottom row so chips live inline with the action buttons.
+    const editorHost = inputWrap.createDiv({ cls: "obsidian-agents-composer-editor-host" });
 
-    this.addBtn = inputRow.createEl("button", {
+    this.editor = new LivePreviewEditor(editorHost, {
+      placeholder: "Ask anything",
+      onChange: () => {
+        this.autoResize();
+        this.updatePlaceholder();
+        this.updateSendButton();
+        this.fireInput();
+        this.mentionPopover?.onEditorChange();
+        this.handleSlashInput();
+      },
+      onSubmit: () => this.send(),
+      onKeyDown: (evt) => this.handleEditorKeyDown(evt),
+      onPaste: (evt) => this.handlePaste(evt),
+    });
+
+    const bottomBar = inputWrap.createDiv({ cls: "obsidian-agents-composer-bottom-bar" });
+
+    this.addBtn = bottomBar.createEl("button", {
       cls: "obsidian-agents-composer-attach-btn",
       attr: { "aria-label": "Attach or add skill" },
     });
@@ -79,34 +106,14 @@ export class Composer extends Component {
       this.toggleAddMenu();
     });
 
-    const editorHost = inputRow.createDiv({ cls: "obsidian-agents-composer-editor-host" });
-
-    this.editor = new LivePreviewEditor(editorHost, {
-      placeholder: "Ask anything",
-      onChange: () => {
-        this.autoResize();
-        this.updatePlaceholder();
-        this.updateSendButton();
-        this.fireInput();
-        this.mentionPopover?.onEditorChange();
-      },
-      onSubmit: () => this.send(),
-      onKeyDown: (evt) => this.handleEditorKeyDown(evt),
-      onPaste: (evt) => this.handlePaste(evt),
-    });
-
-    this.sendBtn = inputRow.createEl("button", {
-      cls: "obsidian-agents-composer-send-btn",
-      attr: { "aria-label": "Send message" },
-    });
-    setIcon(this.sendBtn, "arrow-up");
-    this.updateSendButton();
-
-    // Skill chip row, rendered BELOW the editor input (ChatGPT-style).
-    this.skillChipsEl = inputWrap.createDiv({ cls: "obsidian-agents-composer-skill-chips" });
+    // Inline skill chip row, sharing the bottom bar with the action buttons.
+    this.skillChipsEl = bottomBar.createDiv({ cls: "obsidian-agents-composer-skill-chips" });
     this.skillChipsEl.style.display = "none";
 
-    this.expandBtn = inputWrap.createEl("button", {
+    // Spacer pushes expand + send to the right edge regardless of chip count.
+    bottomBar.createDiv({ cls: "obsidian-agents-composer-bottom-spacer" });
+
+    this.expandBtn = bottomBar.createEl("button", {
       cls: "obsidian-agents-composer-expand-btn",
       attr: { "aria-label": "Expand editor" },
     });
@@ -117,6 +124,13 @@ export class Composer extends Component {
       e.stopPropagation();
       this.setExpanded(!this.expanded);
     });
+
+    this.sendBtn = bottomBar.createEl("button", {
+      cls: "obsidian-agents-composer-send-btn",
+      attr: { "aria-label": "Send message" },
+    });
+    setIcon(this.sendBtn, "arrow-up");
+    this.updateSendButton();
 
     this.registerDomEvent(this.sendBtn, "click", () => {
       if (this.streaming) {
@@ -184,6 +198,30 @@ export class Composer extends Component {
   }
 
   private handleEditorKeyDown(evt: KeyboardEvent): boolean {
+    // Slash-popover owns navigation keys while it's open.
+    if (this.slashPopoverEl && this.slashPopoverEl.style.display !== "none") {
+      if (evt.key === "ArrowDown") {
+        this.slashSelectedIndex = (this.slashSelectedIndex + 1) % this.slashItems.length;
+        this.renderSlashItems();
+        return true;
+      } else if (evt.key === "ArrowUp") {
+        this.slashSelectedIndex =
+          (this.slashSelectedIndex - 1 + this.slashItems.length) % this.slashItems.length;
+        this.renderSlashItems();
+        return true;
+      } else if (evt.key === "Enter" || evt.key === "Tab") {
+        const picked = this.slashItems[this.slashSelectedIndex];
+        if (picked) {
+          evt.preventDefault();
+          this.pickSlashSkill(picked);
+        }
+        return true;
+      } else if (evt.key === "Escape") {
+        this.hideSlashPopover();
+        return true;
+      }
+    }
+
     for (const fn of this.keydownListeners) fn(evt);
     if (evt.defaultPrevented) return true;
 
@@ -406,6 +444,118 @@ export class Composer extends Component {
       this.activeSkills.length > 0 ||
       this.replyQuote != null;
     this.sendBtn.disabled = !hasContent;
+  }
+
+  // --- Slash autocomplete ---------------------------------------------
+
+  /**
+   * Triggered from the editor's onChange. If the current text starts with a
+   * "/" followed by non-space/non-newline characters and no other content
+   * precedes it, we show a filtered skill list. Mirrors ChatGPT's power-user
+   * shortcut for the + menu.
+   */
+  private handleSlashInput(): void {
+    const text = this.editor.getValue();
+    const cursor = this.editor.getCursor();
+    const before = text.slice(0, cursor);
+
+    // Only trigger when "/" is the very first character of the doc and the
+    // user hasn't pressed space yet — keeps the popover out of the way
+    // during normal typing.
+    const match = /^\/([\w-]*)$/.exec(before);
+    if (!match) {
+      this.hideSlashPopover();
+      return;
+    }
+
+    this.slashStartIndex = 0;
+    this.slashQuery = match[1];
+    const available = this.skills
+      .filter(this.slashQuery)
+      .filter((s) => !this.activeSkills.some((a) => a.id === s.id));
+
+    if (available.length === 0) {
+      this.hideSlashPopover();
+      return;
+    }
+    this.slashItems = available;
+    this.slashSelectedIndex = 0;
+    this.showSlashPopover();
+  }
+
+  private showSlashPopover(): void {
+    if (!this.slashPopoverEl) {
+      const inputWrap = this.containerEl.querySelector(
+        ".obsidian-agents-composer-input-wrap"
+      ) as HTMLElement;
+      this.slashPopoverEl = (inputWrap || this.containerEl).createDiv({
+        cls: "obsidian-agents-slash-popover",
+      });
+    }
+    this.slashPopoverEl.style.display = "block";
+    this.renderSlashItems();
+  }
+
+  private hideSlashPopover(): void {
+    if (this.slashPopoverEl) this.slashPopoverEl.style.display = "none";
+    this.slashItems = [];
+    this.slashQuery = "";
+    this.slashStartIndex = -1;
+  }
+
+  private renderSlashItems(): void {
+    if (!this.slashPopoverEl) return;
+    this.slashPopoverEl.empty();
+    for (let i = 0; i < this.slashItems.length; i++) {
+      const skill = this.slashItems[i];
+      const row = this.slashPopoverEl.createDiv({
+        cls:
+          "obsidian-agents-slash-item" +
+          (i === this.slashSelectedIndex ? " selected" : ""),
+        attr: { title: skill.description },
+      });
+      const icon = row.createSpan({ cls: "obsidian-agents-slash-item-icon" });
+      setIcon(icon, skill.icon ?? "sparkles");
+      const main = row.createDiv({ cls: "obsidian-agents-slash-item-main" });
+      main.createSpan({
+        cls: "obsidian-agents-slash-item-id",
+        text: "/" + skill.id.replace(/^\//, ""),
+      });
+      main.createSpan({ cls: "obsidian-agents-slash-item-label", text: skill.label });
+      row.createDiv({ cls: "obsidian-agents-slash-item-desc", text: skill.description });
+
+      row.addEventListener("mouseenter", () => {
+        this.slashSelectedIndex = i;
+        this.slashPopoverEl
+          ?.querySelectorAll(".obsidian-agents-slash-item.selected")
+          .forEach((e) => e.removeClass("selected"));
+        row.addClass("selected");
+      });
+      row.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        this.pickSlashSkill(skill);
+      });
+    }
+  }
+
+  private pickSlashSkill(skill: Skill): void {
+    if (this.activeSkills.length >= MAX_ACTIVE_SKILLS) {
+      this.hideSlashPopover();
+      return;
+    }
+    // Remove the typed "/query" from the editor before promoting to a chip.
+    if (this.slashStartIndex >= 0) {
+      const cursor = this.editor.getCursor();
+      this.editor.replaceRange(this.slashStartIndex, cursor, "");
+    }
+    if (!this.activeSkills.some((s) => s.id === skill.id)) {
+      this.activeSkills.push(skill);
+    }
+    this.hideSlashPopover();
+    this.renderSkillChips();
+    this.updatePlaceholder();
+    this.updateSendButton();
+    this.editor.focus();
   }
 
   // --- Add menu (attach + skills) -------------------------------------
@@ -651,6 +801,7 @@ export class Composer extends Component {
     this.renderSkillChips();
     this.updatePlaceholder();
     this.hideAddMenu();
+    this.hideSlashPopover();
     this.updateSendButton();
     if (this.expanded) this.setExpanded(false);
     this.expandBtn.style.display = "none";
