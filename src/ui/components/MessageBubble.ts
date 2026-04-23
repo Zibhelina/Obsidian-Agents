@@ -122,7 +122,14 @@ export class MessageBubble extends Component {
       const displayText = this.message.content
         .replace(/@\[[^\]]*\]\([^)]*\)/g, "")
         .trim();
-      this.contentEl.appendText(displayText || this.message.content);
+      LayoutEngine.render(
+        this.contentEl,
+        displayText || this.message.content,
+        [],
+        this.plugin.app,
+        this,
+        ""
+      );
     } else {
       const blocks: LayoutBlock[] = [];
       if (this.message.attachments) {
